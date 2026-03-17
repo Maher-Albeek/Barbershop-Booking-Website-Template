@@ -21,11 +21,11 @@ function normalizeRole(value?: string): AuthRole {
 function getErrorMessage(error?: string) {
   switch (error) {
     case "missing_fields":
-      return "Enter your email and password.";
+      return "Bitte E-Mail und Passwort eingeben.";
     case "invalid_credentials":
-      return "The email or password is not valid.";
+      return "Die E-Mail oder das Passwort ist ungueltig.";
     case "forbidden_role":
-      return "That account is not allowed to access the requested area.";
+      return "Dieses Konto darf den angeforderten Bereich nicht aufrufen.";
     default:
       return "";
   }
@@ -76,15 +76,15 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
             color: "var(--muted)"
           }}
         >
-          Secure sign-in
+          Sicherer Login
         </p>
         <h1 style={{ margin: "12px 0 8px", fontSize: 32 }}>
-          {role === "admin" ? "Admin login" : "Employee login"}
+          {role === "admin" ? "Admin-Anmeldung" : "Mitarbeiter-Anmeldung"}
         </h1>
         <p style={{ margin: 0, lineHeight: 1.6, color: "var(--muted)" }}>
           {role === "admin"
-            ? "Only admin accounts can open admin routes."
-            : "Employees can access their own dashboard, while admin-only routes stay restricted."}
+            ? "Nur Admin-Konten koennen Admin-Routen oeffnen."
+            : "Mitarbeiter sehen nur ihr eigenes Dashboard, Admin-Bereiche bleiben geschuetzt."}
         </p>
 
         {errorMessage ? (
@@ -122,7 +122,7 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
           </label>
 
           <label style={{ display: "grid", gap: 8 }}>
-            <span>Password</span>
+            <span>Passwort</span>
             <input
               type="password"
               name="password"
@@ -153,19 +153,19 @@ export default async function LoginPage({ params, searchParams }: LoginPageProps
         </form>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 18 }}>
-          <Link href={`/${locale}/login?role=admin`}>Admin access</Link>
-          <Link href={`/${locale}/login?role=employee`}>Employee access</Link>
-          <Link href={`/${locale}`}>Back to site</Link>
+          <Link href={`/${locale}/login?role=admin`}>Admin-Zugang</Link>
+          <Link href={`/${locale}/login?role=employee`}>Mitarbeiter-Zugang</Link>
+          <Link href={`/${locale}`}>Zurueck zur Website</Link>
         </div>
 
         {session ? (
           <p style={{ marginTop: 18, color: "var(--muted)", lineHeight: 1.6 }}>
-            Current session: {session.displayName} ({session.role}).
+            Aktuelle Sitzung: {session.displayName} ({session.role}).
           </p>
         ) : (
           <p style={{ marginTop: 18, color: "var(--muted)", lineHeight: 1.6 }}>
-            Demo credentials are prefilled for local verification. Passwords are stored as salted
-            `scrypt` hashes.
+            Demo-Zugangsdaten sind fuer lokale Tests vorausgefuellt. Passwoerter werden als gesalzene
+            `scrypt`-Hashes gespeichert.
           </p>
         )}
       </section>

@@ -96,10 +96,10 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
         style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}
       >
         {[
-          ["Total bookings", String(dashboard.metrics.totalBookings)],
-          ["Employees", String(dashboard.metrics.employees)],
-          ["Services", String(dashboard.metrics.services)],
-          ["Active offers", String(dashboard.metrics.activeOffers)]
+          ["Buchungen gesamt", String(dashboard.metrics.totalBookings)],
+          ["Mitarbeiter", String(dashboard.metrics.employees)],
+          ["Dienstleistungen", String(dashboard.metrics.services)],
+          ["Aktive Angebote", String(dashboard.metrics.activeOffers)]
         ].map(([label, value]) => (
           <article key={label} style={sectionStyle}>
             <div
@@ -118,15 +118,15 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
       </section>
 
       <section style={sectionStyle}>
-        <SectionTitle story="ADMIN-001" title="Recent booking overview" />
+        <SectionTitle story="ADMIN-001" title="Uebersicht der letzten Buchungen" />
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ textAlign: "left", color: "var(--muted)" }}>
-                <th style={{ paddingBottom: 10 }}>Date</th>
-                <th style={{ paddingBottom: 10 }}>Customer</th>
-                <th style={{ paddingBottom: 10 }}>Service</th>
-                <th style={{ paddingBottom: 10 }}>Barber</th>
+                <th style={{ paddingBottom: 10 }}>Datum</th>
+                <th style={{ paddingBottom: 10 }}>Kunde</th>
+                <th style={{ paddingBottom: 10 }}>Dienstleistung</th>
+                <th style={{ paddingBottom: 10 }}>Barbier</th>
                 <th style={{ paddingBottom: 10 }}>Status</th>
               </tr>
             </thead>
@@ -146,17 +146,17 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
       </section>
 
       <section id="services" style={sectionStyle}>
-        <SectionTitle story="ADMIN-002" title="Manage services" />
+        <SectionTitle story="ADMIN-002" title="Dienstleistungen verwalten" />
         <div style={gridTwo}>
           {siteConfig.services[locale].services.map((service) => (
             <article key={service.slug} style={surfaceCardStyle}>
               <strong>{service.name}</strong>
               <div style={{ color: "var(--muted)", marginTop: 8 }}>{service.slug}</div>
               <div style={{ marginTop: 8 }}>
-                {service.isActive ? "Active" : "Inactive"} · {service.durationLabel}
+                {service.isActive ? "Aktiv" : "Inaktiv"} · {service.durationLabel}
               </div>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
-                <Link href={`/${locale}/admin?editService=${service.slug}#services`}>Edit</Link>
+                <Link href={`/${locale}/admin?editService=${service.slug}#services`}>Bearbeiten</Link>
                 <form action={deleteServiceAction}>
                   <input type="hidden" name="locale" value={locale} />
                   <input type="hidden" name="serviceSlug" value={service.slug} />
@@ -184,25 +184,25 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             <input
               name="serviceSlug"
               defaultValue={serviceToEdit?.slug ?? ""}
-              placeholder="Existing slug"
+              placeholder="Vorhandener Slug"
               style={inputStyle}
             />
-            <input name="slug" placeholder="New slug override" style={inputStyle} />
+            <input name="slug" placeholder="Neuen Slug ueberschreiben" style={inputStyle} />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <input type="checkbox" name="isActive" defaultChecked={serviceToEdit?.isActive ?? true} />
-              Active service
+              Dienstleistung aktiv
             </label>
           </div>
           {serviceToEdit ? (
             <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ color: "var(--muted)" }}>
-                Editing <strong style={{ color: "inherit" }}>{serviceToEdit.name}</strong>
+                Bearbeite <strong style={{ color: "inherit" }}>{serviceToEdit.name}</strong>
               </div>
-              <Link href={`/${locale}/admin#services`}>Clear form</Link>
+              <Link href={`/${locale}/admin#services`}>Formular leeren</Link>
             </div>
           ) : null}
           <div style={gridTwo}>
-            <LocaleFields title={`${currentLocaleLabel} content`}>
+            <LocaleFields title={`${currentLocaleLabel} Inhalt`}>
               <input
                 name={`name_${locale}`}
                 defaultValue={serviceToEdit?.name ?? ""}
@@ -212,42 +212,42 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
               <input
                 name={`description_${locale}`}
                 defaultValue={serviceToEdit?.description ?? ""}
-                placeholder="Description"
+                placeholder="Beschreibung"
                 style={inputStyle}
               />
               <input
                 name={`duration_${locale}`}
                 defaultValue={serviceToEdit?.durationLabel ?? ""}
-                placeholder="Duration label"
+                placeholder="Dauerbezeichnung"
                 style={inputStyle}
               />
               <input
                 name={`price_${locale}`}
                 defaultValue={serviceToEdit?.priceLabel ?? ""}
-                placeholder="Price label"
+                placeholder="Preisbezeichnung"
                 style={inputStyle}
               />
             </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            {serviceToEdit ? "Update service" : "Save service"}
+            {serviceToEdit ? "Dienstleistung aktualisieren" : "Dienstleistung speichern"}
           </button>
         </form>
       </section>
 
       <section id="employees" style={sectionStyle}>
-        <SectionTitle story="ADMIN-003" title="Manage employees" />
+        <SectionTitle story="ADMIN-003" title="Mitarbeiter verwalten" />
         <div style={gridTwo}>
           {siteConfig.team[locale].members.map((member) => (
             <article key={member.slug} style={surfaceCardStyle}>
               <strong>{member.name}</strong>
               <div style={{ color: "var(--muted)", marginTop: 8 }}>{member.slug}</div>
-              <div style={{ marginTop: 8 }}>{member.isActive ? "Active" : "Inactive"}</div>
+              <div style={{ marginTop: 8 }}>{member.isActive ? "Aktiv" : "Inaktiv"}</div>
               <div style={{ marginTop: 8, color: "var(--muted)" }}>
                 {member.specialties.join(", ")}
               </div>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
-                <Link href={`/${locale}/admin?editEmployee=${member.slug}#employees`}>Edit</Link>
+                <Link href={`/${locale}/admin?editEmployee=${member.slug}#employees`}>Bearbeiten</Link>
                 <form action={deleteEmployeeAction}>
                   <input type="hidden" name="locale" value={locale} />
                   <input type="hidden" name="employeeSlug" value={member.slug} />
@@ -275,14 +275,14 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             <input
               name="employeeSlug"
               defaultValue={employeeToEdit?.slug ?? ""}
-              placeholder="Existing slug"
+              placeholder="Vorhandener Slug"
               style={inputStyle}
             />
-            <input name="slug" placeholder="New slug override" style={inputStyle} />
+            <input name="slug" placeholder="Neuen Slug ueberschreiben" style={inputStyle} />
             <input
               name="loginEmail"
               defaultValue={employeeLogin?.email ?? ""}
-              placeholder="Employee login email"
+              placeholder="Login-E-Mail des Mitarbeiters"
               style={inputStyle}
             />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -297,42 +297,42 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
           {employeeToEdit ? (
             <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ color: "var(--muted)" }}>
-                Editing <strong style={{ color: "inherit" }}>{employeeToEdit.name}</strong>
+                Bearbeite <strong style={{ color: "inherit" }}>{employeeToEdit.name}</strong>
               </div>
-              <Link href={`/${locale}/admin#employees`}>Clear form</Link>
+              <Link href={`/${locale}/admin#employees`}>Formular leeren</Link>
             </div>
           ) : null}
           <div style={gridTwo}>
-            <LocaleFields title={`${currentLocaleLabel} content`}>
+            <LocaleFields title={`${currentLocaleLabel} Inhalt`}>
               <input
                 name={`name_${locale}`}
                 defaultValue={employeeToEdit?.name ?? ""}
-                placeholder="Display name"
+                placeholder="Anzeigename"
                 style={inputStyle}
               />
               <input
                 name={`image_${locale}`}
                 defaultValue={employeeToEdit?.imageSrc ?? ""}
-                placeholder="Avatar URL"
+                placeholder="Avatar-URL"
                 style={inputStyle}
               />
               <input
                 name={`specialties_${locale}`}
                 defaultValue={(employeeToEdit?.specialties ?? []).join(", ")}
-                placeholder="Comma-separated specialties"
+                placeholder="Spezialisierungen, kommagetrennt"
                 style={inputStyle}
               />
               <textarea
                 name={`bio_${locale}`}
                 rows={4}
                 defaultValue={employeeToEdit?.bio ?? ""}
-                placeholder="Bio"
+                placeholder="Kurzprofil"
                 style={inputStyle}
               />
             </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            {employeeToEdit ? "Update employee" : "Save employee"}
+            {employeeToEdit ? "Mitarbeiter aktualisieren" : "Mitarbeiter speichern"}
           </button>
         </form>
       </section>
@@ -340,7 +340,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
       <section id="availability" style={sectionStyle}>
         <SectionTitle
           story="ADMIN-004 / ADMIN-005 / ADMIN-006"
-          title="Assignments, working hours, blocked times"
+          title="Zuweisungen, Arbeitszeiten und Sperrzeiten"
         />
         <div style={{ display: "grid", gap: 18 }}>
           {siteConfig.team[locale].members.map((member) => {
@@ -365,12 +365,12 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                     <span style={{ color: "var(--muted)" }}>{member.slug}</span>
                   </div>
                   <span style={{ color: "var(--muted)" }}>
-                    Hours summary: {buildWeekdaySummary(member.slug) || "none"}
+                    Arbeitszeiten: {buildWeekdaySummary(member.slug) || "keine"}
                   </span>
                 </div>
 
                 <div style={{ display: "grid", gap: 12 }}>
-                  <strong>Assignments</strong>
+                  <strong>Zuweisungen</strong>
                   {assignments.length > 0 ? (
                     <div style={{ display: "grid", gap: 12 }}>
                       {assignments.map((entry) => (
@@ -409,13 +409,13 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                             <input name="priceLabel" defaultValue={entry.priceLabel} style={inputStyle} />
                             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
                               <input type="checkbox" name="isActive" defaultChecked={entry.isActive} />
-                              Active assignment
+                              Zuweisung aktiv
                             </label>
                             <button
                               type="submit"
                               style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}
                             >
-                              Save assignment
+                              Zuweisung speichern
                             </button>
                           </form>
                           <form action={deleteAssignmentAction}>
@@ -423,19 +423,19 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                             <input type="hidden" name="employeeSlug" value={member.slug} />
                             <input type="hidden" name="serviceSlug" value={entry.serviceSlug} />
                             <button type="submit" style={{ ...inputStyle, cursor: "pointer", maxWidth: 200 }}>
-                              Delete assignment
+                              Zuweisung loeschen
                             </button>
                           </form>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div style={{ color: "var(--muted)" }}>No assignments stored for this employee.</div>
+                    <div style={{ color: "var(--muted)" }}>Fuer diesen Mitarbeiter sind keine Zuweisungen gespeichert.</div>
                   )}
                   <form action={upsertAssignmentAction} style={{ ...sectionStyle, gap: 12 }}>
                     <input type="hidden" name="locale" value={locale} />
                     <input type="hidden" name="employeeSlug" value={member.slug} />
-                    <strong>Add assignment</strong>
+                    <strong>Zuweisung hinzufuegen</strong>
                     <select name="serviceSlug" style={inputStyle}>
                       {siteConfig.services[locale].services.map((service) => (
                         <option key={service.slug} value={service.slug}>
@@ -448,22 +448,22 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                       type="number"
                       min="5"
                       step="5"
-                      placeholder="Duration minutes"
+                      placeholder="Dauer in Minuten"
                       style={inputStyle}
                     />
-                    <input name="priceLabel" placeholder="Price label" style={inputStyle} />
+                    <input name="priceLabel" placeholder="Preisbezeichnung" style={inputStyle} />
                     <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <input type="checkbox" name="isActive" defaultChecked />
-                      Active assignment
+                      Zuweisung aktiv
                     </label>
                     <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-                      Add assignment
+                      Zuweisung hinzufuegen
                     </button>
                   </form>
                 </div>
 
                 <div style={{ display: "grid", gap: 12 }}>
-                  <strong>Weekly working hours</strong>
+                  <strong>Woechentliche Arbeitszeiten</strong>
                   <div style={{ display: "grid", gap: 10 }}>
                     {weekdayLabels.map((day) => {
                       const existingHours = siteConfig.booking.workingHours.find(
@@ -501,7 +501,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                           />
                           <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
                             <input type="checkbox" name="isOff" defaultChecked={existingHours?.isOff ?? false} />
-                            Day off
+                            Freier Tag
                           </label>
                           <button
                             type="submit"
@@ -516,7 +516,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                 </div>
 
                 <div style={{ display: "grid", gap: 12 }}>
-                  <strong>Blocked times</strong>
+                  <strong>Sperrzeiten</strong>
                   {blockedTimes.length > 0 ? (
                     <div style={{ display: "grid", gap: 12 }}>
                       {blockedTimes.map((entry) => (
@@ -549,14 +549,14 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                             <input
                               name="reason"
                               defaultValue={entry.reason ?? ""}
-                              placeholder="Optional reason"
+                              placeholder="Optionaler Grund"
                               style={inputStyle}
                             />
                             <button
                               type="submit"
                               style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}
                             >
-                              Save blocked time
+                              Sperrzeit speichern
                             </button>
                           </form>
                           <form action={deleteBlockedTimeAction}>
@@ -566,25 +566,25 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                             <input type="hidden" name="start" value={entry.start} />
                             <input type="hidden" name="end" value={entry.end} />
                             <button type="submit" style={{ ...inputStyle, cursor: "pointer", maxWidth: 220 }}>
-                              Delete blocked time
+                              Sperrzeit loeschen
                             </button>
                           </form>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div style={{ color: "var(--muted)" }}>No blocked times stored for this employee.</div>
+                    <div style={{ color: "var(--muted)" }}>Fuer diesen Mitarbeiter sind keine Sperrzeiten gespeichert.</div>
                   )}
                   <form action={upsertBlockedTimeAction} style={{ ...sectionStyle, gap: 12 }}>
                     <input type="hidden" name="locale" value={locale} />
                     <input type="hidden" name="employeeSlug" value={member.slug} />
-                    <strong>Add blocked time</strong>
+                    <strong>Sperrzeit hinzufuegen</strong>
                     <input name="date" type="date" style={inputStyle} />
                     <input name="start" type="time" style={inputStyle} />
                     <input name="end" type="time" style={inputStyle} />
-                    <input name="reason" placeholder="Optional reason" style={inputStyle} />
+                    <input name="reason" placeholder="Optionaler Grund" style={inputStyle} />
                     <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-                      Add blocked time
+                      Sperrzeit hinzufuegen
                     </button>
                   </form>
                 </div>
@@ -595,7 +595,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
       </section>
 
       <section id="bookings" style={sectionStyle}>
-        <SectionTitle story="ADMIN-007" title="Manage bookings" />
+        <SectionTitle story="ADMIN-007" title="Buchungen verwalten" />
         <form method="get" style={gridTwo}>
           <input type="date" name="bookingDate" defaultValue={filters.bookingDate} style={inputStyle} />
           <select
@@ -603,7 +603,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             defaultValue={filters.bookingEmployee ?? ""}
             style={inputStyle}
           >
-            <option value="">All employees</option>
+            <option value="">Alle Mitarbeiter</option>
             {options.employees.map((member) => (
               <option key={member.slug} value={member.slug}>
                 {member.name}
@@ -611,7 +611,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             ))}
           </select>
           <select name="bookingService" defaultValue={filters.bookingService ?? ""} style={inputStyle}>
-            <option value="">All services</option>
+            <option value="">Alle Dienstleistungen</option>
             {options.services.map((service) => (
               <option key={service.slug} value={service.slug}>
                 {service.name}
@@ -619,14 +619,14 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             ))}
           </select>
           <select name="bookingStatus" defaultValue={filters.bookingStatus ?? ""} style={inputStyle}>
-            <option value="">All statuses</option>
+            <option value="">Alle Status</option>
             <option value="confirmed">confirmed</option>
             <option value="cancelled">cancelled</option>
             <option value="completed">completed</option>
             <option value="no_show">no_show</option>
           </select>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Apply filters
+            Filter anwenden
           </button>
         </form>
         <div style={{ display: "grid", gap: 12 }}>
@@ -644,10 +644,10 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                 {booking.customerName} · {booking.serviceName} · {booking.employeeName}
               </div>
               <div style={{ color: "var(--muted)" }}>
-                Snapshot: {booking.priceSnapshot} · Ref: {booking.id}
+                Snapshot: {booking.priceSnapshot} · Ref.: {booking.id}
               </div>
               <div style={{ color: "var(--muted)" }}>
-                Email: {booking.email || "n/a"} · Notes: {booking.notes || "n/a"}
+                E-Mail: {booking.email || "k. A."} · Notizen: {booking.notes || "k. A."}
               </div>
               <form action={updateBookingStatusAction} style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 <input type="hidden" name="locale" value={locale} />
@@ -662,7 +662,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                   type="submit"
                   style={{ ...inputStyle, maxWidth: 180, cursor: "pointer", fontWeight: 700 }}
                 >
-                  Update status
+                  Status aktualisieren
                 </button>
               </form>
             </article>
@@ -671,7 +671,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
       </section>
 
       <section id="gallery" style={sectionStyle}>
-        <SectionTitle story="ADMIN-008" title="Manage gallery" />
+        <SectionTitle story="ADMIN-008" title="Galerie verwalten" />
         <div style={gridTwo}>
           {siteConfig.gallery[locale].images
             .sort((left, right) => left.sortOrder - right.sortOrder)
@@ -684,40 +684,40 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                 />
                 <strong>{image.caption}</strong>
                 <div style={{ color: "var(--muted)" }}>
-                  {image.slug} · order {image.sortOrder} · {image.isVisible ? "visible" : "hidden"}
+                  {image.slug} · Reihenfolge {image.sortOrder} · {image.isVisible ? "sichtbar" : "ausgeblendet"}
                 </div>
                 <form action={upsertGalleryAction} style={{ display: "grid", gap: 10 }}>
                   <input type="hidden" name="locale" value={locale} />
                   <input type="hidden" name="slug" value={image.slug} />
                   <input type="hidden" name="currentImageSrc" value={image.imageSrc} />
                   <GalleryImagePicker name="imageFile" initialPreview={image.imageSrc} />
-                  <input name="alt" defaultValue={image.alt} placeholder="Alt text" style={inputStyle} />
+                  <input name="alt" defaultValue={image.alt} placeholder="Alt-Text" style={inputStyle} />
                   <input
                     name="caption"
                     defaultValue={image.caption}
-                    placeholder="Caption"
+                    placeholder="Bildunterschrift"
                     style={inputStyle}
                   />
                   <input
                     name="sortOrder"
                     type="number"
                     defaultValue={image.sortOrder}
-                    placeholder="Sort order"
+                    placeholder="Sortierreihenfolge"
                     style={inputStyle}
                   />
                   <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <input type="checkbox" name="isVisible" defaultChecked={image.isVisible} />
-                    Visible on public gallery
+                    In oeffentlicher Galerie sichtbar
                   </label>
                   <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-                    Save changes
+                    Aenderungen speichern
                   </button>
                 </form>
                 <form action={deleteGalleryAction}>
                   <input type="hidden" name="locale" value={locale} />
                   <input type="hidden" name="slug" value={image.slug} />
                   <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-                    Delete image
+                    Bild loeschen
                   </button>
                 </form>
               </article>
@@ -727,36 +727,36 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
           <input type="hidden" name="locale" value={locale} />
           <input name="slug" placeholder="Slug (optional)" style={inputStyle} />
           <GalleryImagePicker name="imageFile" />
-          <input name="alt" placeholder="Alt text" style={inputStyle} />
-          <input name="caption" placeholder="Caption" style={inputStyle} />
-          <input name="sortOrder" type="number" placeholder="Sort order" style={inputStyle} />
+          <input name="alt" placeholder="Alt-Text" style={inputStyle} />
+          <input name="caption" placeholder="Bildunterschrift" style={inputStyle} />
+          <input name="sortOrder" type="number" placeholder="Sortierreihenfolge" style={inputStyle} />
           <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <input type="checkbox" name="isVisible" defaultChecked />
-            Visible on public gallery
+            In oeffentlicher Galerie sichtbar
           </label>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Save gallery image
+            Galeriebild speichern
           </button>
         </form>
       </section>
 
       <section id="offers" style={sectionStyle}>
-        <SectionTitle story="ADMIN-009" title="Manage offers" />
+        <SectionTitle story="ADMIN-009" title="Angebote verwalten" />
         <div style={gridTwo}>
           {siteConfig.offers[locale].offers.map((offer) => (
             <article key={offer.slug} style={{ ...surfaceCardStyle, display: "grid", gap: 10 }}>
               <strong>{offer.title}</strong>
               <div style={{ color: "var(--muted)" }}>
-                {offer.validFrom} to {offer.validUntil}
+                {offer.validFrom} bis {offer.validUntil}
               </div>
-              <div>{offer.isActive ? "Active" : "Inactive"}</div>
+              <div>{offer.isActive ? "Aktiv" : "Inaktiv"}</div>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <Link href={`/${locale}/admin?editOffer=${offer.slug}#offers`}>Edit</Link>
+                <Link href={`/${locale}/admin?editOffer=${offer.slug}#offers`}>Bearbeiten</Link>
                 <form action={deleteOfferAction}>
                   <input type="hidden" name="locale" value={locale} />
                   <input type="hidden" name="slug" value={offer.slug} />
                   <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-                    Delete offer
+                    Angebot loeschen
                   </button>
                 </form>
               </div>
@@ -769,10 +769,10 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             <input
               name="offerSlug"
               defaultValue={offerToEdit?.slug ?? ""}
-              placeholder="Existing slug"
+              placeholder="Vorhandener Slug"
               style={inputStyle}
             />
-            <input name="slug" placeholder="New slug override" style={inputStyle} />
+            <input name="slug" placeholder="Neuen Slug ueberschreiben" style={inputStyle} />
             <input
               name="validFrom"
               type="date"
@@ -788,78 +788,78 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             <input
               name="imageSrc"
               defaultValue={offerToEdit?.imageSrc ?? ""}
-              placeholder="Image URL"
+              placeholder="Bild-URL"
               style={inputStyle}
             />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <input type="checkbox" name="isActive" defaultChecked={offerToEdit?.isActive ?? true} />
-              Offer active
+              Angebot aktiv
             </label>
           </div>
           {offerToEdit ? (
             <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ color: "var(--muted)" }}>
-                Editing <strong style={{ color: "inherit" }}>{offerToEdit.title}</strong>
+                Bearbeite <strong style={{ color: "inherit" }}>{offerToEdit.title}</strong>
               </div>
-              <Link href={`/${locale}/admin#offers`}>Clear form</Link>
+              <Link href={`/${locale}/admin#offers`}>Formular leeren</Link>
             </div>
           ) : null}
           <div style={gridTwo}>
-            <LocaleFields title={`${currentLocaleLabel} content`}>
+            <LocaleFields title={`${currentLocaleLabel} Inhalt`}>
               <input
                 name={`title_${locale}`}
                 defaultValue={offerToEdit?.title ?? ""}
-                placeholder="Offer title"
+                placeholder="Angebotstitel"
                 style={inputStyle}
               />
               <textarea
                 name={`description_${locale}`}
                 rows={4}
                 defaultValue={offerToEdit?.description ?? ""}
-                placeholder="Description"
+                placeholder="Beschreibung"
                 style={inputStyle}
               />
             </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            {offerToEdit ? "Update offer" : "Save offer"}
+            {offerToEdit ? "Angebot aktualisieren" : "Angebot speichern"}
           </button>
         </form>
       </section>
 
       <section id="settings" style={sectionStyle}>
-        <SectionTitle story="ADMIN-010" title="Manage shop settings" />
+        <SectionTitle story="ADMIN-010" title="Shop-Einstellungen verwalten" />
         <form action={updateShopSettingsAction} style={{ display: "grid", gap: 14 }}>
           <input type="hidden" name="locale" value={locale} />
           <div style={gridTwo}>
             <input
               name="shopName"
               defaultValue={siteConfig.brand.shopName}
-              placeholder="Shop name"
+              placeholder="Shop-Name"
               style={inputStyle}
             />
             <input
               name="logoText"
               defaultValue={siteConfig.brand.logoText}
-              placeholder="Logo text"
+              placeholder="Logo-Text"
               style={inputStyle}
             />
             <input
               name="primaryColor"
               defaultValue={siteConfig.brand.primaryColor}
-              placeholder="Primary color"
+              placeholder="Primaerfarbe"
               style={inputStyle}
             />
             <input
               name="secondaryColor"
               defaultValue={siteConfig.brand.secondaryColor}
-              placeholder="Secondary color"
+              placeholder="Sekundaerfarbe"
               style={inputStyle}
             />
             <input
               name="accentColor"
               defaultValue={siteConfig.brand.accentColor}
-              placeholder="Accent color"
+              placeholder="Akzentfarbe"
               style={inputStyle}
             />
           </div>
@@ -886,60 +886,60 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                 </label>
               </div>
             ))}
-            <LocaleFields title={`${currentLocaleLabel} hero content`}>
+            <LocaleFields title={`${currentLocaleLabel} Hero-Inhalt`}>
               <input
                 name={`hero_kicker_${locale}`}
                 defaultValue={siteConfig.content[locale].hero.kicker}
-                placeholder="Hero kicker"
+                placeholder="Hero-Kicker"
                 style={inputStyle}
               />
               <input
                 name={`hero_title_${locale}`}
                 defaultValue={siteConfig.content[locale].hero.title}
-                placeholder="Hero title"
+                placeholder="Hero-Titel"
                 style={inputStyle}
               />
               <textarea
                 name={`hero_subtitle_${locale}`}
                 defaultValue={siteConfig.content[locale].hero.subtitle}
                 rows={4}
-                placeholder="Hero subtitle"
+                placeholder="Hero-Untertitel"
                 style={inputStyle}
               />
             </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Save shop settings
+            Shop-Einstellungen speichern
           </button>
         </form>
       </section>
 
       <section id="email" style={sectionStyle}>
-        <SectionTitle story="ADMIN-011" title="Manage email settings" />
+        <SectionTitle story="ADMIN-011" title="E-Mail-Einstellungen verwalten" />
         <form action={updateEmailSettingsAction} style={gridTwo}>
           <input type="hidden" name="locale" value={locale} />
           <input
             name="providerName"
             defaultValue={siteConfig.emailSettings.providerName}
-            placeholder="Provider name"
+            placeholder="Anbietername"
             style={inputStyle}
           />
           <input
             name="fromEmail"
             defaultValue={siteConfig.emailSettings.fromEmail}
-            placeholder="From email"
+            placeholder="Absender-E-Mail"
             style={inputStyle}
           />
           <input
             name="replyToEmail"
             defaultValue={siteConfig.emailSettings.replyToEmail}
-            placeholder="Reply-to email"
+            placeholder="Antwort-E-Mail"
             style={inputStyle}
           />
           <input
             name="internalNotificationEmail"
             defaultValue={siteConfig.emailSettings.internalNotificationEmail}
-            placeholder="Internal notification email"
+            placeholder="Interne Benachrichtigungs-E-Mail"
             style={inputStyle}
           />
           <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -948,7 +948,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
               name="sendCustomerConfirmation"
               defaultChecked={siteConfig.emailSettings.sendCustomerConfirmation}
             />
-            Send customer confirmations
+            Kundenbestaetigungen senden
           </label>
           <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <input
@@ -956,16 +956,16 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
               name="sendInternalNotification"
               defaultChecked={siteConfig.emailSettings.sendInternalNotification}
             />
-            Send internal notifications
+            Interne Benachrichtigungen senden
           </label>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Save email settings
+            E-Mail-Einstellungen speichern
           </button>
         </form>
       </section>
 
       <section id="contact" style={sectionStyle}>
-        <SectionTitle story="ADMIN-012" title="Manage contact page content" />
+        <SectionTitle story="ADMIN-012" title="Kontaktseiten-Inhalte verwalten" />
         <form action={updateContactContentAction} style={{ display: "grid", gap: 14 }}>
           <input type="hidden" name="locale" value={locale} />
           <div style={gridTwo}>
@@ -984,25 +984,25 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             <input
               name="address"
               defaultValue={siteConfig.contact[locale].items.address.value}
-              placeholder="Address"
+              placeholder="Adresse"
               style={inputStyle}
             />
             <input
               name="whatsapp"
               defaultValue={siteConfig.contact[locale].items.whatsapp?.href ?? ""}
-              placeholder="WhatsApp link"
+              placeholder="WhatsApp-Link"
               style={inputStyle}
             />
             <input
               name="mapEmbedUrl"
               defaultValue={siteConfig.contact[locale].map.embedUrl}
-              placeholder="Map embed URL"
+              placeholder="Karten-Embed-URL"
               style={inputStyle}
             />
             <input
               name="mapDirectionsHref"
               defaultValue={siteConfig.contact[locale].map.directionsHref}
-              placeholder="Directions URL"
+              placeholder="Routen-URL"
               style={inputStyle}
             />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -1015,23 +1015,23 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             </label>
           </div>
           <div style={gridTwo}>
-            <LocaleFields title={`${currentLocaleLabel} content`}>
+            <LocaleFields title={`${currentLocaleLabel} Inhalt`}>
               <input
                 name={`title_${locale}`}
                 defaultValue={siteConfig.contact[locale].title}
-                placeholder="Page title"
+                placeholder="Seitentitel"
                 style={inputStyle}
               />
               <input
                 name={`subtitle_${locale}`}
                 defaultValue={siteConfig.contact[locale].subtitle}
-                placeholder="Subtitle"
+                placeholder="Untertitel"
                 style={inputStyle}
               />
               <input
                 name={`addressLabel_${locale}`}
                 defaultValue={siteConfig.contact[locale].items.address.label}
-                placeholder="Address label"
+                placeholder="Adressbezeichnung"
                 style={inputStyle}
               />
               <textarea
@@ -1040,13 +1040,13 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                 defaultValue={siteConfig.contact[locale].workingHours
                   .map((entry) => `${entry.days}: ${entry.hours}`)
                   .join("\n")}
-                placeholder="One line per row: Day: hours"
+                placeholder="Eine Zeile pro Eintrag: Tag: Zeiten"
                 style={inputStyle}
               />
             </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Save contact content
+            Kontaktinhalte speichern
           </button>
         </form>
       </section>

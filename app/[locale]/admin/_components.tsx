@@ -39,16 +39,16 @@ export const gridTwo = {
   gap: 14
 } as const;
 
-export const localeLabels = { en: "English", de: "Deutsch", ar: "Arabic" } as const;
+export const localeLabels = { en: "Englisch", de: "Deutsch", ar: "Arabisch" } as const;
 
 export const weekdayLabels = [
-  { value: 1, label: "Mon" },
-  { value: 2, label: "Tue" },
-  { value: 3, label: "Wed" },
-  { value: 4, label: "Thu" },
-  { value: 5, label: "Fri" },
-  { value: 6, label: "Sat" },
-  { value: 0, label: "Sun" }
+  { value: 1, label: "Mo" },
+  { value: 2, label: "Di" },
+  { value: 3, label: "Mi" },
+  { value: 4, label: "Do" },
+  { value: 5, label: "Fr" },
+  { value: 6, label: "Sa" },
+  { value: 0, label: "So" }
 ] as const;
 
 export function AdminShell({ locale, displayName, children }: AdminShellProps) {
@@ -77,7 +77,7 @@ export function AdminShell({ locale, displayName, children }: AdminShellProps) {
                 ADMIN-001 to ADMIN-012
               </p>
               <h1 style={{ margin: 0, fontSize: "clamp(2rem, 5vw, 2.5rem)" }}>
-                Business control center
+                Verwaltungszentrale
               </h1>
               <p
                 style={{
@@ -87,13 +87,13 @@ export function AdminShell({ locale, displayName, children }: AdminShellProps) {
                   color: "rgba(255, 250, 244, 0.82)"
                 }}
               >
-                Signed in as {displayName ?? "staff user"}. This route manages the reusable admin
-                feature set for the template.
+                Angemeldet als {displayName ?? "Mitarbeiter"}. Hier verwalten Sie die
+                wiederverwendbaren Admin-Funktionen der Vorlage.
               </p>
             </div>
             <div style={{ display: "flex", gap: 10, alignItems: "start", flexWrap: "wrap" }}>
-              <Link href={`/${locale}`}>Public site</Link>
-              <Link href={`/${locale}/booking`}>Booking flow</Link>
+              <Link href={`/${locale}`}>Oeffentliche Seite</Link>
+              <Link href={`/${locale}/booking`}>Buchungsstrecke</Link>
               <form action={logoutUser}>
                 <input type="hidden" name="locale" value={locale} />
                 <button
@@ -107,7 +107,7 @@ export function AdminShell({ locale, displayName, children }: AdminShellProps) {
                     cursor: "pointer"
                   }}
                 >
-                  Sign out
+                  Abmelden
                 </button>
               </form>
             </div>
