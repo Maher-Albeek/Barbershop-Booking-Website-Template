@@ -1,3 +1,5 @@
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { authUsers } from "@/lib/auth-users";
 import type { CSSProperties } from "react";
 import {
@@ -405,12 +407,94 @@ export function saveGalleryImage(input: {
   }
 }
 
+const galleryUploadDirectory = path.join(process.cwd(), "public", "uploads", "gallery");
+
+function sanitizeFilenamePart(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9.-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function getGalleryUploadFilename(fileName: string, slug?: string, caption?: string) {
+  const extension = path.extname(fileName).toLowerCase() || ".jpg";
+  const baseName = sanitizeFilenamePart(path.basename(fileName, extension));
+  const preferredBase = sanitizeFilenamePart(slug || caption || baseName || `gallery-${Date.now()}`);
+  return `${preferredBase}-${Date.now()}${extension}`;
+}
+
+export async function uploadGalleryImage(input: { file: File; slug?: string; caption?: string }) {
+  const { file, slug, caption } = input;
+
+  if (!file || file.size === 0) {
+    throw new Error("Gallery image file is required.");
+  }
+
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Only image uploads are allowed for gallery items.");
+  }
+
+  await mkdir(galleryUploadDirectory, { recursive: true });
+  const fileName = getGalleryUploadFilename(file.name, slug, caption);
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await writeFile(path.join(galleryUploadDirectory, fileName), buffer);
+  return `/uploads/gallery/${fileName}`;
+}
+
+function getLocalGalleryUploadPath(imageSrc: string) {
+  if (!imageSrc.startsWith("/uploads/gallery/")) {
+    return null;
+  }
+
+  const relativePath = imageSrc.replace(/^\/+/, "").split("/").join(path.sep);
+  return path.join(process.cwd(), "public", relativePath);
+}
+
 export function deleteGalleryImage(slug: string) {
+  let deletedImageSrc: string | undefined;
+
   for (const locale of locales) {
+    const existing = siteConfig.gallery[locale].images.find((image) => image.slug === slug);
+    if (!deletedImageSrc && existing) {
+      deletedImageSrc = existing.imageSrc;
+    }
+
     siteConfig.gallery[locale].images = siteConfig.gallery[locale].images.filter(
       (image) => image.slug !== slug
     );
   }
+
+  if (deletedImageSrc) {
+    void deleteGalleryUploadIfUnused(deletedImageSrc);
+  }
+}
+
+async function deleteGalleryUploadIfUnused(imageSrc: string) {
+  const isStillUsed = locales.some((locale) =>
+    siteConfig.gallery[locale].images.some((image) => image.imageSrc === imageSrc)
+  );
+
+  if (isStillUsed) {
+    return;
+  }
+
+  const filePath = getLocalGalleryUploadPath(imageSrc);
+  if (!filePath) {
+    return;
+  }
+
+  try {
+    await unlink(filePath);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw error;
+    }
+  }
+}
+
+export function cleanupGalleryUpload(imageSrc: string) {
+  void deleteGalleryUploadIfUnused(imageSrc);
 }
 
 export function saveOffer(input: {

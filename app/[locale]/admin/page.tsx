@@ -39,6 +39,7 @@ import {
   surfaceCardStyle,
   weekdayLabels
 } from "./_components";
+import { GalleryImagePicker } from "./GalleryImagePicker";
 
 type AdminPageProps = {
   params: Promise<{ locale: string }>;
@@ -580,6 +581,33 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                 <div style={{ color: "var(--muted)" }}>
                   {image.slug} · order {image.sortOrder} · {image.isVisible ? "visible" : "hidden"}
                 </div>
+                <form action={upsertGalleryAction} style={{ display: "grid", gap: 10 }}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <input type="hidden" name="slug" value={image.slug} />
+                  <input type="hidden" name="currentImageSrc" value={image.imageSrc} />
+                  <GalleryImagePicker name="imageFile" initialPreview={image.imageSrc} />
+                  <input name="alt" defaultValue={image.alt} placeholder="Alt text" style={inputStyle} />
+                  <input
+                    name="caption"
+                    defaultValue={image.caption}
+                    placeholder="Caption"
+                    style={inputStyle}
+                  />
+                  <input
+                    name="sortOrder"
+                    type="number"
+                    defaultValue={image.sortOrder}
+                    placeholder="Sort order"
+                    style={inputStyle}
+                  />
+                  <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <input type="checkbox" name="isVisible" defaultChecked={image.isVisible} />
+                    Visible on public gallery
+                  </label>
+                  <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+                    Save changes
+                  </button>
+                </form>
                 <form action={deleteGalleryAction}>
                   <input type="hidden" name="locale" value={locale} />
                   <input type="hidden" name="slug" value={image.slug} />
@@ -592,8 +620,8 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
         </div>
         <form action={upsertGalleryAction} style={gridTwo}>
           <input type="hidden" name="locale" value={locale} />
-          <input name="slug" placeholder="Existing slug to update" style={inputStyle} />
-          <input name="imageSrc" placeholder="Image URL" style={inputStyle} />
+          <input name="slug" placeholder="Slug (optional)" style={inputStyle} />
+          <GalleryImagePicker name="imageFile" />
           <input name="alt" placeholder="Alt text" style={inputStyle} />
           <input name="caption" placeholder="Caption" style={inputStyle} />
           <input name="sortOrder" type="number" placeholder="Sort order" style={inputStyle} />

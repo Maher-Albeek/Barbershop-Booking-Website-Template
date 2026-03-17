@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
 import {
   addBlockedTime,
+  cleanupGalleryUpload,
   ensureLocale,
   isValidTimeRange,
   saveAssignment,
@@ -17,6 +18,7 @@ import {
   saveWorkingHours,
   setBookingStatus,
   deleteGalleryImage,
+  uploadGalleryImage,
   deleteEmployee,
   deleteOffer,
   deleteService
@@ -194,15 +196,33 @@ export async function updateBookingStatusAction(formData: FormData) {
 
 export async function upsertGalleryAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
+  const currentImageSrc = normalize(formData.get("currentImageSrc"));
+  const fileEntry = formData.get("imageFile");
+  const imageFile = fileEntry instanceof File && fileEntry.size > 0 ? fileEntry : null;
+  const imageSrc = imageFile
+    ? await uploadGalleryImage({
+        file: imageFile,
+        slug: normalize(formData.get("slug")) || undefined,
+        caption: normalize(formData.get("caption")) || undefined
+      })
+    : currentImageSrc;
+
+  if (!imageSrc) {
+    redirectToAdmin(locale, "gallery");
+  }
 
   saveGalleryImage({
     slug: normalize(formData.get("slug")) || undefined,
-    imageSrc: normalize(formData.get("imageSrc")),
+    imageSrc,
     alt: normalize(formData.get("alt")),
     caption: normalize(formData.get("caption")),
     isVisible: checked(formData, "isVisible"),
     sortOrder: Number(normalize(formData.get("sortOrder")) || 0)
   });
+
+  if (imageFile && currentImageSrc && currentImageSrc !== imageSrc) {
+    cleanupGalleryUpload(currentImageSrc);
+  }
 
   redirectToAdmin(locale, "gallery");
 }
