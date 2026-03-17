@@ -1,0 +1,630 @@
+{
+  "project": {
+    "name": "Barbershop Booking Website Template",
+    "type": "Reusable template for multiple barbershops",
+    "goal": "Build a customizable barbershop website with booking system, multi-language support, admin and employee dashboards, email confirmations, gallery, and offers page. Each client will get an independent deployment with custom branding and content."
+  },
+  "tech_stack": {
+    "frontend": "Next.js with TypeScript",
+    "styling": "Tailwind CSS",
+    "backend": "Next.js App Router + Route Handlers",
+    "database": "MySQL or MariaDB",
+    "orm": "Prisma",
+    "authentication": "Auth.js",
+    "i18n": "next-intl",
+    "email": "Resend or Nodemailer",
+    "deployment": "Vercel"
+  },
+  "core_requirements": {
+    "multi_language": true,
+    "public_booking_without_login": true,
+    "admin_dashboard": true,
+    "employee_dashboard": true,
+    "email_confirmation": true,
+    "online_payment": false,
+    "gallery": true,
+    "offers_page": true,
+    "independent_deployment_per_shop": true,
+    "customization_per_client": {
+      "shop_name": true,
+      "logo": true,
+      "colors": true,
+      "services": true,
+      "employees": true,
+      "gallery_images": true,
+      "offers": true,
+      "languages": true,
+      "contact_info": true
+    }
+  },
+  "roles": [
+    {
+      "name": "shop_admin",
+      "description": "Manages the entire barbershop website, employees, services, bookings, offers, gallery, and settings."
+    },
+    {
+      "name": "employee",
+      "description": "Can view assigned bookings, manage availability if allowed, and update booking statuses."
+    },
+    {
+      "name": "customer",
+      "description": "Public visitor who can browse the website and book an appointment without registration."
+    }
+  ],
+  "business_rules": [
+    "Customers can book without creating an account.",
+    "A booking is directly created with status 'confirmed'.",
+    "Customers can choose a specific employee or select any available employee.",
+    "Each employee has different working hours.",
+    "Service duration and price are not fixed globally; they depend on the employee.",
+    "Only employees assigned to a service can be booked for that service.",
+    "Available time slots must be generated based on employee working hours, existing bookings, blocked times, and service duration for that employee.",
+    "The system must prevent overlapping bookings.",
+    "The system must send a confirmation email after a successful booking.",
+    "Each shop will have an independent deployment, but the codebase should be reusable as a template."
+  ],
+  "data_model_notes": {
+    "important_rule": "Service duration and price must be stored in the employee-service relation, not only in the service itself.",
+    "booking_snapshots": [
+      "Store durationSnapshot in booking",
+      "Store priceSnapshot in booking"
+    ],
+    "main_entities": [
+      "Shop",
+      "User",
+      "Employee",
+      "Service",
+      "ServiceTranslation",
+      "EmployeeService",
+      "WorkingHour",
+      "BlockedTime",
+      "Booking",
+      "GalleryImage",
+      "Offer",
+      "OfferTranslation",
+      "ShopTranslation"
+    ]
+  },
+  "pages": {
+    "public": [
+      "/",
+      "/services",
+      "/team",
+      "/gallery",
+      "/offers",
+      "/contact",
+      "/booking",
+      "/booking/success"
+    ],
+    "admin": [
+      "/admin/login",
+      "/admin/dashboard",
+      "/admin/bookings",
+      "/admin/services",
+      "/admin/employees",
+      "/admin/schedule",
+      "/admin/gallery",
+      "/admin/offers",
+      "/admin/settings"
+    ],
+    "employee": [
+      "/employee/dashboard",
+      "/employee/bookings",
+      "/employee/schedule"
+    ]
+  },
+  "user_stories": [
+    {
+      "id": "PUB-001",
+      "title": "View public homepage",
+      "as_a": "customer",
+      "i_want": "to view a professional homepage for the barbershop",
+      "so_that": "I can understand the shop brand, services, and call to action",
+      "acceptance_criteria": [
+        "Homepage displays shop name, logo, hero section, and primary branding colors",
+        "Homepage content is editable from shop settings or content source",
+        "Homepage supports multiple languages",
+        "Homepage has navigation links to services, team, gallery, offers, contact, and booking"
+      ]
+    },
+    {
+      "id": "PUB-002",
+      "title": "Browse services",
+      "as_a": "customer",
+      "i_want": "to browse the available services",
+      "so_that": "I can decide what I want to book",
+      "acceptance_criteria": [
+        "Services page lists active services only",
+        "Each service displays translated name and description",
+        "Services can be shown even if price differs by employee",
+        "A call-to-action button leads the customer to booking"
+      ]
+    },
+    {
+      "id": "PUB-003",
+      "title": "View team members",
+      "as_a": "customer",
+      "i_want": "to see the available employees",
+      "so_that": "I can choose who I want to book with",
+      "acceptance_criteria": [
+        "Team page shows active employees only",
+        "Each employee card includes name, image, and bio if available",
+        "Employee information supports multiple languages where applicable"
+      ]
+    },
+    {
+      "id": "PUB-004",
+      "title": "View gallery",
+      "as_a": "customer",
+      "i_want": "to browse a gallery of shop images",
+      "so_that": "I can evaluate the style and quality of the barbershop",
+      "acceptance_criteria": [
+        "Gallery page shows visible gallery images only",
+        "Images are ordered by sort order",
+        "Gallery is manageable by admin dashboard"
+      ]
+    },
+    {
+      "id": "PUB-005",
+      "title": "View offers",
+      "as_a": "customer",
+      "i_want": "to see current promotions or offers",
+      "so_that": "I can take advantage of discounts or special services",
+      "acceptance_criteria": [
+        "Offers page shows only active offers within valid date range",
+        "Offer content supports multiple languages",
+        "Each offer may include title, description, and optional image"
+      ]
+    },
+    {
+      "id": "PUB-006",
+      "title": "View contact details",
+      "as_a": "customer",
+      "i_want": "to find contact and location details",
+      "so_that": "I can call, message, or visit the shop",
+      "acceptance_criteria": [
+        "Contact page displays phone, email, address, and optional WhatsApp link",
+        "Contact page supports multi-language labels",
+        "Shop contact information is editable by admin"
+      ]
+    },
+    {
+      "id": "BOOK-001",
+      "title": "Start booking without login",
+      "as_a": "customer",
+      "i_want": "to book an appointment without creating an account",
+      "so_that": "the process is fast and simple",
+      "acceptance_criteria": [
+        "Booking page is publicly accessible",
+        "No login is required for the customer",
+        "Booking form starts with service selection"
+      ]
+    },
+    {
+      "id": "BOOK-002",
+      "title": "Choose a service",
+      "as_a": "customer",
+      "i_want": "to choose a service before booking",
+      "so_that": "the system knows which employees and times are relevant",
+      "acceptance_criteria": [
+        "Only active services are shown",
+        "Service names and descriptions are translated",
+        "System only allows continuing if a valid service is selected"
+      ]
+    },
+    {
+      "id": "BOOK-003",
+      "title": "Choose any available employee or a specific employee",
+      "as_a": "customer",
+      "i_want": "to select either any available employee or a specific one",
+      "so_that": "I can book in the way I prefer",
+      "acceptance_criteria": [
+        "Booking flow includes an option for 'any available employee'",
+        "Booking flow also allows selecting a specific employee",
+        "Only employees assigned to the selected service are available for selection"
+      ]
+    },
+    {
+      "id": "BOOK-004",
+      "title": "View available time slots",
+      "as_a": "customer",
+      "i_want": "to see only valid available appointment times",
+      "so_that": "I can select a bookable slot",
+      "acceptance_criteria": [
+        "Available slots are calculated using employee working hours",
+        "Blocked times are excluded from available slots",
+        "Existing bookings are excluded from available slots",
+        "Slot generation uses the selected employee's duration for the selected service",
+        "When 'any available employee' is selected, the system may show the earliest valid slots with the assigned employee"
+      ]
+    },
+    {
+      "id": "BOOK-005",
+      "title": "Enter booking details",
+      "as_a": "customer",
+      "i_want": "to enter my basic information",
+      "so_that": "the shop can identify and contact me about the booking",
+      "acceptance_criteria": [
+        "Booking form includes customer name, phone number, email, and optional notes",
+        "Form validates required fields before submission",
+        "Email must be validated if provided"
+      ]
+    },
+    {
+      "id": "BOOK-006",
+      "title": "Create confirmed booking",
+      "as_a": "customer",
+      "i_want": "my appointment to be confirmed immediately",
+      "so_that": "I know my booking is successful without waiting for approval",
+      "acceptance_criteria": [
+        "Booking is created with status 'confirmed'",
+        "System stores service, employee, date, start time, end time, durationSnapshot, and priceSnapshot",
+        "System prevents double booking and overlapping time conflicts"
+      ]
+    },
+    {
+      "id": "BOOK-007",
+      "title": "Receive confirmation email",
+      "as_a": "customer",
+      "i_want": "to receive a confirmation email after booking",
+      "so_that": "I have a record of my appointment details",
+      "acceptance_criteria": [
+        "A confirmation email is sent after successful booking",
+        "Email includes shop name, service name, employee name, date, time, price, and contact details",
+        "Booking success page is displayed after successful submission"
+      ]
+    },
+    {
+      "id": "AUTH-001",
+      "title": "Admin login",
+      "as_a": "shop_admin",
+      "i_want": "to log into the admin dashboard securely",
+      "so_that": "I can manage the website and bookings",
+      "acceptance_criteria": [
+        "Only valid admin users can access admin routes",
+        "Unauthorized users are redirected to login page",
+        "Passwords are stored securely"
+      ]
+    },
+    {
+      "id": "AUTH-002",
+      "title": "Employee login",
+      "as_a": "employee",
+      "i_want": "to log into the employee dashboard securely",
+      "so_that": "I can manage my work-related bookings and schedule",
+      "acceptance_criteria": [
+        "Only valid employee users can access employee routes",
+        "Employee cannot access admin-only routes unless explicitly allowed",
+        "Unauthorized users are redirected to login page"
+      ]
+    },
+    {
+      "id": "ADMIN-001",
+      "title": "View admin dashboard",
+      "as_a": "shop_admin",
+      "i_want": "to see an overview of the business",
+      "so_that": "I can quickly monitor bookings and shop activity",
+      "acceptance_criteria": [
+        "Dashboard shows recent bookings",
+        "Dashboard shows counts such as total bookings, employees, services, and active offers",
+        "Dashboard layout is responsive"
+      ]
+    },
+    {
+      "id": "ADMIN-002",
+      "title": "Manage services",
+      "as_a": "shop_admin",
+      "i_want": "to create, edit, activate, or deactivate services",
+      "so_that": "I can control which services the shop offers",
+      "acceptance_criteria": [
+        "Admin can create a service",
+        "Admin can edit service translations",
+        "Admin can activate or deactivate a service",
+        "Service itself does not need a single fixed price or duration"
+      ]
+    },
+    {
+      "id": "ADMIN-003",
+      "title": "Manage employees",
+      "as_a": "shop_admin",
+      "i_want": "to create and manage employees",
+      "so_that": "I can keep the team list accurate and assign services properly",
+      "acceptance_criteria": [
+        "Admin can create employee records",
+        "Admin can link employee accounts to login users if needed",
+        "Admin can edit employee display data such as name, bio, and avatar",
+        "Admin can activate or deactivate employees"
+      ]
+    },
+    {
+      "id": "ADMIN-004",
+      "title": "Assign services to employees with custom duration and price",
+      "as_a": "shop_admin",
+      "i_want": "to assign services per employee with their own duration and price",
+      "so_that": "booking reflects real staff-specific availability and pricing",
+      "acceptance_criteria": [
+        "Admin can assign one or more services to each employee",
+        "Admin can set durationMinutes for a specific employee-service combination",
+        "Admin can set price for a specific employee-service combination",
+        "Inactive employee-service assignments are excluded from booking flow"
+      ]
+    },
+    {
+      "id": "ADMIN-005",
+      "title": "Manage employee working hours",
+      "as_a": "shop_admin",
+      "i_want": "to define weekly working hours for each employee",
+      "so_that": "the system can generate valid appointment slots",
+      "acceptance_criteria": [
+        "Admin can set working hours per employee and day of week",
+        "Admin can mark days as off",
+        "Working hours are used by slot generation logic"
+      ]
+    },
+    {
+      "id": "ADMIN-006",
+      "title": "Manage blocked times",
+      "as_a": "shop_admin",
+      "i_want": "to block specific times for employees",
+      "so_that": "bookings cannot be made during unavailable periods",
+      "acceptance_criteria": [
+        "Admin can block a specific date and time range for an employee",
+        "Blocked times include an optional reason",
+        "Blocked times are excluded from available booking slots"
+      ]
+    },
+    {
+      "id": "ADMIN-007",
+      "title": "Manage bookings",
+      "as_a": "shop_admin",
+      "i_want": "to view and manage all bookings",
+      "so_that": "I can operate the shop effectively",
+      "acceptance_criteria": [
+        "Admin can list bookings with filters such as date, employee, service, and status",
+        "Admin can update booking status to cancelled, completed, or no_show",
+        "Admin can view booking details including snapshots"
+      ]
+    },
+    {
+      "id": "ADMIN-008",
+      "title": "Manage gallery",
+      "as_a": "shop_admin",
+      "i_want": "to upload and organize gallery images",
+      "so_that": "the website reflects the visual quality of the shop",
+      "acceptance_criteria": [
+        "Admin can upload gallery images",
+        "Admin can reorder gallery images",
+        "Admin can hide or show images",
+        "Admin can delete gallery images"
+      ]
+    },
+    {
+      "id": "ADMIN-009",
+      "title": "Manage offers",
+      "as_a": "shop_admin",
+      "i_want": "to create and manage promotional offers",
+      "so_that": "I can advertise special campaigns on the website",
+      "acceptance_criteria": [
+        "Admin can create, edit, activate, deactivate, and delete offers",
+        "Admin can set start and end dates for offers",
+        "Admin can manage translated title and description for each offer"
+      ]
+    },
+    {
+      "id": "ADMIN-010",
+      "title": "Manage shop settings",
+      "as_a": "shop_admin",
+      "i_want": "to customize the website for my barbershop",
+      "so_that": "the site matches my brand and business information",
+      "acceptance_criteria": [
+        "Admin can update shop name, logo, contact information, address, and branding colors",
+        "Admin can manage enabled locales and default locale",
+        "Admin can edit translated shop content such as hero title, subtitle, and description"
+      ]
+    },
+    {
+      "id": "ADMIN-011",
+      "title": "Manage email settings",
+      "as_a": "shop_admin",
+      "i_want": "the system to send booking confirmation emails correctly",
+      "so_that": "customers and the shop receive appointment notifications",
+      "acceptance_criteria": [
+        "System is configurable for transactional email sending",
+        "Booking confirmation email can be sent to the customer",
+        "Optional internal notification can be sent to the shop email"
+      ]
+    },
+    {
+      "id": "EMP-001",
+      "title": "View my bookings",
+      "as_a": "employee",
+      "i_want": "to see the bookings assigned to me",
+      "so_that": "I know my schedule",
+      "acceptance_criteria": [
+        "Employee dashboard shows only bookings assigned to the logged-in employee",
+        "Employee can filter by date or status",
+        "Employee can see customer and service details relevant to the booking"
+      ]
+    },
+    {
+      "id": "EMP-002",
+      "title": "Update booking status",
+      "as_a": "employee",
+      "i_want": "to mark bookings as completed or no-show",
+      "so_that": "the booking lifecycle stays accurate",
+      "acceptance_criteria": [
+        "Employee can update own assigned bookings only",
+        "Allowed statuses include completed and no_show",
+        "Status changes are saved and visible to admin"
+      ]
+    },
+    {
+      "id": "EMP-003",
+      "title": "Manage my schedule availability",
+      "as_a": "employee",
+      "i_want": "to manage my availability if permitted",
+      "so_that": "my available slots stay accurate",
+      "acceptance_criteria": [
+        "Employee can view their working hours",
+        "Employee can create blocked times if this permission is enabled",
+        "Availability changes affect slot generation"
+      ]
+    },
+    {
+      "id": "I18N-001",
+      "title": "Support multiple interface languages",
+      "as_a": "customer_or_staff_user",
+      "i_want": "to use the website in my preferred language",
+      "so_that": "I can understand and navigate the system easily",
+      "acceptance_criteria": [
+        "System supports at least Arabic, German, and English",
+        "Interface text is translated using next-intl message files",
+        "Language switching is available in the public website",
+        "Text direction is handled correctly for Arabic"
+      ]
+    },
+    {
+      "id": "I18N-002",
+      "title": "Support translated business content",
+      "as_a": "shop_admin",
+      "i_want": "to manage translated content for my shop",
+      "so_that": "customers in different languages see appropriate content",
+      "acceptance_criteria": [
+        "Services support translated names and descriptions",
+        "Offers support translated titles and descriptions",
+        "Shop content supports translated hero and descriptive content"
+      ]
+    },
+    {
+      "id": "SYS-001",
+      "title": "Reusable project structure",
+      "as_a": "developer",
+      "i_want": "a clean reusable codebase",
+      "so_that": "I can deploy customized copies for multiple barbershop clients",
+      "acceptance_criteria": [
+        "Project is structured as a reusable template",
+        "Shop-specific branding and content are configurable",
+        "Code supports independent deployment per client"
+      ]
+    },
+    {
+      "id": "SYS-002",
+      "title": "Responsive design",
+      "as_a": "customer_or_staff_user",
+      "i_want": "the website and dashboards to work on mobile and desktop",
+      "so_that": "I can use the system comfortably on any device",
+      "acceptance_criteria": [
+        "Public pages are responsive",
+        "Admin dashboard is responsive",
+        "Employee dashboard is responsive"
+      ]
+    }
+  ],
+  "development_phases": [
+    {
+      "phase": 1,
+      "name": "Project setup and architecture",
+      "includes": [
+        "Initialize Next.js project with TypeScript and Tailwind CSS",
+        "Set up Prisma and MySQL/MariaDB connection",
+        "Configure Auth.js for admin and employee authentication",
+        "Configure next-intl for multi-language support",
+        "Create base project structure"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Database schema and core models",
+      "includes": [
+        "Define Prisma schema",
+        "Create migrations",
+        "Seed initial admin user and demo content"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Public website pages",
+      "includes": [
+        "Build homepage",
+        "Build services page",
+        "Build team page",
+        "Build gallery page",
+        "Build offers page",
+        "Build contact page"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Booking system",
+      "includes": [
+        "Implement service selection",
+        "Implement employee selection including any available employee",
+        "Implement slot generation logic",
+        "Implement booking form and validation",
+        "Create confirmed booking flow",
+        "Build booking success page"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Admin dashboard",
+      "includes": [
+        "Dashboard overview",
+        "Manage services",
+        "Manage employees",
+        "Manage employee-service pricing and duration",
+        "Manage schedules and blocked times",
+        "Manage bookings",
+        "Manage gallery",
+        "Manage offers",
+        "Manage shop settings"
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Employee dashboard",
+      "includes": [
+        "View own bookings",
+        "Update booking statuses",
+        "Manage availability if allowed"
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "Email and polish",
+      "includes": [
+        "Send booking confirmation emails",
+        "Optional shop notification emails",
+        "Improve UX, validation, and responsive design",
+        "Test role-based access and booking edge cases"
+      ]
+    }
+  ],
+  "non_functional_requirements": [
+    "Use clean and modular folder structure",
+    "Use server-side validation for booking and admin actions",
+    "Protect admin and employee routes with role-based authorization",
+    "Prevent race conditions or duplicate bookings for the same time slot",
+    "Ensure responsive layout across mobile and desktop",
+    "Keep the code reusable for future client deployments"
+  ],
+  "codex_instructions": {
+    "implementation_style": [
+      "Use clean architecture and modular components",
+      "Prefer server actions or route handlers where appropriate",
+      "Use Prisma relations properly",
+      "Use TypeScript types everywhere",
+      "Make forms validated with Zod if possible",
+      "Keep UI modern and simple",
+      "Make the project production-ready, not just a demo"
+    ],
+    "important_focus": [
+      "Correct booking slot logic",
+      "Employee-specific service duration and pricing",
+      "Role-based dashboards",
+      "Reusable template structure",
+      "Multi-language architecture",
+      "Email confirmation flow"
+    ]
+  }
+}
