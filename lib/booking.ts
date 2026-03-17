@@ -341,3 +341,20 @@ export function updateBookingStatus(id: string, status: BookingStatus) {
   booking.status = status;
   return booking;
 }
+
+export function updateEmployeeBookingStatus(
+  employeeSlug: string,
+  id: string,
+  status: Extract<BookingStatus, "completed" | "no_show">
+) {
+  const booking = getBookingStore().find(
+    (entry) => entry.id === id && entry.employeeSlug === employeeSlug
+  );
+
+  if (!booking) {
+    return null;
+  }
+
+  booking.status = status;
+  return booking;
+}

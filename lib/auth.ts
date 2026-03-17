@@ -11,6 +11,8 @@ type SessionPayload = {
   role: AuthRole;
   email: string;
   displayName: string;
+  employeeSlug?: string;
+  canManageAvailability?: boolean;
   iat: number;
   exp: number;
 };
@@ -99,6 +101,8 @@ export async function createSession(input: {
   role: AuthRole;
   email: string;
   displayName: string;
+  employeeSlug?: string;
+  canManageAvailability?: boolean;
 }) {
   const issuedAt = Math.floor(Date.now() / 1000);
   const session = encodeSession({
@@ -106,6 +110,8 @@ export async function createSession(input: {
     role: input.role,
     email: input.email,
     displayName: input.displayName,
+    employeeSlug: input.employeeSlug,
+    canManageAvailability: input.canManageAvailability,
     iat: issuedAt,
     exp: issuedAt + SESSION_TTL_SECONDS
   });

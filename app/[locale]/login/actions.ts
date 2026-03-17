@@ -51,7 +51,9 @@ export async function loginUser(formData: FormData) {
     userId: user.id,
     role: user.role,
     email: user.email,
-    displayName: user.displayName
+    displayName: user.displayName,
+    employeeSlug: user.employeeSlug,
+    canManageAvailability: user.canManageAvailability
   });
 
   redirect(safeRedirect);

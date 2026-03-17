@@ -693,7 +693,7 @@
     "Ensure responsive layout across mobile and desktop",
     "Keep the code reusable for future client deployments"
   ],
-  "codex_instructions": {
+  "instructions": {
     "implementation_style": [
       "Use clean architecture and modular components",
       "Prefer server actions or route handlers where appropriate",
