@@ -1,7 +1,29 @@
+import "dotenv/config";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { BookingStatus, PrismaClient, Role } from "../lib/generated/prisma/client";
 import { hashPassword } from "../lib/password";
 
-const prisma = new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is not set.");
+}
+
+function createMariaDbAdapter(urlString: string) {
+  const url = new URL(urlString);
+
+  return new PrismaMariaDb({
+    host: url.hostname,
+    port: url.port ? Number(url.port) : 3306,
+    user: decodeURIComponent(url.username),
+    password: decodeURIComponent(url.password),
+    database: url.pathname.replace(/^\//, "") || undefined
+  });
+}
+
+const prisma = new PrismaClient({
+  adapter: createMariaDbAdapter(databaseUrl)
+});
 
 const DEMO_PASSWORD = "DemoAdmin123!";
 
