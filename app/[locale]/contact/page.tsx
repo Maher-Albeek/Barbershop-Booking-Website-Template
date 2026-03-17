@@ -466,16 +466,36 @@ export default async function ContactPage({ params }: ContactPageProps) {
               </p>
             </div>
 
-            <ContactMap
-              shopName={siteConfig.brand.shopName}
-              embedUrl={contactContent.map.embedUrl}
-              directionsHref={contactContent.map.directionsHref}
-              directionsLabel={contactContent.map.directionsLabel}
-              consentTitle={contactContent.map.consentTitle}
-              consentDescription={contactContent.map.consentDescription}
-              consentButtonLabel={contactContent.map.consentButtonLabel}
-              privacyNotice={contactContent.map.privacyNotice}
-            />
+            {contactContent.map.isVisible ? (
+              <ContactMap
+                shopName={siteConfig.brand.shopName}
+                embedUrl={contactContent.map.embedUrl}
+                directionsHref={contactContent.map.directionsHref}
+                directionsLabel={contactContent.map.directionsLabel}
+                consentTitle={contactContent.map.consentTitle}
+                consentDescription={contactContent.map.consentDescription}
+                consentButtonLabel={contactContent.map.consentButtonLabel}
+                privacyNotice={contactContent.map.privacyNotice}
+              />
+            ) : (
+              <div
+                style={{
+                  borderRadius: 24,
+                  border: "1px solid var(--border)",
+                  minHeight: 220,
+                  padding: 24,
+                  background: "rgba(214, 176, 125, 0.1)",
+                  display: "grid",
+                  gap: 12,
+                  alignContent: "center"
+                }}
+              >
+                <strong>Map disabled by the shop</strong>
+                <a href={contactContent.map.directionsHref} target="_blank" rel="noreferrer">
+                  {contactContent.map.directionsLabel}
+                </a>
+              </div>
+            )}
           </article>
         </section>
       </div>

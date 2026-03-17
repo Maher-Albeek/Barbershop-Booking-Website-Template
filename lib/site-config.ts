@@ -120,6 +120,7 @@ type LocalizedContactContent = {
     invalidEmailMessage: string;
   };
   map: {
+    isVisible: boolean;
     eyebrow: string;
     title: string;
     description: string;
@@ -177,6 +178,9 @@ export const siteConfig: {
   brand: {
     shopName: string;
     logoText: string;
+    primaryColor: string;
+    secondaryColor: string;
+    accentColor: string;
   };
   content: Record<Locale, LocalizedHomepageContent>;
   services: Record<Locale, LocalizedServicesContent>;
@@ -193,12 +197,23 @@ export const siteConfig: {
     blockedTimes: EmployeeBlockedTime[];
     existingBookings: ExistingBooking[];
   };
+  emailSettings: {
+    providerName: string;
+    fromEmail: string;
+    replyToEmail: string;
+    sendCustomerConfirmation: boolean;
+    sendInternalNotification: boolean;
+    internalNotificationEmail: string;
+  };
 } = {
   defaultLocale,
   locales,
   brand: {
     shopName: "Crown & Blade",
-    logoText: "CB"
+    logoText: "CB",
+    primaryColor: "#8b5e3c",
+    secondaryColor: "#d6b07d",
+    accentColor: "#22333b"
   },
   content: {
     en: {
@@ -867,6 +882,7 @@ export const siteConfig: {
         invalidEmailMessage: "Enter a valid email address so the shop can reply to you."
       },
       map: {
+        isVisible: true,
         eyebrow: "Map",
         title: "Find Crown & Blade in central Berlin.",
         description:
@@ -946,6 +962,7 @@ export const siteConfig: {
           "Bitte gib eine gueltige E-Mail-Adresse an, damit der Shop dir antworten kann."
       },
       map: {
+        isVisible: true,
         eyebrow: "Karte",
         title: "Finde Crown & Blade im Zentrum von Berlin.",
         description:
@@ -1027,6 +1044,7 @@ export const siteConfig: {
           "\u0623\u062f\u062e\u0644 \u0628\u0631\u064a\u062f\u0627\u064b \u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u0627\u064b \u0635\u062d\u064a\u062d\u0627\u064b \u0644\u064a\u062a\u0645\u0643\u0646 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0645\u0646 \u0627\u0644\u0631\u062f."
       },
       map: {
+        isVisible: true,
         eyebrow: "\u0627\u0644\u062e\u0631\u064a\u0637\u0629",
         title: "\u0627\u0639\u062b\u0631 \u0639\u0644\u0649 Crown & Blade \u0641\u064a \u0648\u0633\u0637 \u0628\u0631\u0644\u064a\u0646.",
         description:
@@ -1225,5 +1243,13 @@ export const siteConfig: {
         end: "14:30"
       }
     ]
+  },
+  emailSettings: {
+    providerName: "Console transport",
+    fromEmail: "bookings@crownandblade.de",
+    replyToEmail: "hello@crownandblade.de",
+    sendCustomerConfirmation: true,
+    sendInternalNotification: true,
+    internalNotificationEmail: "hello@crownandblade.de"
   }
 };

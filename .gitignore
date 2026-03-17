@@ -32,3 +32,9 @@ pnpm-debug.log*
 Thumbs.db
 .idea/
 .vscode/
+
+/lib/generated/prisma
+prisma/migrations/20260317163808_init/migration.sql
+prisma/migrations/migration_lock.toml
+prisma/schema.prisma
+prisma.config.ts

@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import { getThemeStyle } from "@/lib/admin-data";
 
 export const metadata: Metadata = {
   title: "Barbershop Template",
@@ -13,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body style={getThemeStyle()}>{children}</body>
     </html>
   );
 }

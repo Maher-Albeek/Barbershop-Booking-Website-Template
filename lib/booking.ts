@@ -1,9 +1,11 @@
 import { type Locale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
 
+export type BookingStatus = "confirmed" | "cancelled" | "completed" | "no_show";
+
 export type BookingRecord = {
   id: string;
-  status: "confirmed";
+  status: BookingStatus;
   locale: Locale;
   serviceSlug: string;
   serviceName: string;
@@ -41,14 +43,59 @@ type CreateBookingInput = {
   notes?: string;
 };
 
+type BookingFilters = {
+  date?: string;
+  employeeSlug?: string;
+  serviceSlug?: string;
+  status?: BookingStatus;
+};
+
 declare global {
   // eslint-disable-next-line no-var
   var __barbershopBookings: BookingRecord[] | undefined;
 }
 
+function getServiceName(locale: Locale, serviceSlug: string) {
+  return siteConfig.services[locale].services.find((service) => service.slug === serviceSlug)?.name;
+}
+
+function getEmployeeName(locale: Locale, employeeSlug: string) {
+  return siteConfig.team[locale].members.find((member) => member.slug === employeeSlug)?.name;
+}
+
+function seedBookings() {
+  return siteConfig.booking.existingBookings.map<BookingRecord>((booking, index) => {
+    const durationMinutes =
+      parseTimeToMinutes(booking.end) - parseTimeToMinutes(booking.start);
+    const assignment = siteConfig.booking.employeeServices.find(
+      (item) =>
+        item.employeeSlug === booking.employeeSlug && item.serviceSlug === booking.serviceSlug
+    );
+
+    return {
+      id: `seed-booking-${index + 1}`,
+      status: "confirmed",
+      locale: siteConfig.defaultLocale,
+      serviceSlug: booking.serviceSlug,
+      serviceName:
+        getServiceName(siteConfig.defaultLocale, booking.serviceSlug) ?? booking.serviceSlug,
+      employeeSlug: booking.employeeSlug,
+      employeeName:
+        getEmployeeName(siteConfig.defaultLocale, booking.employeeSlug) ?? booking.employeeSlug,
+      date: booking.date,
+      start: booking.start,
+      end: booking.end,
+      durationSnapshot: durationMinutes,
+      priceSnapshot: assignment?.priceLabel ?? "Price set in shop",
+      customerName: `Customer ${index + 1}`,
+      createdAt: new Date(`${booking.date}T${booking.start}:00`).toISOString()
+    };
+  });
+}
+
 function getBookingStore() {
   if (!globalThis.__barbershopBookings) {
-    globalThis.__barbershopBookings = [];
+    globalThis.__barbershopBookings = seedBookings();
   }
 
   return globalThis.__barbershopBookings;
@@ -107,6 +154,38 @@ function getEligibleEmployees(locale: Locale, serviceSlug: string) {
   );
 }
 
+function blocksCalendar(status: BookingStatus) {
+  return status === "confirmed" || status === "completed";
+}
+
+export function listBookings(filters: BookingFilters = {}) {
+  return getBookingStore()
+    .filter((booking) => {
+      if (filters.date && booking.date !== filters.date) {
+        return false;
+      }
+
+      if (filters.employeeSlug && booking.employeeSlug !== filters.employeeSlug) {
+        return false;
+      }
+
+      if (filters.serviceSlug && booking.serviceSlug !== filters.serviceSlug) {
+        return false;
+      }
+
+      if (filters.status && booking.status !== filters.status) {
+        return false;
+      }
+
+      return true;
+    })
+    .sort((left, right) => {
+      const leftKey = `${left.date}-${left.start}-${left.createdAt}`;
+      const rightKey = `${right.date}-${right.start}-${right.createdAt}`;
+      return rightKey.localeCompare(leftKey);
+    });
+}
+
 export function listAvailableSlots(locale: Locale, serviceSlug: string, employeeSlug?: string) {
   const service = getActiveService(locale, serviceSlug);
 
@@ -154,14 +233,13 @@ export function listAvailableSlots(locale: Locale, serviceSlug: string, employee
               start: parseTimeToMinutes(item.start),
               end: parseTimeToMinutes(item.end)
             })),
-          ...siteConfig.booking.existingBookings
-            .filter((item) => item.employeeSlug === member.slug && item.date === dateKey)
-            .map((item) => ({
-              start: parseTimeToMinutes(item.start),
-              end: parseTimeToMinutes(item.end)
-            })),
           ...createdBookings
-            .filter((item) => item.employeeSlug === member.slug && item.date === dateKey)
+            .filter(
+              (item) =>
+                item.employeeSlug === member.slug &&
+                item.date === dateKey &&
+                blocksCalendar(item.status)
+            )
             .map((item) => ({
               start: parseTimeToMinutes(item.start),
               end: parseTimeToMinutes(item.end)
@@ -251,4 +329,15 @@ export function createConfirmedBooking(input: CreateBookingInput) {
 
 export function getBookingById(id: string) {
   return getBookingStore().find((booking) => booking.id === id);
+}
+
+export function updateBookingStatus(id: string, status: BookingStatus) {
+  const booking = getBookingStore().find((entry) => entry.id === id);
+
+  if (!booking) {
+    return null;
+  }
+
+  booking.status = status;
+  return booking;
 }

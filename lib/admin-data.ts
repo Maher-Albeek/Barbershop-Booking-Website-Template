@@ -1,0 +1,437 @@
+import { authUsers } from "@/lib/auth-users";
+import type { CSSProperties } from "react";
+import {
+  listBookings,
+  parseTimeToMinutes,
+  updateBookingStatus,
+  type BookingStatus
+} from "@/lib/booking";
+import { locales, type Locale } from "@/lib/i18n";
+import { siteConfig } from "@/lib/site-config";
+
+export function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+}
+
+export function ensureLocale(value: string): Locale {
+  return locales.includes(value as Locale) ? (value as Locale) : siteConfig.defaultLocale;
+}
+
+export function getThemeStyle(): CSSProperties {
+  return {
+    "--brand-primary": siteConfig.brand.primaryColor,
+    "--brand-secondary": siteConfig.brand.secondaryColor,
+    "--brand-accent": siteConfig.brand.accentColor
+  } as CSSProperties;
+}
+
+export function getDashboardData(locale: Locale) {
+  const bookings = listBookings();
+
+  return {
+    recentBookings: bookings.slice(0, 6),
+    metrics: {
+      totalBookings: bookings.length,
+      employees: siteConfig.team[locale].members.length,
+      services: siteConfig.services[locale].services.length,
+      activeOffers: siteConfig.offers[locale].offers.filter((offer) => offer.isActive).length
+    }
+  };
+}
+
+export function getBookingOptions(locale: Locale) {
+  return {
+    services: siteConfig.services[locale].services,
+    employees: siteConfig.team[locale].members
+  };
+}
+
+export function listFilteredBookings(filters: {
+  date?: string;
+  employeeSlug?: string;
+  serviceSlug?: string;
+  status?: BookingStatus;
+}) {
+  return listBookings(filters);
+}
+
+export function saveService(input: {
+  serviceSlug?: string;
+  slug?: string;
+  isActive: boolean;
+  translations: Record<Locale, { name: string; description: string; durationLabel: string; priceLabel: string }>;
+}) {
+  const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
+  const existingSlug = input.serviceSlug;
+
+  for (const locale of locales) {
+    const services = siteConfig.services[locale].services;
+    const index = services.findIndex((service) => service.slug === existingSlug);
+    const payload = input.translations[locale];
+    const nextService = {
+      slug,
+      isActive: input.isActive,
+      pricing: "variable" as const,
+      priceLabel: payload.priceLabel || undefined,
+      durationLabel: payload.durationLabel || "30 min",
+      name: payload.name || slug,
+      description: payload.description || ""
+    };
+
+    if (index >= 0) {
+      services[index] = nextService;
+    } else {
+      services.push(nextService);
+    }
+  }
+
+  if (existingSlug && existingSlug !== slug) {
+    for (const locale of locales) {
+      for (const member of siteConfig.team[locale].members) {
+        member.bookingServiceSlugs = member.bookingServiceSlugs.map((item) =>
+          item === existingSlug ? slug : item
+        );
+      }
+    }
+
+    for (const assignment of siteConfig.booking.employeeServices) {
+      if (assignment.serviceSlug === existingSlug) {
+        assignment.serviceSlug = slug;
+      }
+    }
+  }
+}
+
+export function saveEmployee(input: {
+  employeeSlug?: string;
+  slug?: string;
+  isActive: boolean;
+  email?: string;
+  linkLogin: boolean;
+  translations: Record<Locale, { name: string; bio: string; imageSrc: string; specialties: string[] }>;
+}) {
+  const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
+  const existingSlug = input.employeeSlug;
+
+  for (const locale of locales) {
+    const members = siteConfig.team[locale].members;
+    const index = members.findIndex((member) => member.slug === existingSlug);
+    const payload = input.translations[locale];
+    const bookingServiceSlugs =
+      index >= 0 ? members[index].bookingServiceSlugs : [];
+    const nextMember = {
+      slug,
+      isActive: input.isActive,
+      imageSrc:
+        payload.imageSrc ||
+        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+      bookingServiceSlugs,
+      specialties: payload.specialties,
+      name: payload.name || slug,
+      bio: payload.bio || undefined
+    };
+
+    if (index >= 0) {
+      members[index] = nextMember;
+    } else {
+      members.push(nextMember);
+    }
+  }
+
+  if (existingSlug && existingSlug !== slug) {
+    for (const assignment of siteConfig.booking.employeeServices) {
+      if (assignment.employeeSlug === existingSlug) {
+        assignment.employeeSlug = slug;
+      }
+    }
+
+    for (const entry of siteConfig.booking.workingHours) {
+      if (entry.employeeSlug === existingSlug) {
+        entry.employeeSlug = slug;
+      }
+    }
+
+    for (const entry of siteConfig.booking.blockedTimes) {
+      if (entry.employeeSlug === existingSlug) {
+        entry.employeeSlug = slug;
+      }
+    }
+  }
+
+  if (input.linkLogin && input.email) {
+    const existingUser = authUsers.find((user) => user.email === input.email);
+
+    if (!existingUser) {
+      authUsers.push({
+        id: `employee-login-${slug}`,
+        email: input.email,
+        role: "employee",
+        displayName: input.translations.de.name || input.translations.en.name || slug,
+        passwordSalt: "b572d2ea55bd90b48d3cb074a32761d6",
+        passwordHash:
+          "c41e2d4e694e03dccaa15a094953c9d4d143dbc572d601fbb1dc925fb46afe4f9c1cd855b4c0feb8f808911803c36d2be63018d2b860471bbc899ab4700e3dcf"
+      });
+    }
+  }
+}
+
+export function saveAssignment(input: {
+  employeeSlug: string;
+  serviceSlug: string;
+  durationMinutes: number;
+  priceLabel: string;
+  isActive: boolean;
+}) {
+  const existing = siteConfig.booking.employeeServices.find(
+    (entry) => entry.employeeSlug === input.employeeSlug && entry.serviceSlug === input.serviceSlug
+  );
+
+  if (existing) {
+    existing.durationMinutes = input.durationMinutes;
+    existing.priceLabel = input.priceLabel;
+    existing.isActive = input.isActive;
+  } else {
+    siteConfig.booking.employeeServices.push({ ...input });
+  }
+
+  for (const locale of locales) {
+    const member = siteConfig.team[locale].members.find((item) => item.slug === input.employeeSlug);
+
+    if (member && !member.bookingServiceSlugs.includes(input.serviceSlug)) {
+      member.bookingServiceSlugs.push(input.serviceSlug);
+    }
+  }
+}
+
+export function saveWorkingHours(input: {
+  employeeSlug: string;
+  weekday: number;
+  start: string;
+  end: string;
+  isOff: boolean;
+}) {
+  const existing = siteConfig.booking.workingHours.find(
+    (entry) => entry.employeeSlug === input.employeeSlug && entry.weekday === input.weekday
+  );
+
+  if (existing) {
+    existing.start = input.start;
+    existing.end = input.end;
+    existing.isOff = input.isOff;
+    return;
+  }
+
+  siteConfig.booking.workingHours.push({ ...input });
+}
+
+export function addBlockedTime(input: {
+  employeeSlug: string;
+  date: string;
+  start: string;
+  end: string;
+  reason?: string;
+}) {
+  siteConfig.booking.blockedTimes.push({
+    employeeSlug: input.employeeSlug,
+    date: input.date,
+    start: input.start,
+    end: input.end,
+    reason: input.reason || undefined
+  });
+}
+
+export function saveGalleryImage(input: {
+  slug?: string;
+  imageSrc: string;
+  alt: string;
+  caption: string;
+  isVisible: boolean;
+  sortOrder: number;
+}) {
+  const slug = slugify(input.slug || input.caption || `gallery-${Date.now()}`);
+
+  for (const locale of locales) {
+    const images = siteConfig.gallery[locale].images;
+    const index = images.findIndex((image) => image.slug === slug);
+    const nextImage = {
+      slug,
+      imageSrc: input.imageSrc,
+      alt: input.alt,
+      caption: input.caption,
+      isVisible: input.isVisible,
+      sortOrder: input.sortOrder
+    };
+
+    if (index >= 0) {
+      images[index] = { ...images[index], ...nextImage };
+    } else {
+      images.push(nextImage);
+    }
+  }
+}
+
+export function deleteGalleryImage(slug: string) {
+  for (const locale of locales) {
+    siteConfig.gallery[locale].images = siteConfig.gallery[locale].images.filter(
+      (image) => image.slug !== slug
+    );
+  }
+}
+
+export function saveOffer(input: {
+  offerSlug?: string;
+  slug?: string;
+  isActive: boolean;
+  validFrom: string;
+  validUntil: string;
+  imageSrc?: string;
+  translations: Record<Locale, { title: string; description: string }>;
+}) {
+  const slug = slugify(input.slug || input.translations.de.title || input.translations.en.title);
+
+  for (const locale of locales) {
+    const offers = siteConfig.offers[locale].offers;
+    const index = offers.findIndex((offer) => offer.slug === input.offerSlug);
+    const payload = input.translations[locale];
+    const nextOffer = {
+      slug,
+      isActive: input.isActive,
+      validFrom: input.validFrom,
+      validUntil: input.validUntil,
+      imageSrc: input.imageSrc || undefined,
+      title: payload.title || slug,
+      description: payload.description || ""
+    };
+
+    if (index >= 0) {
+      offers[index] = nextOffer;
+    } else {
+      offers.push(nextOffer);
+    }
+  }
+}
+
+export function deleteOffer(slug: string) {
+  for (const locale of locales) {
+    siteConfig.offers[locale].offers = siteConfig.offers[locale].offers.filter(
+      (offer) => offer.slug !== slug
+    );
+  }
+}
+
+export function saveShopSettings(input: {
+  shopName: string;
+  logoText: string;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  enabledLocales: Locale[];
+  defaultLocale: Locale;
+  hero: Record<Locale, { title: string; subtitle: string; kicker: string }>;
+}) {
+  siteConfig.brand.shopName = input.shopName;
+  siteConfig.brand.logoText = input.logoText;
+  siteConfig.brand.primaryColor = input.primaryColor;
+  siteConfig.brand.secondaryColor = input.secondaryColor;
+  siteConfig.brand.accentColor = input.accentColor;
+  siteConfig.defaultLocale = input.defaultLocale;
+  const mutableLocales = siteConfig.locales as Locale[];
+  mutableLocales.splice(0, mutableLocales.length, ...input.enabledLocales);
+
+  for (const locale of locales) {
+    siteConfig.content[locale].hero = input.hero[locale];
+  }
+}
+
+export function saveEmailSettings(input: {
+  providerName: string;
+  fromEmail: string;
+  replyToEmail: string;
+  sendCustomerConfirmation: boolean;
+  sendInternalNotification: boolean;
+  internalNotificationEmail: string;
+}) {
+  siteConfig.emailSettings = { ...input };
+}
+
+export function saveContactContent(input: {
+  phone: string;
+  email: string;
+  address: string;
+  whatsapp: string;
+  workingHours: Record<Locale, string>;
+  mapEmbedUrl: string;
+  mapDirectionsHref: string;
+  mapVisible: boolean;
+  translations: Record<Locale, { title: string; subtitle: string; addressLabel: string }>;
+}) {
+  for (const locale of locales) {
+    const content = siteConfig.contact[locale];
+    const payload = input.translations[locale];
+
+    content.title = payload.title;
+    content.subtitle = payload.subtitle;
+    content.items.address.label = payload.addressLabel;
+    content.items.address.value = input.address;
+    content.items.phone.value = input.phone;
+    content.items.phone.href = `tel:${input.phone.replace(/[^\d+]/g, "")}`;
+    content.items.email.value = input.email;
+    content.items.email.href = `mailto:${input.email}`;
+    content.items.whatsapp = input.whatsapp
+      ? {
+          label: "WhatsApp",
+          value: input.whatsapp,
+          href: input.whatsapp
+        }
+      : undefined;
+    content.workingHours = input.workingHours[locale]
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const [days, ...rest] = line.split(":");
+        return {
+          days: days.trim(),
+          hours: rest.join(":").trim() || line.trim()
+        };
+      });
+    content.map.embedUrl = input.mapEmbedUrl;
+    content.map.directionsHref = input.mapDirectionsHref;
+    content.map.isVisible = input.mapVisible;
+  }
+}
+
+export function setBookingStatus(bookingId: string, status: BookingStatus) {
+  return updateBookingStatus(bookingId, status);
+}
+
+export function formatAssignmentDuration(durationMinutes: number) {
+  return `${durationMinutes} min`;
+}
+
+export function buildWeekdaySummary(employeeSlug: string) {
+  return siteConfig.booking.workingHours
+    .filter((entry) => entry.employeeSlug === employeeSlug)
+    .sort((left, right) => left.weekday - right.weekday)
+    .map((entry) =>
+      entry.isOff ? `${entry.weekday}: off` : `${entry.weekday}: ${entry.start}-${entry.end}`
+    )
+    .join(", ");
+}
+
+export function getBlockedTimeSummary(employeeSlug: string) {
+  return siteConfig.booking.blockedTimes
+    .filter((entry) => entry.employeeSlug === employeeSlug)
+    .sort((left, right) =>
+      `${left.date}-${left.start}`.localeCompare(`${right.date}-${right.start}`)
+    );
+}
+
+export function isValidTimeRange(start: string, end: string) {
+  return parseTimeToMinutes(start) < parseTimeToMinutes(end);
+}
