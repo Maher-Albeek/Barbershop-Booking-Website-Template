@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
@@ -7,8 +8,8 @@ type HomePageProps = {
   params: Promise<{ locale: string }>;
 };
 
-function navHref(locale: Locale, path: string) {
-  return `/${locale}${path}`;
+function navHref(locale: Locale, path: string): Route {
+  return `/${locale}${path}` as Route;
 }
 
 export default async function HomePage({ params }: HomePageProps) {
@@ -102,10 +103,10 @@ export default async function HomePage({ params }: HomePageProps) {
           </nav>
 
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            {siteConfig.locales.map((item) => (
+                {siteConfig.locales.map((item) => (
               <Link
                 key={item}
-                href={`/${item}`}
+                href={`/${item}` as Route}
                 style={{
                   border: locale === item ? "1px solid transparent" : "1px solid var(--border)",
                   background:

@@ -26,6 +26,12 @@ const dictionaries = {
     actions: {
       bookNow: "Book now",
       viewServices: "Explore services"
+    },
+    services: {
+      durationLabel: "Duration",
+      variablePriceLabel: "Price varies by barber",
+      fixedPriceLabel: "Price",
+      bookingCta: "Book this service"
     }
   },
   de: {
@@ -45,25 +51,37 @@ const dictionaries = {
     actions: {
       bookNow: "Jetzt buchen",
       viewServices: "Leistungen ansehen"
+    },
+    services: {
+      durationLabel: "Dauer",
+      variablePriceLabel: "Preis variiert je Barber",
+      fixedPriceLabel: "Preis",
+      bookingCta: "Diese Leistung buchen"
     }
   },
   ar: {
     direction: "rtl",
     labels: {
-      since: "قالب صالون الحلاقة",
-      primaryNavigation: "التنقل الرئيسي"
+      since: "\u0642\u0627\u0644\u0628 \u0635\u0627\u0644\u0648\u0646 \u0627\u0644\u062d\u0644\u0627\u0642\u0629",
+      primaryNavigation: "\u0627\u0644\u062a\u0646\u0642\u0644 \u0627\u0644\u0631\u0626\u064a\u0633\u064a"
     },
     navigation: [
-      { href: "/services", label: "الخدمات" },
-      { href: "/team", label: "الفريق" },
-      { href: "/gallery", label: "المعرض" },
-      { href: "/offers", label: "العروض" },
-      { href: "/contact", label: "التواصل" },
-      { href: "/booking", label: "الحجز" }
+      { href: "/services", label: "\u0627\u0644\u062e\u062f\u0645\u0627\u062a" },
+      { href: "/team", label: "\u0627\u0644\u0641\u0631\u064a\u0642" },
+      { href: "/gallery", label: "\u0627\u0644\u0645\u0639\u0631\u0636" },
+      { href: "/offers", label: "\u0627\u0644\u0639\u0631\u0648\u0636" },
+      { href: "/contact", label: "\u0627\u0644\u062a\u0648\u0627\u0635\u0644" },
+      { href: "/booking", label: "\u0627\u0644\u062d\u062c\u0632" }
     ],
     actions: {
-      bookNow: "احجز الآن",
-      viewServices: "استعرض الخدمات"
+      bookNow: "\u0627\u062d\u062c\u0632 \u0627\u0644\u0622\u0646",
+      viewServices: "\u0627\u0633\u062a\u0639\u0631\u0636 \u0627\u0644\u062e\u062f\u0645\u0627\u062a"
+    },
+    services: {
+      durationLabel: "\u0627\u0644\u0645\u062f\u0629",
+      variablePriceLabel: "\u0627\u0644\u0633\u0639\u0631 \u064a\u062e\u062a\u0644\u0641 \u062d\u0633\u0628 \u0627\u0644\u062d\u0644\u0627\u0642",
+      fixedPriceLabel: "\u0627\u0644\u0633\u0639\u0631",
+      bookingCta: "\u0627\u062d\u062c\u0632 \u0647\u0630\u0647 \u0627\u0644\u062e\u062f\u0645\u0629"
     }
   }
 } as const satisfies Record<
@@ -78,6 +96,12 @@ const dictionaries = {
     actions: {
       bookNow: string;
       viewServices: string;
+    };
+    services: {
+      durationLabel: string;
+      variablePriceLabel: string;
+      fixedPriceLabel: string;
+      bookingCta: string;
     };
   }
 >;
