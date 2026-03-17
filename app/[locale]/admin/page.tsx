@@ -50,6 +50,7 @@ type AdminPageProps = {
     bookingStatus?: "confirmed" | "cancelled" | "completed" | "no_show";
     editService?: string;
     editEmployee?: string;
+    editOffer?: string;
   }>;
 };
 
@@ -68,6 +69,9 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
     : undefined;
   const employeeToEdit = filters.editEmployee
     ? siteConfig.team[locale].members.find((member) => member.slug === filters.editEmployee)
+    : undefined;
+  const offerToEdit = filters.editOffer
+    ? siteConfig.offers[locale].offers.find((offer) => offer.slug === filters.editOffer)
     : undefined;
   const employeeLogin = employeeToEdit
     ? authUsers.find((user) => user.role === "employee" && user.employeeSlug === employeeToEdit.slug)
@@ -600,42 +604,79 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                 {offer.validFrom} to {offer.validUntil}
               </div>
               <div>{offer.isActive ? "Active" : "Inactive"}</div>
-              <form action={deleteOfferAction}>
-                <input type="hidden" name="locale" value={locale} />
-                <input type="hidden" name="slug" value={offer.slug} />
-                <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-                  Delete offer
-                </button>
-              </form>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <Link href={`/${locale}/admin?editOffer=${offer.slug}#offers`}>Edit</Link>
+                <form action={deleteOfferAction}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <input type="hidden" name="slug" value={offer.slug} />
+                  <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+                    Delete offer
+                  </button>
+                </form>
+              </div>
             </article>
           ))}
         </div>
         <form action={upsertOfferAction} style={{ display: "grid", gap: 14 }}>
           <input type="hidden" name="locale" value={locale} />
           <div style={gridTwo}>
-            <input name="offerSlug" placeholder="Existing slug" style={inputStyle} />
+            <input
+              name="offerSlug"
+              defaultValue={offerToEdit?.slug ?? ""}
+              placeholder="Existing slug"
+              style={inputStyle}
+            />
             <input name="slug" placeholder="New slug override" style={inputStyle} />
-            <input name="validFrom" type="date" style={inputStyle} />
-            <input name="validUntil" type="date" style={inputStyle} />
-            <input name="imageSrc" placeholder="Image URL" style={inputStyle} />
+            <input
+              name="validFrom"
+              type="date"
+              defaultValue={offerToEdit?.validFrom ?? ""}
+              style={inputStyle}
+            />
+            <input
+              name="validUntil"
+              type="date"
+              defaultValue={offerToEdit?.validUntil ?? ""}
+              style={inputStyle}
+            />
+            <input
+              name="imageSrc"
+              defaultValue={offerToEdit?.imageSrc ?? ""}
+              placeholder="Image URL"
+              style={inputStyle}
+            />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isActive" defaultChecked />
+              <input type="checkbox" name="isActive" defaultChecked={offerToEdit?.isActive ?? true} />
               Offer active
             </label>
           </div>
+          {offerToEdit ? (
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+              <div style={{ color: "var(--muted)" }}>
+                Editing <strong style={{ color: "inherit" }}>{offerToEdit.title}</strong>
+              </div>
+              <Link href={`/${locale}/admin#offers`}>Clear form</Link>
+            </div>
+          ) : null}
           <div style={gridTwo}>
             <LocaleFields title={`${currentLocaleLabel} content`}>
-              <input name={`title_${locale}`} placeholder="Offer title" style={inputStyle} />
+              <input
+                name={`title_${locale}`}
+                defaultValue={offerToEdit?.title ?? ""}
+                placeholder="Offer title"
+                style={inputStyle}
+              />
               <textarea
                 name={`description_${locale}`}
                 rows={4}
+                defaultValue={offerToEdit?.description ?? ""}
                 placeholder="Description"
                 style={inputStyle}
               />
             </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Save offer
+            {offerToEdit ? "Update offer" : "Save offer"}
           </button>
         </form>
       </section>

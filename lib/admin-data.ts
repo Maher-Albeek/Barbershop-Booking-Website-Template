@@ -521,10 +521,11 @@ export function saveOffer(input: {
   translations: Record<Locale, { title: string; description: string }>;
 }) {
   const slug = slugify(input.slug || firstNonEmptyTranslationValue(input.translations, (item) => item.title));
+  const existingSlug = input.offerSlug;
   const fallbackLocale = siteConfig.defaultLocale;
   const fallbackTranslation = input.translations[fallbackLocale];
   const fallbackExisting = siteConfig.offers[fallbackLocale].offers.find(
-    (offer) => offer.slug === input.offerSlug
+    (offer) => offer.slug === existingSlug
   );
 
   for (const locale of locales) {
@@ -560,9 +561,21 @@ export function saveOffer(input: {
       offers.push(nextOffer);
     }
   }
+
+  if (existingSlug && existingSlug !== slug) {
+    for (const locale of locales) {
+      siteConfig.offers[locale].offers = siteConfig.offers[locale].offers.filter(
+        (offer) => offer.slug !== existingSlug || offer.slug === slug
+      );
+    }
+  }
 }
 
 export function deleteOffer(slug: string) {
+  if (!slug) {
+    return;
+  }
+
   for (const locale of locales) {
     siteConfig.offers[locale].offers = siteConfig.offers[locale].offers.filter(
       (offer) => offer.slug !== slug
