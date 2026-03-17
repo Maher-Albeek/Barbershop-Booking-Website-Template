@@ -51,6 +51,7 @@ type GalleryImage = {
   imageSrc: string;
   alt: string;
   caption: string;
+  sourceHref?: string;
   isVisible: boolean;
   sortOrder: number;
 };
@@ -85,12 +86,40 @@ type ContactItem = {
   href?: string;
 };
 
+type WorkingHoursEntry = {
+  days: string;
+  hours: string;
+};
+
 type LocalizedContactContent = {
   eyebrow: string;
   title: string;
   subtitle: string;
+  shopSummary: string;
   visitNote: string;
   responseNote: string;
+  workingHoursTitle: string;
+  workingHoursNote: string;
+  workingHours: WorkingHoursEntry[];
+  form: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    nameLabel: string;
+    emailLabel: string;
+    subjectLabel: string;
+    messageLabel: string;
+    submitLabel: string;
+    privacyNote: string;
+  };
+  map: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    directionsLabel: string;
+    directionsHref: string;
+    embedUrl: string;
+  };
   items: {
     phone: ContactItem;
     email: ContactItem;
@@ -458,8 +487,10 @@ export const siteConfig: {
         {
           slug: "interior-detail",
           imageSrc:
-            "https://images.unsplash.com/photo-1512690459411-b0fd1c86b8c8?auto=format&fit=crop&w=1200&q=80",
+            "https://69b8a91cdbcf8e0d39e5177b.imgix.net/luxury-coffee-shop-table-inside-barista-bar-generated-by-ai.jpg",
           alt: "Warm barbershop interior with leather chairs and mirrors",
+          sourceHref:
+            "https://www.freepik.com/free-ai-image/luxury-coffee-shop-table-inside-barista-bar-generated-by-ai_42131531.htm#fromView=search&page=1&position=1&uuid=d69de93f-7c8d-4fed-8591-04e815b2da71&query=Warmer+Barbershop-Innenraum+mit+Ledersesseln+und+Spiegeln",
           caption: "A calm interior built around warm tones, clean stations, and comfortable waiting space.",
           isVisible: true,
           sortOrder: 1
@@ -502,7 +533,7 @@ export const siteConfig: {
         {
           slug: "interior-detail",
           imageSrc:
-            "https://images.unsplash.com/photo-1512690459411-b0fd1c86b8c8?auto=format&fit=crop&w=1200&q=80",
+            "https://69b8a91cdbcf8e0d39e5177b.imgix.net/luxury-coffee-shop-table-inside-barista-bar-generated-by-ai.jpg",
           alt: "Warmer Barbershop-Innenraum mit Ledersesseln und Spiegeln",
           caption:
             "Ein ruhiger Innenraum mit warmen Tönen, sauberen Stationen und einem angenehmen Wartebereich.",
@@ -550,7 +581,7 @@ export const siteConfig: {
         {
           slug: "interior-detail",
           imageSrc:
-            "https://images.unsplash.com/photo-1512690459411-b0fd1c86b8c8?auto=format&fit=crop&w=1200&q=80",
+            "https://69b8a91cdbcf8e0d39e5177b.imgix.net/luxury-coffee-shop-table-inside-barista-bar-generated-by-ai.jpg",
           alt: "داخل صالون حلاقة دافئ مع كراسٍ جلدية ومرايا",
           caption: "مساحة هادئة بألوان دافئة ومحطات مرتبة ومنطقة انتظار مريحة.",
           isVisible: true,
@@ -738,10 +769,44 @@ export const siteConfig: {
       title: "Reach the shop before you arrive.",
       subtitle:
         "Phone, email, address, and messaging details are managed from one editable config so each deployment can publish the correct local contact information.",
+      shopSummary:
+        "Crown & Blade keeps every essential contact point in one place so guests can call, message, or navigate to the shop without friction.",
       visitNote:
         "Walk-ins are welcome when capacity allows, but calling ahead is the fastest way to confirm same-day availability.",
       responseNote:
         "Messages sent through WhatsApp are typically answered during business hours.",
+      workingHoursTitle: "Working hours",
+      workingHoursNote:
+        "Hours can shift on holidays or campaign days, so call ahead if you need same-day confirmation.",
+      workingHours: [
+        { days: "Monday", hours: "09:00 - 18:00" },
+        { days: "Tuesday - Friday", hours: "09:00 - 20:00" },
+        { days: "Saturday", hours: "10:00 - 18:00" },
+        { days: "Sunday", hours: "Closed" }
+      ],
+      form: {
+        eyebrow: "Send a message",
+        title: "Use the contact form for questions or special requests.",
+        description:
+          "Share your message and preferred contact details. The shop can follow up by email or phone.",
+        nameLabel: "Name",
+        emailLabel: "Email",
+        subjectLabel: "Subject",
+        messageLabel: "Message",
+        submitLabel: "Send request",
+        privacyNote: "By sending this form, you agree that the shop may contact you about your request."
+      },
+      map: {
+        eyebrow: "Map",
+        title: "Find Crown & Blade in central Berlin.",
+        description:
+          "The map is embedded on the page so customers can verify the location before they travel.",
+        directionsLabel: "Open directions",
+        directionsHref:
+          "https://www.google.com/maps/search/?api=1&query=Friedrichstrasse+148%2C+10117+Berlin",
+        embedUrl:
+          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed"
+      },
       items: {
         phone: {
           label: "Phone",
@@ -769,10 +834,45 @@ export const siteConfig: {
       title: "Erreiche den Shop vor deinem Besuch.",
       subtitle:
         "Telefon, E-Mail, Adresse und Messenger-Kontakt werden zentral gepflegt, damit jede Bereitstellung die korrekten lokalen Kontaktdaten zeigt.",
+      shopSummary:
+        "Crown & Blade buendelt alle wichtigen Kontaktdaten an einem Ort, damit Kundinnen und Kunden schnell anrufen, schreiben oder den Weg planen koennen.",
       visitNote:
         "Spontane Besuche sind moeglich, wenn Kapazitaet frei ist. Fuer Termine am selben Tag ist ein kurzer Anruf am schnellsten.",
       responseNote:
         "WhatsApp-Nachrichten werden in der Regel waehrend der Geschaeftszeiten beantwortet.",
+      workingHoursTitle: "Oeffnungszeiten",
+      workingHoursNote:
+        "An Feiertagen oder Aktionstagen koennen die Zeiten abweichen. Fuer denselben Tag am besten kurz anrufen.",
+      workingHours: [
+        { days: "Montag", hours: "09:00 - 18:00" },
+        { days: "Dienstag - Freitag", hours: "09:00 - 20:00" },
+        { days: "Samstag", hours: "10:00 - 18:00" },
+        { days: "Sonntag", hours: "Geschlossen" }
+      ],
+      form: {
+        eyebrow: "Nachricht senden",
+        title: "Nutze das Kontaktformular fuer Fragen oder besondere Anliegen.",
+        description:
+          "Teile deine Nachricht und passende Kontaktdaten mit. Der Shop kann per E-Mail oder Telefon reagieren.",
+        nameLabel: "Name",
+        emailLabel: "E-Mail",
+        subjectLabel: "Betreff",
+        messageLabel: "Nachricht",
+        submitLabel: "Anfrage senden",
+        privacyNote:
+          "Mit dem Absenden stimmst du zu, dass der Shop dich zu deiner Anfrage kontaktieren darf."
+      },
+      map: {
+        eyebrow: "Karte",
+        title: "Finde Crown & Blade im Zentrum von Berlin.",
+        description:
+          "Die Karte ist direkt auf der Seite eingebettet, damit Kundinnen und Kunden den Standort sofort pruefen koennen.",
+        directionsLabel: "Route oeffnen",
+        directionsHref:
+          "https://www.google.com/maps/search/?api=1&query=Friedrichstrasse+148%2C+10117+Berlin",
+        embedUrl:
+          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed"
+      },
       items: {
         phone: {
           label: "Telefon",
@@ -800,10 +900,45 @@ export const siteConfig: {
       title: "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0642\u0628\u0644 \u0627\u0644\u0648\u0635\u0648\u0644.",
       subtitle:
         "\u064a\u062a\u0645 \u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0647\u0627\u062a\u0641 \u0648\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0648\u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0648\u0648\u0633\u0627\u0626\u0644 \u0627\u0644\u0645\u0631\u0627\u0633\u0644\u0629 \u0645\u0646 \u0645\u0635\u062f\u0631 \u0648\u0627\u062d\u062f \u0642\u0627\u0628\u0644 \u0644\u0644\u062a\u0639\u062f\u064a\u0644 \u0644\u0625\u0638\u0647\u0627\u0631 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0641\u0631\u0639 \u0627\u0644\u0635\u062d\u064a\u062d\u0629.",
+      shopSummary:
+        "\u064a\u062c\u0645\u0639 Crown & Blade \u0643\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062a\u0648\u0627\u0635\u0644 \u0627\u0644\u0623\u0633\u0627\u0633\u064a\u0629 \u0641\u064a \u0645\u0643\u0627\u0646 \u0648\u0627\u062d\u062f \u0644\u064a\u062a\u0645\u0643\u0646 \u0627\u0644\u0639\u0645\u064a\u0644 \u0645\u0646 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0623\u0648 \u0627\u0644\u0645\u0631\u0627\u0633\u0644\u0629 \u0623\u0648 \u0627\u0644\u0648\u0635\u0648\u0644 \u0628\u0633\u0647\u0648\u0644\u0629.",
       visitNote:
         "\u064a\u0645\u0643\u0646 \u0627\u0633\u062a\u0642\u0628\u0627\u0644 \u0627\u0644\u0632\u0648\u0627\u0631 \u062f\u0648\u0646 \u062d\u062c\u0632 \u0639\u0646\u062f \u062a\u0648\u0641\u0631 \u0627\u0644\u0633\u0639\u0629\u060c \u0648\u0644\u0643\u0646 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0645\u0633\u0628\u0642\u0627 \u0647\u0648 \u0627\u0644\u0623\u0633\u0631\u0639 \u0644\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062a\u0648\u0641\u0631 \u0641\u064a \u0646\u0641\u0633 \u0627\u0644\u064a\u0648\u0645.",
       responseNote:
         "\u062a\u064f\u0631\u062f \u0631\u0633\u0627\u0626\u0644 \u0648\u0627\u062a\u0633\u0627\u0628 \u0639\u0627\u062f\u0629 \u062e\u0644\u0627\u0644 \u0633\u0627\u0639\u0627\u062a \u0627\u0644\u0639\u0645\u0644.",
+      workingHoursTitle: "\u0633\u0627\u0639\u0627\u062a \u0627\u0644\u0639\u0645\u0644",
+      workingHoursNote:
+        "\u0642\u062f \u062a\u062a\u063a\u064a\u0631 \u0627\u0644\u0633\u0627\u0639\u0627\u062a \u0641\u064a \u0627\u0644\u0639\u0637\u0644 \u0623\u0648 \u0623\u064a\u0627\u0645 \u0627\u0644\u0639\u0631\u0648\u0636\u060c \u0644\u0630\u0627 \u064a\u0641\u0636\u0644 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0645\u0633\u0628\u0642\u0627 \u0644\u0644\u062a\u0623\u0643\u062f \u0645\u0646 \u0645\u0648\u0627\u0639\u064a\u062f \u0627\u0644\u064a\u0648\u0645 \u0646\u0641\u0633\u0647.",
+      workingHours: [
+        { days: "\u0627\u0644\u0627\u062b\u0646\u064a\u0646", hours: "09:00 - 18:00" },
+        { days: "\u0627\u0644\u062b\u0644\u0627\u062b\u0627\u0621 - \u0627\u0644\u062c\u0645\u0639\u0629", hours: "09:00 - 20:00" },
+        { days: "\u0627\u0644\u0633\u0628\u062a", hours: "10:00 - 18:00" },
+        { days: "\u0627\u0644\u0623\u062d\u062f", hours: "\u0645\u063a\u0644\u0642" }
+      ],
+      form: {
+        eyebrow: "\u0623\u0631\u0633\u0644 \u0631\u0633\u0627\u0644\u0629",
+        title: "\u0627\u0633\u062a\u062e\u062f\u0645 \u0646\u0645\u0648\u0630\u062c \u0627\u0644\u062a\u0648\u0627\u0635\u0644 \u0644\u0644\u0623\u0633\u0626\u0644\u0629 \u0623\u0648 \u0627\u0644\u0637\u0644\u0628\u0627\u062a \u0627\u0644\u062e\u0627\u0635\u0629.",
+        description:
+          "\u0627\u0643\u062a\u0628 \u0631\u0633\u0627\u0644\u062a\u0643 \u0648\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062a\u0648\u0627\u0635\u0644 \u0627\u0644\u0645\u0646\u0627\u0633\u0628\u0629\u060c \u0648\u0633\u064a\u0642\u0648\u0645 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0628\u0627\u0644\u0631\u062f \u0639\u0628\u0631 \u0627\u0644\u0628\u0631\u064a\u062f \u0623\u0648 \u0627\u0644\u0647\u0627\u062a\u0641.",
+        nameLabel: "\u0627\u0644\u0627\u0633\u0645",
+        emailLabel: "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a",
+        subjectLabel: "\u0627\u0644\u0645\u0648\u0636\u0648\u0639",
+        messageLabel: "\u0627\u0644\u0631\u0633\u0627\u0644\u0629",
+        submitLabel: "\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628",
+        privacyNote:
+          "\u0628\u0625\u0631\u0633\u0627\u0644 \u0647\u0630\u0627 \u0627\u0644\u0646\u0645\u0648\u0630\u062c \u0623\u0646\u062a \u062a\u0648\u0627\u0641\u0642 \u0639\u0644\u0649 \u0625\u0645\u0643\u0627\u0646\u064a\u0629 \u062a\u0648\u0627\u0635\u0644 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0645\u0639\u0643 \u0628\u062e\u0635\u0648\u0635 \u0637\u0644\u0628\u0643."
+      },
+      map: {
+        eyebrow: "\u0627\u0644\u062e\u0631\u064a\u0637\u0629",
+        title: "\u0627\u0639\u062b\u0631 \u0639\u0644\u0649 Crown & Blade \u0641\u064a \u0648\u0633\u0637 \u0628\u0631\u0644\u064a\u0646.",
+        description:
+          "\u062a\u0638\u0647\u0631 \u0627\u0644\u062e\u0631\u064a\u0637\u0629 \u062f\u0627\u062e\u0644 \u0627\u0644\u0635\u0641\u062d\u0629 \u0644\u064a\u062a\u062d\u0642\u0642 \u0627\u0644\u0639\u0645\u064a\u0644 \u0645\u0646 \u0627\u0644\u0645\u0648\u0642\u0639 \u0642\u0628\u0644 \u0627\u0644\u0627\u0646\u0637\u0644\u0627\u0642.",
+        directionsLabel: "\u0627\u0641\u062a\u062d \u0627\u0644\u0627\u062a\u062c\u0627\u0647\u0627\u062a",
+        directionsHref:
+          "https://www.google.com/maps/search/?api=1&query=Friedrichstrasse+148%2C+10117+Berlin",
+        embedUrl:
+          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed"
+      },
       items: {
         phone: {
           label: "\u0627\u0644\u0647\u0627\u062a\u0641",

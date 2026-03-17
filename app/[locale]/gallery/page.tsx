@@ -206,16 +206,31 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
                 display: "grid"
               }}
             >
-              <img
-                src={image.imageSrc}
-                alt={image.alt}
-                style={{
-                  width: "100%",
-                  aspectRatio: index === 0 ? "4 / 5" : index % 3 === 0 ? "1 / 1" : "4 / 3",
-                  objectFit: "cover",
-                  display: "block"
-                }}
-              />
+              {image.sourceHref ? (
+                <a href={image.sourceHref} target="_blank" rel="noreferrer">
+                  <img
+                    src={image.imageSrc}
+                    alt={image.alt}
+                    style={{
+                      width: "100%",
+                      aspectRatio: index === 0 ? "4 / 5" : index % 3 === 0 ? "1 / 1" : "4 / 3",
+                      objectFit: "cover",
+                      display: "block"
+                    }}
+                  />
+                </a>
+              ) : (
+                <img
+                  src={image.imageSrc}
+                  alt={image.alt}
+                  style={{
+                    width: "100%",
+                    aspectRatio: index === 0 ? "4 / 5" : index % 3 === 0 ? "1 / 1" : "4 / 3",
+                    objectFit: "cover",
+                    display: "block"
+                  }}
+                />
+              )}
 
               <div
                 style={{

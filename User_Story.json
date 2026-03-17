@@ -94,7 +94,9 @@
       "/offers",
       "/contact",
       "/booking",
-      "/booking/success"
+      "/booking/success",
+      "/impressum",
+      "/datenschutz"
     ],
     "admin": [
       "/admin/login",
@@ -189,6 +191,25 @@
       ]
     },
     {
+      "id": "PUB-007",
+      "title": "View complete contact page",
+      "as_a": "customer",
+      "i_want": "to access a complete contact page with shop information, contact form, and map",
+      "so_that": "I can easily contact the shop or find its location",
+      "acceptance_criteria": [
+        "Contact page displays shop name",
+        "Contact page displays address",
+        "Contact page displays phone number",
+        "Contact page displays email address",
+        "Contact page displays WhatsApp link if available",
+        "Contact page displays working hours if available",
+        "Contact page includes a visible contact form",
+        "Contact page includes a map section in the same page",
+        "Page is responsive on mobile and desktop",
+        "Page supports multiple languages"
+      ]
+    },
+    {
       "id": "BOOK-001",
       "title": "Start booking without login",
       "as_a": "customer",
@@ -272,6 +293,53 @@
         "A confirmation email is sent after successful booking",
         "Email includes shop name, service name, employee name, date, time, price, and contact details",
         "Booking success page is displayed after successful submission"
+      ]
+    },
+    {
+      "id": "CONTACT-001",
+      "title": "Submit contact form",
+      "as_a": "customer",
+      "i_want": "to send a message to the shop through a contact form",
+      "so_that": "I can ask questions or request more information",
+      "acceptance_criteria": [
+        "Contact form includes name field",
+        "Contact form includes email field",
+        "Contact form includes phone field as optional",
+        "Contact form includes subject field",
+        "Contact form includes message field",
+        "Required fields are validated before submission",
+        "Email format is validated",
+        "User sees a success message after successful submission",
+        "Form submission is protected against empty or invalid data"
+      ]
+    },
+    {
+      "id": "CONTACT-002",
+      "title": "View shop information on contact page",
+      "as_a": "customer",
+      "i_want": "to see the shop's main contact details in one place",
+      "so_that": "I can quickly call, email, or visit the shop",
+      "acceptance_criteria": [
+        "Shop information section includes address",
+        "Shop information section includes phone number",
+        "Shop information section includes email address",
+        "Shop information section includes WhatsApp link if configured",
+        "Shop information is editable by admin",
+        "Information is displayed clearly and accessibly"
+      ]
+    },
+    {
+      "id": "CONTACT-003",
+      "title": "View map on contact page",
+      "as_a": "customer",
+      "i_want": "to view the shop location on a map",
+      "so_that": "I can easily find the barbershop",
+      "acceptance_criteria": [
+        "Contact page includes an embedded map in the same page",
+        "Map displays the shop location based on saved address or coordinates",
+        "Map section is responsive",
+        "Map can include a button or link to open directions externally",
+        "If map provider requires consent, it must respect cookie/privacy rules"
       ]
     },
     {
@@ -432,6 +500,23 @@
         "System is configurable for transactional email sending",
         "Booking confirmation email can be sent to the customer",
         "Optional internal notification can be sent to the shop email"
+      ]
+    },
+    {
+      "id": "ADMIN-012",
+      "title": "Manage contact page content",
+      "as_a": "shop_admin",
+      "i_want": "to manage the contact page details",
+      "so_that": "customers always see the correct business information",
+      "acceptance_criteria": [
+        "Admin can update address",
+        "Admin can update phone number",
+        "Admin can update email address",
+        "Admin can update WhatsApp link",
+        "Admin can update working hours shown on contact page",
+        "Admin can update map location data",
+        "Admin can enable or disable map display",
+        "Admin can manage translated labels or content if needed"
       ]
     },
     {
