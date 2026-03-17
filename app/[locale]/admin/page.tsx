@@ -12,7 +12,8 @@ import { authUsers } from "@/lib/auth-users";
 import { isLocale, locales } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
 import {
-  addBlockedTimeAction,
+  deleteAssignmentAction,
+  deleteBlockedTimeAction,
   deleteEmployeeAction,
   deleteGalleryAction,
   deleteOfferAction,
@@ -21,6 +22,7 @@ import {
   updateContactContentAction,
   updateEmailSettingsAction,
   updateShopSettingsAction,
+  upsertBlockedTimeAction,
   upsertAssignmentAction,
   upsertEmployeeAction,
   upsertGalleryAction,
@@ -53,6 +55,10 @@ type AdminPageProps = {
     editOffer?: string;
   }>;
 };
+
+function getServiceName(locale: keyof typeof siteConfig.services, serviceSlug: string) {
+  return siteConfig.services[locale].services.find((service) => service.slug === serviceSlug)?.name;
+}
 
 export default async function AdminPage({ params, searchParams }: AdminPageProps) {
   const [{ locale }, filters] = await Promise.all([params, searchParams]);
@@ -336,115 +342,255 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
           story="ADMIN-004 / ADMIN-005 / ADMIN-006"
           title="Assignments, working hours, blocked times"
         />
-        <div style={gridTwo}>
-          {siteConfig.team[locale].members.map((member) => (
-            <article key={member.slug} style={{ ...surfaceCardStyle, display: "grid", gap: 10 }}>
-              <strong>{member.name}</strong>
-              <div>
-                Assignments:{" "}
-                {siteConfig.booking.employeeServices
-                  .filter((entry) => entry.employeeSlug === member.slug)
-                  .map(
-                    (entry) =>
-                      `${entry.serviceSlug} (${entry.durationMinutes} min, ${entry.priceLabel}, ${
-                        entry.isActive ? "active" : "inactive"
-                      })`
-                  )
-                  .join("; ") || "none"}
-              </div>
-              <div>Hours: {buildWeekdaySummary(member.slug) || "none"}</div>
-              <div>
-                Blocks:{" "}
-                {getBlockedTimeSummary(member.slug)
-                  .slice(0, 3)
-                  .map((entry) => `${entry.date} ${entry.start}-${entry.end}`)
-                  .join("; ") || "none"}
-              </div>
-            </article>
-          ))}
-        </div>
-        <div style={gridTwo}>
-          <form action={upsertAssignmentAction} style={sectionStyle}>
-            <input type="hidden" name="locale" value={locale} />
-            <strong>Employee-service assignment</strong>
-            <select name="employeeSlug" style={inputStyle}>
-              {siteConfig.team[locale].members.map((member) => (
-                <option key={member.slug} value={member.slug}>
-                  {member.name}
-                </option>
-              ))}
-            </select>
-            <select name="serviceSlug" style={inputStyle}>
-              {siteConfig.services[locale].services.map((service) => (
-                <option key={service.slug} value={service.slug}>
-                  {service.name}
-                </option>
-              ))}
-            </select>
-            <input
-              name="durationMinutes"
-              type="number"
-              min="5"
-              step="5"
-              placeholder="Duration minutes"
-              style={inputStyle}
-            />
-            <input name="priceLabel" placeholder="Price label" style={inputStyle} />
-            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isActive" defaultChecked />
-              Active assignment
-            </label>
-            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-              Save assignment
-            </button>
-          </form>
+        <div style={{ display: "grid", gap: 18 }}>
+          {siteConfig.team[locale].members.map((member) => {
+            const assignments = siteConfig.booking.employeeServices.filter(
+              (entry) => entry.employeeSlug === member.slug
+            );
+            const blockedTimes = getBlockedTimeSummary(member.slug);
 
-          <form action={upsertWorkingHoursAction} style={sectionStyle}>
-            <input type="hidden" name="locale" value={locale} />
-            <strong>Weekly working hours</strong>
-            <select name="employeeSlug" style={inputStyle}>
-              {siteConfig.team[locale].members.map((member) => (
-                <option key={member.slug} value={member.slug}>
-                  {member.name}
-                </option>
-              ))}
-            </select>
-            <select name="weekday" style={inputStyle}>
-              {weekdayLabels.map((day) => (
-                <option key={day.value} value={day.value}>
-                  {day.label}
-                </option>
-              ))}
-            </select>
-            <input name="start" type="time" style={inputStyle} />
-            <input name="end" type="time" style={inputStyle} />
-            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isOff" />
-              Mark day off
-            </label>
-            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-              Save hours
-            </button>
-          </form>
+            return (
+              <article key={member.slug} style={{ ...surfaceCardStyle, display: "grid", gap: 18 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    flexWrap: "wrap",
+                    alignItems: "baseline"
+                  }}
+                >
+                  <div style={{ display: "grid", gap: 6 }}>
+                    <strong style={{ fontSize: "1.05rem" }}>{member.name}</strong>
+                    <span style={{ color: "var(--muted)" }}>{member.slug}</span>
+                  </div>
+                  <span style={{ color: "var(--muted)" }}>
+                    Hours summary: {buildWeekdaySummary(member.slug) || "none"}
+                  </span>
+                </div>
 
-          <form action={addBlockedTimeAction} style={sectionStyle}>
-            <input type="hidden" name="locale" value={locale} />
-            <strong>Blocked time</strong>
-            <select name="employeeSlug" style={inputStyle}>
-              {siteConfig.team[locale].members.map((member) => (
-                <option key={member.slug} value={member.slug}>
-                  {member.name}
-                </option>
-              ))}
-            </select>
-            <input name="date" type="date" style={inputStyle} />
-            <input name="start" type="time" style={inputStyle} />
-            <input name="end" type="time" style={inputStyle} />
-            <input name="reason" placeholder="Optional reason" style={inputStyle} />
-            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-              Add blocked time
-            </button>
-          </form>
+                <div style={{ display: "grid", gap: 12 }}>
+                  <strong>Assignments</strong>
+                  {assignments.length > 0 ? (
+                    <div style={{ display: "grid", gap: 12 }}>
+                      {assignments.map((entry) => (
+                        <div
+                          key={`${entry.employeeSlug}-${entry.serviceSlug}`}
+                          style={{
+                            border: "1px solid var(--border)",
+                            borderRadius: 16,
+                            padding: 14,
+                            display: "grid",
+                            gap: 12
+                          }}
+                        >
+                          <div style={{ fontWeight: 700 }}>
+                            {getServiceName(locale, entry.serviceSlug) ?? entry.serviceSlug}
+                          </div>
+                          <form
+                            action={upsertAssignmentAction}
+                            style={{
+                              display: "grid",
+                              gap: 12,
+                              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))"
+                            }}
+                          >
+                            <input type="hidden" name="locale" value={locale} />
+                            <input type="hidden" name="employeeSlug" value={member.slug} />
+                            <input type="hidden" name="serviceSlug" value={entry.serviceSlug} />
+                            <input
+                              name="durationMinutes"
+                              type="number"
+                              min="5"
+                              step="5"
+                              defaultValue={entry.durationMinutes}
+                              style={inputStyle}
+                            />
+                            <input name="priceLabel" defaultValue={entry.priceLabel} style={inputStyle} />
+                            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              <input type="checkbox" name="isActive" defaultChecked={entry.isActive} />
+                              Active assignment
+                            </label>
+                            <button
+                              type="submit"
+                              style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}
+                            >
+                              Save assignment
+                            </button>
+                          </form>
+                          <form action={deleteAssignmentAction}>
+                            <input type="hidden" name="locale" value={locale} />
+                            <input type="hidden" name="employeeSlug" value={member.slug} />
+                            <input type="hidden" name="serviceSlug" value={entry.serviceSlug} />
+                            <button type="submit" style={{ ...inputStyle, cursor: "pointer", maxWidth: 200 }}>
+                              Delete assignment
+                            </button>
+                          </form>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ color: "var(--muted)" }}>No assignments stored for this employee.</div>
+                  )}
+                  <form action={upsertAssignmentAction} style={{ ...sectionStyle, gap: 12 }}>
+                    <input type="hidden" name="locale" value={locale} />
+                    <input type="hidden" name="employeeSlug" value={member.slug} />
+                    <strong>Add assignment</strong>
+                    <select name="serviceSlug" style={inputStyle}>
+                      {siteConfig.services[locale].services.map((service) => (
+                        <option key={service.slug} value={service.slug}>
+                          {service.name}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      name="durationMinutes"
+                      type="number"
+                      min="5"
+                      step="5"
+                      placeholder="Duration minutes"
+                      style={inputStyle}
+                    />
+                    <input name="priceLabel" placeholder="Price label" style={inputStyle} />
+                    <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <input type="checkbox" name="isActive" defaultChecked />
+                      Active assignment
+                    </label>
+                    <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+                      Add assignment
+                    </button>
+                  </form>
+                </div>
+
+                <div style={{ display: "grid", gap: 12 }}>
+                  <strong>Weekly working hours</strong>
+                  <div style={{ display: "grid", gap: 10 }}>
+                    {weekdayLabels.map((day) => {
+                      const existingHours = siteConfig.booking.workingHours.find(
+                        (entry) => entry.employeeSlug === member.slug && entry.weekday === day.value
+                      );
+
+                      return (
+                        <form
+                          key={`${member.slug}-${day.value}`}
+                          action={upsertWorkingHoursAction}
+                          style={{
+                            border: "1px solid var(--border)",
+                            borderRadius: 16,
+                            padding: 14,
+                            display: "grid",
+                            gap: 12,
+                            gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))"
+                          }}
+                        >
+                          <input type="hidden" name="locale" value={locale} />
+                          <input type="hidden" name="employeeSlug" value={member.slug} />
+                          <input type="hidden" name="weekday" value={day.value} />
+                          <div style={{ alignSelf: "center", fontWeight: 700 }}>{day.label}</div>
+                          <input
+                            name="start"
+                            type="time"
+                            defaultValue={existingHours?.isOff ? "" : existingHours?.start}
+                            style={inputStyle}
+                          />
+                          <input
+                            name="end"
+                            type="time"
+                            defaultValue={existingHours?.isOff ? "" : existingHours?.end}
+                            style={inputStyle}
+                          />
+                          <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <input type="checkbox" name="isOff" defaultChecked={existingHours?.isOff ?? false} />
+                            Day off
+                          </label>
+                          <button
+                            type="submit"
+                            style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}
+                          >
+                            Save {day.label}
+                          </button>
+                        </form>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gap: 12 }}>
+                  <strong>Blocked times</strong>
+                  {blockedTimes.length > 0 ? (
+                    <div style={{ display: "grid", gap: 12 }}>
+                      {blockedTimes.map((entry) => (
+                        <div
+                          key={`${entry.date}-${entry.start}-${entry.end}`}
+                          style={{
+                            border: "1px solid var(--border)",
+                            borderRadius: 16,
+                            padding: 14,
+                            display: "grid",
+                            gap: 12
+                          }}
+                        >
+                          <form
+                            action={upsertBlockedTimeAction}
+                            style={{
+                              display: "grid",
+                              gap: 12,
+                              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))"
+                            }}
+                          >
+                            <input type="hidden" name="locale" value={locale} />
+                            <input type="hidden" name="employeeSlug" value={member.slug} />
+                            <input type="hidden" name="originalDate" value={entry.date} />
+                            <input type="hidden" name="originalStart" value={entry.start} />
+                            <input type="hidden" name="originalEnd" value={entry.end} />
+                            <input name="date" type="date" defaultValue={entry.date} style={inputStyle} />
+                            <input name="start" type="time" defaultValue={entry.start} style={inputStyle} />
+                            <input name="end" type="time" defaultValue={entry.end} style={inputStyle} />
+                            <input
+                              name="reason"
+                              defaultValue={entry.reason ?? ""}
+                              placeholder="Optional reason"
+                              style={inputStyle}
+                            />
+                            <button
+                              type="submit"
+                              style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}
+                            >
+                              Save blocked time
+                            </button>
+                          </form>
+                          <form action={deleteBlockedTimeAction}>
+                            <input type="hidden" name="locale" value={locale} />
+                            <input type="hidden" name="employeeSlug" value={member.slug} />
+                            <input type="hidden" name="date" value={entry.date} />
+                            <input type="hidden" name="start" value={entry.start} />
+                            <input type="hidden" name="end" value={entry.end} />
+                            <button type="submit" style={{ ...inputStyle, cursor: "pointer", maxWidth: 220 }}>
+                              Delete blocked time
+                            </button>
+                          </form>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ color: "var(--muted)" }}>No blocked times stored for this employee.</div>
+                  )}
+                  <form action={upsertBlockedTimeAction} style={{ ...sectionStyle, gap: 12 }}>
+                    <input type="hidden" name="locale" value={locale} />
+                    <input type="hidden" name="employeeSlug" value={member.slug} />
+                    <strong>Add blocked time</strong>
+                    <input name="date" type="date" style={inputStyle} />
+                    <input name="start" type="time" style={inputStyle} />
+                    <input name="end" type="time" style={inputStyle} />
+                    <input name="reason" placeholder="Optional reason" style={inputStyle} />
+                    <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+                      Add blocked time
+                    </button>
+                  </form>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
 

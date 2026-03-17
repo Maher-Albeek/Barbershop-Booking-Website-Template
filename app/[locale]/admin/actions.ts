@@ -5,6 +5,8 @@ import { requireRole } from "@/lib/auth";
 import {
   addBlockedTime,
   cleanupGalleryUpload,
+  deleteAssignment,
+  deleteBlockedTime,
   ensureLocale,
   isValidTimeRange,
   saveAssignment,
@@ -18,6 +20,7 @@ import {
   saveWorkingHours,
   setBookingStatus,
   deleteGalleryImage,
+  updateBlockedTime,
   uploadGalleryImage,
   deleteEmployee,
   deleteOffer,
@@ -144,6 +147,12 @@ export async function upsertAssignmentAction(formData: FormData) {
   redirectToAdmin(locale, "availability");
 }
 
+export async function deleteAssignmentAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+  deleteAssignment(normalize(formData.get("employeeSlug")), normalize(formData.get("serviceSlug")));
+  redirectToAdmin(locale, "availability");
+}
+
 export async function upsertWorkingHoursAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
   const start = normalize(formData.get("start"));
@@ -182,6 +191,55 @@ export async function addBlockedTimeAction(formData: FormData) {
     reason: normalize(formData.get("reason")) || undefined
   });
 
+  redirectToAdmin(locale, "availability");
+}
+
+export async function upsertBlockedTimeAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+  const date = normalize(formData.get("date"));
+  const start = normalize(formData.get("start"));
+  const end = normalize(formData.get("end"));
+
+  if (!date || !start || !end || !isValidTimeRange(start, end)) {
+    redirectToAdmin(locale, "availability");
+  }
+
+  const originalDate = normalize(formData.get("originalDate"));
+  const originalStart = normalize(formData.get("originalStart"));
+  const originalEnd = normalize(formData.get("originalEnd"));
+
+  if (originalDate && originalStart && originalEnd) {
+    updateBlockedTime({
+      employeeSlug: normalize(formData.get("employeeSlug")),
+      originalDate,
+      originalStart,
+      originalEnd,
+      date,
+      start,
+      end,
+      reason: normalize(formData.get("reason")) || undefined
+    });
+  } else {
+    addBlockedTime({
+      employeeSlug: normalize(formData.get("employeeSlug")),
+      date,
+      start,
+      end,
+      reason: normalize(formData.get("reason")) || undefined
+    });
+  }
+
+  redirectToAdmin(locale, "availability");
+}
+
+export async function deleteBlockedTimeAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+  deleteBlockedTime({
+    employeeSlug: normalize(formData.get("employeeSlug")),
+    date: normalize(formData.get("date")),
+    start: normalize(formData.get("start")),
+    end: normalize(formData.get("end"))
+  });
   redirectToAdmin(locale, "availability");
 }
 

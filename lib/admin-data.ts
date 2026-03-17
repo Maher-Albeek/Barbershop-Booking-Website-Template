@@ -354,6 +354,24 @@ export function saveAssignment(input: {
   }
 }
 
+export function deleteAssignment(employeeSlug: string, serviceSlug: string) {
+  if (!employeeSlug || !serviceSlug) {
+    return;
+  }
+
+  siteConfig.booking.employeeServices = siteConfig.booking.employeeServices.filter(
+    (entry) => !(entry.employeeSlug === employeeSlug && entry.serviceSlug === serviceSlug)
+  );
+
+  for (const locale of locales) {
+    const member = siteConfig.team[locale].members.find((item) => item.slug === employeeSlug);
+
+    if (member) {
+      member.bookingServiceSlugs = member.bookingServiceSlugs.filter((slug) => slug !== serviceSlug);
+    }
+  }
+}
+
 export function saveWorkingHours(input: {
   employeeSlug: string;
   weekday: number;
@@ -389,6 +407,58 @@ export function addBlockedTime(input: {
     end: input.end,
     reason: input.reason || undefined
   });
+}
+
+export function updateBlockedTime(input: {
+  employeeSlug: string;
+  originalDate: string;
+  originalStart: string;
+  originalEnd: string;
+  date: string;
+  start: string;
+  end: string;
+  reason?: string;
+}) {
+  const existing = siteConfig.booking.blockedTimes.find(
+    (entry) =>
+      entry.employeeSlug === input.employeeSlug &&
+      entry.date === input.originalDate &&
+      entry.start === input.originalStart &&
+      entry.end === input.originalEnd
+  );
+
+  if (existing) {
+    existing.date = input.date;
+    existing.start = input.start;
+    existing.end = input.end;
+    existing.reason = input.reason || undefined;
+    return;
+  }
+
+  addBlockedTime({
+    employeeSlug: input.employeeSlug,
+    date: input.date,
+    start: input.start,
+    end: input.end,
+    reason: input.reason
+  });
+}
+
+export function deleteBlockedTime(input: {
+  employeeSlug: string;
+  date: string;
+  start: string;
+  end: string;
+}) {
+  siteConfig.booking.blockedTimes = siteConfig.booking.blockedTimes.filter(
+    (entry) =>
+      !(
+        entry.employeeSlug === input.employeeSlug &&
+        entry.date === input.date &&
+        entry.start === input.start &&
+        entry.end === input.end
+      )
+  );
 }
 
 export function saveGalleryImage(input: {
