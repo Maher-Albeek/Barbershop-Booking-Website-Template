@@ -158,6 +158,26 @@ export function saveService(input: {
   }
 }
 
+export function deleteService(serviceSlug: string) {
+  if (!serviceSlug) {
+    return;
+  }
+
+  for (const locale of locales) {
+    siteConfig.services[locale].services = siteConfig.services[locale].services.filter(
+      (service) => service.slug !== serviceSlug
+    );
+
+    for (const member of siteConfig.team[locale].members) {
+      member.bookingServiceSlugs = member.bookingServiceSlugs.filter((slug) => slug !== serviceSlug);
+    }
+  }
+
+  siteConfig.booking.employeeServices = siteConfig.booking.employeeServices.filter(
+    (entry) => entry.serviceSlug !== serviceSlug
+  );
+}
+
 export function saveEmployee(input: {
   employeeSlug?: string;
   slug?: string;

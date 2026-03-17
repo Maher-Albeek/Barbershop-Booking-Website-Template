@@ -18,7 +18,8 @@ import {
   setBookingStatus,
   deleteGalleryImage,
   deleteEmployee,
-  deleteOffer
+  deleteOffer,
+  deleteService
 } from "@/lib/admin-data";
 import { locales, type Locale } from "@/lib/i18n";
 
@@ -69,6 +70,12 @@ export async function upsertServiceAction(formData: FormData) {
     }
   });
 
+  redirectToAdmin(locale, "services");
+}
+
+export async function deleteServiceAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+  deleteService(normalize(formData.get("serviceSlug")));
   redirectToAdmin(locale, "services");
 }
 

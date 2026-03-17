@@ -16,6 +16,7 @@ import {
   deleteEmployeeAction,
   deleteGalleryAction,
   deleteOfferAction,
+  deleteServiceAction,
   updateBookingStatusAction,
   updateContactContentAction,
   updateEmailSettingsAction,
@@ -46,6 +47,7 @@ type AdminPageProps = {
     bookingEmployee?: string;
     bookingService?: string;
     bookingStatus?: "confirmed" | "cancelled" | "completed" | "no_show";
+    editService?: string;
     editEmployee?: string;
   }>;
 };
@@ -60,6 +62,9 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
   const session = await getSession();
   const dashboard = getDashboardData(locale);
   const options = getBookingOptions(locale);
+  const serviceToEdit = filters.editService
+    ? siteConfig.services[locale].services.find((service) => service.slug === filters.editService)
+    : undefined;
   const employeeToEdit = filters.editEmployee
     ? siteConfig.team[locale].members.find((member) => member.slug === filters.editEmployee)
     : undefined;
@@ -138,31 +143,104 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
               <div style={{ marginTop: 8 }}>
                 {service.isActive ? "Active" : "Inactive"} · {service.durationLabel}
               </div>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
+                <Link href={`/${locale}/admin?editService=${service.slug}#services`}>Edit</Link>
+                <form action={deleteServiceAction}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <input type="hidden" name="serviceSlug" value={service.slug} />
+                  <button
+                    type="submit"
+                    style={{
+                      padding: 0,
+                      border: 0,
+                      background: "transparent",
+                      color: "inherit",
+                      cursor: "pointer",
+                      textDecoration: "underline"
+                    }}
+                  >
+                    Delete
+                  </button>
+                </form>
+              </div>
             </article>
           ))}
         </div>
         <form action={upsertServiceAction} style={{ display: "grid", gap: 14 }}>
           <input type="hidden" name="locale" value={locale} />
           <div style={gridTwo}>
-            <input name="serviceSlug" placeholder="Existing slug" style={inputStyle} />
+            <input
+              name="serviceSlug"
+              defaultValue={serviceToEdit?.slug ?? ""}
+              placeholder="Existing slug"
+              style={inputStyle}
+            />
             <input name="slug" placeholder="New slug override" style={inputStyle} />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isActive" defaultChecked />
+              <input type="checkbox" name="isActive" defaultChecked={serviceToEdit?.isActive ?? true} />
               Active service
             </label>
           </div>
+          {serviceToEdit ? (
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+              <div style={{ color: "var(--muted)" }}>
+                Editing <strong style={{ color: "inherit" }}>{serviceToEdit.name}</strong>
+              </div>
+              <Link href={`/${locale}/admin#services`}>Clear form</Link>
+            </div>
+          ) : null}
           <div style={gridTwo}>
             {locales.map((item) => (
               <LocaleFields key={item} title={localeLabels[item]}>
-                <input name={`name_${item}`} placeholder="Name" style={inputStyle} />
-                <input name={`description_${item}`} placeholder="Description" style={inputStyle} />
-                <input name={`duration_${item}`} placeholder="Duration label" style={inputStyle} />
-                <input name={`price_${item}`} placeholder="Price label" style={inputStyle} />
+                <input
+                  name={`name_${item}`}
+                  defaultValue={
+                    serviceToEdit
+                      ? (siteConfig.services[item].services.find((service) => service.slug === serviceToEdit.slug)
+                          ?.name ?? "")
+                      : ""
+                  }
+                  placeholder="Name"
+                  style={inputStyle}
+                />
+                <input
+                  name={`description_${item}`}
+                  defaultValue={
+                    serviceToEdit
+                      ? (siteConfig.services[item].services.find((service) => service.slug === serviceToEdit.slug)
+                          ?.description ?? "")
+                      : ""
+                  }
+                  placeholder="Description"
+                  style={inputStyle}
+                />
+                <input
+                  name={`duration_${item}`}
+                  defaultValue={
+                    serviceToEdit
+                      ? (siteConfig.services[item].services.find((service) => service.slug === serviceToEdit.slug)
+                          ?.durationLabel ?? "")
+                      : ""
+                  }
+                  placeholder="Duration label"
+                  style={inputStyle}
+                />
+                <input
+                  name={`price_${item}`}
+                  defaultValue={
+                    serviceToEdit
+                      ? (siteConfig.services[item].services.find((service) => service.slug === serviceToEdit.slug)
+                          ?.priceLabel ?? "")
+                      : ""
+                  }
+                  placeholder="Price label"
+                  style={inputStyle}
+                />
               </LocaleFields>
             ))}
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Save service
+            {serviceToEdit ? "Update service" : "Save service"}
           </button>
         </form>
       </section>
