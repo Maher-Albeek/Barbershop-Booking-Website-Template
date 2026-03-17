@@ -36,27 +36,19 @@ export default async function OffersPage({ params }: OffersPageProps) {
 
   return (
     <main
+      className="page-main"
       lang={locale}
       dir={dictionary.direction}
-      style={{
-        minHeight: "100vh",
-        padding: "32px 20px 56px"
-      }}
+      style={{ minHeight: "100vh" }}
     >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto"
-        }}
-      >
+      <div className="page-container">
         <header
+          className="page-header"
           style={{
             border: "1px solid var(--border)",
             background: "var(--surface)",
             backdropFilter: "blur(18px)",
-            borderRadius: 28,
             boxShadow: "var(--shadow)",
-            padding: "18px 22px",
             display: "flex",
             gap: 16,
             alignItems: "center",
@@ -64,7 +56,7 @@ export default async function OffersPage({ params }: OffersPageProps) {
             flexWrap: "wrap"
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div className="page-brand" style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div
               aria-hidden="true"
               style={{
@@ -98,6 +90,7 @@ export default async function OffersPage({ params }: OffersPageProps) {
           </div>
 
           <nav
+            className="page-nav"
             aria-label={dictionary.labels.primaryNavigation}
             style={{
               display: "flex",
@@ -114,7 +107,7 @@ export default async function OffersPage({ params }: OffersPageProps) {
             ))}
           </nav>
 
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div className="page-locale-switcher" style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {siteConfig.locales.map((item) => (
               <Link
                 key={item}
@@ -140,14 +133,13 @@ export default async function OffersPage({ params }: OffersPageProps) {
         </header>
 
         <section
+          className="hero-panel"
           style={{
             marginTop: 24,
-            borderRadius: 36,
             overflow: "hidden",
             boxShadow: "var(--shadow)",
             background:
-              "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))",
-            padding: "42px 28px 34px"
+              "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))"
           }}
         >
           <div
@@ -172,11 +164,10 @@ export default async function OffersPage({ params }: OffersPageProps) {
             </div>
 
             <h1
+              className="hero-title"
               style={{
                 margin: "18px 0 14px",
-                color: "#fffaf4",
-                fontSize: "clamp(2.5rem, 6vw, 4.8rem)",
-                lineHeight: 1
+                color: "#fffaf4"
               }}
             >
               {offersContent.title}
@@ -196,18 +187,18 @@ export default async function OffersPage({ params }: OffersPageProps) {
         </section>
 
         <section
+          className="auto-grid-280 mobile-stack"
           style={{
             marginTop: 24,
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
             gap: 18
           }}
         >
           {visibleOffers.map((offer) => (
             <article
               key={offer.slug}
+              className="surface-panel"
               style={{
-                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",

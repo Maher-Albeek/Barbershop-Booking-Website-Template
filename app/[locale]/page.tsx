@@ -24,27 +24,21 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <main
+      className="page-main"
       lang={locale}
       dir={dictionary.direction}
       style={{
-        minHeight: "100vh",
-        padding: "32px 20px 56px"
+        minHeight: "100vh"
       }}
     >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: "0 auto"
-        }}
-      >
+      <div className="page-container">
         <header
+          className="page-header"
           style={{
             border: "1px solid var(--border)",
             background: "var(--surface)",
             backdropFilter: "blur(18px)",
-            borderRadius: 28,
             boxShadow: "var(--shadow)",
-            padding: "18px 22px",
             display: "flex",
             gap: 16,
             alignItems: "center",
@@ -52,7 +46,7 @@ export default async function HomePage({ params }: HomePageProps) {
             flexWrap: "wrap"
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div className="page-brand" style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div
               aria-hidden="true"
               style={{
@@ -86,6 +80,7 @@ export default async function HomePage({ params }: HomePageProps) {
           </div>
 
           <nav
+            className="page-nav"
             aria-label={dictionary.labels.primaryNavigation}
             style={{
               display: "flex",
@@ -102,7 +97,7 @@ export default async function HomePage({ params }: HomePageProps) {
             ))}
           </nav>
 
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div className="page-locale-switcher" style={{ display: "flex", gap: 8, alignItems: "center" }}>
                 {siteConfig.locales.map((item) => (
               <Link
                 key={item}
@@ -128,9 +123,9 @@ export default async function HomePage({ params }: HomePageProps) {
         </header>
 
         <section
+          className="hero-panel hero-panel--home"
           style={{
             marginTop: 24,
-            borderRadius: 36,
             overflow: "hidden",
             boxShadow: "var(--shadow)",
             background:
@@ -138,11 +133,10 @@ export default async function HomePage({ params }: HomePageProps) {
           }}
         >
           <div
+            className="hero-grid hero-grid--split mobile-stack"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 28,
-              padding: "48px 28px"
+              gap: 28
             }}
           >
             <div>
@@ -162,14 +156,13 @@ export default async function HomePage({ params }: HomePageProps) {
                 {content.hero.kicker}
               </div>
 
-              <h1
-                style={{
-                  margin: "18px 0 14px",
-                  color: "#fffaf4",
-                  fontSize: "clamp(2.8rem, 7vw, 5.6rem)",
-                  lineHeight: 0.96
-                }}
-              >
+            <h1
+              className="hero-title hero-title--home"
+              style={{
+                margin: "18px 0 14px",
+                color: "#fffaf4"
+              }}
+            >
                 {content.hero.title}
               </h1>
 

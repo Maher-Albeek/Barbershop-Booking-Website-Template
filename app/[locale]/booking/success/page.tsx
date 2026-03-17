@@ -30,15 +30,16 @@ export default async function BookingSuccessPage({
 
   return (
     <main
+      className="page-main"
       lang={locale}
       dir={dictionary.direction}
-      style={{ minHeight: "100vh", padding: "32px 20px 56px" }}
+      style={{ minHeight: "100vh" }}
     >
-      <div style={{ maxWidth: 960, margin: "0 auto", display: "grid", gap: 24 }}>
+      <div className="page-container page-container--narrow mobile-stack" style={{ display: "grid", gap: 24 }}>
         <section
+          className="hero-panel"
           style={{
-            borderRadius: 32,
-            padding: "34px 28px",
+            marginTop: 0,
             background:
               "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))",
             color: "#fffaf4",
@@ -60,7 +61,7 @@ export default async function BookingSuccessPage({
             {booking ? dictionary.booking.successEyebrow : dictionary.booking.successMissingTitle}
           </div>
 
-          <h1 style={{ margin: "18px 0 12px", fontSize: "clamp(2.4rem, 5vw, 4rem)" }}>
+          <h1 className="hero-title" style={{ margin: "18px 0 12px" }}>
             {booking ? dictionary.booking.successTitle : dictionary.booking.successMissingTitle}
           </h1>
           <p style={{ margin: 0, color: "rgba(255, 250, 244, 0.82)", lineHeight: 1.7 }}>
@@ -72,27 +73,26 @@ export default async function BookingSuccessPage({
 
         {booking ? (
           <section
+            className="content-grid-success mobile-stack"
             style={{
               display: "grid",
-              gridTemplateColumns: "minmax(0, 1.2fr) minmax(280px, 0.8fr)",
               gap: 18
             }}
           >
             <div
+              className="surface-panel surface-panel-grid"
               style={{
-                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
-                padding: 24,
                 display: "grid",
                 gap: 16
               }}
             >
               <div
+                className="auto-grid-220 mobile-stack"
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
                   gap: 14
                 }}
               >
@@ -150,12 +150,11 @@ export default async function BookingSuccessPage({
             </div>
 
             <aside
+              className="surface-panel surface-panel-grid"
               style={{
-                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
-                padding: 24,
                 display: "grid",
                 gap: 16,
                 alignContent: "start"

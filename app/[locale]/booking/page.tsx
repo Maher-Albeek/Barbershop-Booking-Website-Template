@@ -172,16 +172,15 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
   const feedbackMessage = errorMessage(error, dictionary);
 
   return (
-    <main lang={locale} dir={dictionary.direction} style={{ minHeight: "100vh", padding: "32px 20px 56px" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+    <main className="page-main" lang={locale} dir={dictionary.direction} style={{ minHeight: "100vh" }}>
+      <div className="page-container">
         <header
+          className="page-header"
           style={{
             border: "1px solid var(--border)",
             background: "var(--surface)",
             backdropFilter: "blur(18px)",
-            borderRadius: 28,
             boxShadow: "var(--shadow)",
-            padding: "18px 22px",
             display: "flex",
             gap: 16,
             alignItems: "center",
@@ -189,7 +188,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
             flexWrap: "wrap"
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div className="page-brand" style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div
               aria-hidden="true"
               style={{
@@ -223,6 +222,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
           </div>
 
           <nav
+            className="page-nav"
             aria-label={dictionary.labels.primaryNavigation}
             style={{ display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center", justifyContent: "center" }}
           >
@@ -233,7 +233,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
             ))}
           </nav>
 
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div className="page-locale-switcher" style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {siteConfig.locales.map((item) => (
               <Link
                 key={item}
@@ -269,14 +269,13 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
         </header>
 
         <section
+          className="hero-panel"
           style={{
             marginTop: 24,
-            borderRadius: 36,
             overflow: "hidden",
             boxShadow: "var(--shadow)",
             background:
-              "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))",
-            padding: "42px 28px 34px"
+              "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))"
           }}
         >
           <div style={{ maxWidth: 760 }}>
@@ -297,11 +296,10 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
             </div>
 
             <h1
+              className="hero-title"
               style={{
                 margin: "18px 0 14px",
-                color: "#fffaf4",
-                fontSize: "clamp(2.5rem, 6vw, 4.8rem)",
-                lineHeight: 1
+                color: "#fffaf4"
               }}
             >
               {dictionary.booking.title}
@@ -314,22 +312,21 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
         </section>
 
         <section
+          className="content-grid-2 mobile-stack"
           style={{
             marginTop: 24,
             display: "grid",
-            gridTemplateColumns: "minmax(0, 1.7fr) minmax(280px, 0.9fr)",
             gap: 18
           }}
         >
           <div style={{ display: "grid", gap: 18 }}>
             <form
               method="get"
+              className="surface-panel surface-panel-grid"
               style={{
-                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
-                padding: 24,
                 display: "grid",
                 gap: 24
               }}
@@ -536,9 +533,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                         </strong>
 
                         <div
+                          className="auto-grid-220 mobile-stack"
                           style={{
                             display: "grid",
-                            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
                             gap: 12
                           }}
                         >
@@ -609,12 +606,11 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
             </form>
 
             <section
+              className="surface-panel surface-panel-grid"
               style={{
-                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
-                padding: 24,
                 display: "grid",
                 gap: 18
               }}
@@ -667,9 +663,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                     >
                       <strong>{group.label}</strong>
                       <div
+                        className="slot-grid mobile-stack"
                         style={{
                           display: "grid",
-                          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
                           gap: 10
                         }}
                       >
@@ -758,12 +754,11 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
 
             <form
               action={submitBooking}
+              className="surface-panel surface-panel-grid"
               style={{
-                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
-                padding: 24,
                 display: "grid",
                 gap: 18
               }}
@@ -818,9 +813,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                 >
                   <strong style={{ fontSize: 18 }}>{dictionary.booking.selectedSlotTitle}</strong>
                   <div
+                    className="details-grid mobile-stack"
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
                       gap: 12
                     }}
                   >
@@ -942,12 +937,11 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
           </div>
 
           <aside
+            className="surface-panel surface-panel-grid"
             style={{
-              borderRadius: 28,
               border: "1px solid var(--border)",
               background: "var(--surface-strong)",
               boxShadow: "var(--shadow)",
-              padding: 24,
               display: "grid",
               gap: 18,
               alignContent: "start"
