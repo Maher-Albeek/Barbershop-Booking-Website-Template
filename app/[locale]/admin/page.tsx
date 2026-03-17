@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   buildWeekdaySummary,
@@ -7,10 +8,12 @@ import {
   listFilteredBookings
 } from "@/lib/admin-data";
 import { getSession } from "@/lib/auth";
+import { authUsers } from "@/lib/auth-users";
 import { isLocale, locales } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
 import {
   addBlockedTimeAction,
+  deleteEmployeeAction,
   deleteGalleryAction,
   deleteOfferAction,
   updateBookingStatusAction,
@@ -43,6 +46,7 @@ type AdminPageProps = {
     bookingEmployee?: string;
     bookingService?: string;
     bookingStatus?: "confirmed" | "cancelled" | "completed" | "no_show";
+    editEmployee?: string;
   }>;
 };
 
@@ -56,6 +60,12 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
   const session = await getSession();
   const dashboard = getDashboardData(locale);
   const options = getBookingOptions(locale);
+  const employeeToEdit = filters.editEmployee
+    ? siteConfig.team[locale].members.find((member) => member.slug === filters.editEmployee)
+    : undefined;
+  const employeeLogin = employeeToEdit
+    ? authUsers.find((user) => user.role === "employee" && user.employeeSlug === employeeToEdit.slug)
+    : undefined;
   const bookings = listFilteredBookings({
     date: filters.bookingDate,
     employeeSlug: filters.bookingEmployee,
@@ -168,40 +178,117 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
               <div style={{ marginTop: 8, color: "var(--muted)" }}>
                 {member.specialties.join(", ")}
               </div>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 14 }}>
+                <Link href={`/${locale}/admin?editEmployee=${member.slug}#employees`}>Edit</Link>
+                <form action={deleteEmployeeAction}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <input type="hidden" name="employeeSlug" value={member.slug} />
+                  <button
+                    type="submit"
+                    style={{
+                      padding: 0,
+                      border: 0,
+                      background: "transparent",
+                      color: "inherit",
+                      cursor: "pointer",
+                      textDecoration: "underline"
+                    }}
+                  >
+                    Delete
+                  </button>
+                </form>
+              </div>
             </article>
           ))}
         </div>
         <form action={upsertEmployeeAction} style={{ display: "grid", gap: 14 }}>
           <input type="hidden" name="locale" value={locale} />
           <div style={gridTwo}>
-            <input name="employeeSlug" placeholder="Existing slug" style={inputStyle} />
+            <input
+              name="employeeSlug"
+              defaultValue={employeeToEdit?.slug ?? ""}
+              placeholder="Existing slug"
+              style={inputStyle}
+            />
             <input name="slug" placeholder="New slug override" style={inputStyle} />
-            <input name="loginEmail" placeholder="Employee login email" style={inputStyle} />
+            <input
+              name="loginEmail"
+              defaultValue={employeeLogin?.email ?? ""}
+              placeholder="Employee login email"
+              style={inputStyle}
+            />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isActive" defaultChecked />
+              <input type="checkbox" name="isActive" defaultChecked={employeeToEdit?.isActive ?? true} />
               Active employee
             </label>
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="linkLogin" />
+              <input type="checkbox" name="linkLogin" defaultChecked={Boolean(employeeLogin)} />
               Create/link login
             </label>
           </div>
+          {employeeToEdit ? (
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+              <div style={{ color: "var(--muted)" }}>
+                Editing <strong style={{ color: "inherit" }}>{employeeToEdit.name}</strong>
+              </div>
+              <Link href={`/${locale}/admin#employees`}>Clear form</Link>
+            </div>
+          ) : null}
           <div style={gridTwo}>
             {locales.map((item) => (
               <LocaleFields key={item} title={localeLabels[item]}>
-                <input name={`name_${item}`} placeholder="Display name" style={inputStyle} />
-                <input name={`image_${item}`} placeholder="Avatar URL" style={inputStyle} />
+                <input
+                  name={`name_${item}`}
+                  defaultValue={
+                    employeeToEdit
+                      ? (siteConfig.team[item].members.find((member) => member.slug === employeeToEdit.slug)?.name ??
+                        "")
+                      : ""
+                  }
+                  placeholder="Display name"
+                  style={inputStyle}
+                />
+                <input
+                  name={`image_${item}`}
+                  defaultValue={
+                    employeeToEdit
+                      ? (siteConfig.team[item].members.find((member) => member.slug === employeeToEdit.slug)
+                          ?.imageSrc ?? "")
+                      : ""
+                  }
+                  placeholder="Avatar URL"
+                  style={inputStyle}
+                />
                 <input
                   name={`specialties_${item}`}
+                  defaultValue={
+                    employeeToEdit
+                      ? (
+                          siteConfig.team[item].members.find((member) => member.slug === employeeToEdit.slug)
+                            ?.specialties ?? []
+                        ).join(", ")
+                      : ""
+                  }
                   placeholder="Comma-separated specialties"
                   style={inputStyle}
                 />
-                <textarea name={`bio_${item}`} rows={4} placeholder="Bio" style={inputStyle} />
+                <textarea
+                  name={`bio_${item}`}
+                  rows={4}
+                  defaultValue={
+                    employeeToEdit
+                      ? (siteConfig.team[item].members.find((member) => member.slug === employeeToEdit.slug)?.bio ??
+                        "")
+                      : ""
+                  }
+                  placeholder="Bio"
+                  style={inputStyle}
+                />
               </LocaleFields>
             ))}
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Save employee
+            {employeeToEdit ? "Update employee" : "Save employee"}
           </button>
         </form>
       </section>

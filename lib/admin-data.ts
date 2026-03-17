@@ -263,6 +263,33 @@ export function saveEmployee(input: {
   }
 }
 
+export function deleteEmployee(employeeSlug: string) {
+  if (!employeeSlug) {
+    return;
+  }
+
+  for (const locale of locales) {
+    siteConfig.team[locale].members = siteConfig.team[locale].members.filter(
+      (member) => member.slug !== employeeSlug
+    );
+  }
+
+  siteConfig.booking.employeeServices = siteConfig.booking.employeeServices.filter(
+    (entry) => entry.employeeSlug !== employeeSlug
+  );
+  siteConfig.booking.workingHours = siteConfig.booking.workingHours.filter(
+    (entry) => entry.employeeSlug !== employeeSlug
+  );
+  siteConfig.booking.blockedTimes = siteConfig.booking.blockedTimes.filter(
+    (entry) => entry.employeeSlug !== employeeSlug
+  );
+
+  const nextUsers = authUsers.filter(
+    (user) => !(user.role === "employee" && user.employeeSlug === employeeSlug)
+  );
+  authUsers.splice(0, authUsers.length, ...nextUsers);
+}
+
 export function saveAssignment(input: {
   employeeSlug: string;
   serviceSlug: string;

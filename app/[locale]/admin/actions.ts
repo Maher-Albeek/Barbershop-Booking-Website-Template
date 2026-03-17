@@ -17,6 +17,7 @@ import {
   saveWorkingHours,
   setBookingStatus,
   deleteGalleryImage,
+  deleteEmployee,
   deleteOffer
 } from "@/lib/admin-data";
 import { locales, type Locale } from "@/lib/i18n";
@@ -111,6 +112,12 @@ export async function upsertEmployeeAction(formData: FormData) {
     }
   });
 
+  redirectToAdmin(locale, "employees");
+}
+
+export async function deleteEmployeeAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+  deleteEmployee(normalize(formData.get("employeeSlug")));
   redirectToAdmin(locale, "employees");
 }
 
