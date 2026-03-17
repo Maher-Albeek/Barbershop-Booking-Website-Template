@@ -97,7 +97,7 @@ const dictionaries = {
       customerStepLabel: "Step 4",
       customerStepTitle: "Enter your booking details",
       customerStepDescription:
-        "Add your name, phone, email, and optional notes to create a confirmed appointment.",
+        "Add your name, email, and optional notes to create a confirmed appointment.",
       selectedSlotTitle: "Selected appointment",
       selectedDateLabel: "Date",
       selectedTimeLabel: "Time",
@@ -108,7 +108,6 @@ const dictionaries = {
       noSlotDescription:
         "Select one of the available appointments above before entering your contact details.",
       nameLabel: "Full name",
-      phoneLabel: "Phone number",
       emailLabel: "Email address",
       notesLabel: "Notes",
       notesHint: "Optional notes for the shop",
@@ -124,7 +123,7 @@ const dictionaries = {
       backToBookingLabel: "Book another appointment",
       backToHomeLabel: "Back to homepage",
       contactTitle: "Shop contact details",
-      errorMissingFields: "Enter your name, phone number, and a valid time slot.",
+      errorMissingFields: "Enter your name and a valid time slot.",
       errorInvalidEmail: "Enter a valid email address or leave the field empty.",
       errorInvalidSelection: "The selected service or employee is no longer available.",
       errorSlotUnavailable:
@@ -227,7 +226,7 @@ const dictionaries = {
       customerStepLabel: "Schritt 4",
       customerStepTitle: "Buchungsdaten eingeben",
       customerStepDescription:
-        "Trage Name, Telefonnummer, E-Mail und optionale Hinweise ein, um den Termin direkt zu bestaetigen.",
+        "Trage Name, E-Mail und optionale Hinweise ein, um den Termin direkt zu bestaetigen.",
       selectedSlotTitle: "Ausgewaehlter Termin",
       selectedDateLabel: "Datum",
       selectedTimeLabel: "Uhrzeit",
@@ -238,7 +237,6 @@ const dictionaries = {
       noSlotDescription:
         "Waehle oben einen verfuegbaren Termin aus, bevor du deine Kontaktdaten eingibst.",
       nameLabel: "Vollstaendiger Name",
-      phoneLabel: "Telefonnummer",
       emailLabel: "E-Mail-Adresse",
       notesLabel: "Hinweise",
       notesHint: "Optionale Hinweise fuer den Shop",
@@ -254,7 +252,7 @@ const dictionaries = {
       backToBookingLabel: "Weiteren Termin buchen",
       backToHomeLabel: "Zur Startseite",
       contactTitle: "Kontakt des Shops",
-      errorMissingFields: "Gib Namen, Telefonnummer und ein gueltiges Zeitfenster an.",
+      errorMissingFields: "Gib Namen und ein gueltiges Zeitfenster an.",
       errorInvalidEmail: "Gib eine gueltige E-Mail-Adresse ein oder lasse das Feld leer.",
       errorInvalidSelection:
         "Die ausgewaehlte Leistung oder der ausgewaehlte Barber ist nicht mehr verfuegbar.",
@@ -358,7 +356,7 @@ const dictionaries = {
       customerStepLabel: "\u0627\u0644\u062e\u0637\u0648\u0629 4",
       customerStepTitle: "\u0623\u062f\u062e\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062d\u062c\u0632",
       customerStepDescription:
-        "\u0623\u0636\u0641 \u0627\u0644\u0627\u0633\u0645 \u0648\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641 \u0648\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0648\u0627\u0644\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u0627\u062e\u062a\u064a\u0627\u0631\u064a\u0629 \u0644\u0625\u0646\u0634\u0627\u0621 \u0645\u0648\u0639\u062f \u0645\u0624\u0643\u062f.",
+        "\u0623\u0636\u0641 \u0627\u0644\u0627\u0633\u0645 \u0648\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0648\u0627\u0644\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u0627\u062e\u062a\u064a\u0627\u0631\u064a\u0629 \u0644\u0625\u0646\u0634\u0627\u0621 \u0645\u0648\u0639\u062f \u0645\u0624\u0643\u062f.",
       selectedSlotTitle: "\u0627\u0644\u0645\u0648\u0639\u062f \u0627\u0644\u0645\u062d\u062f\u062f",
       selectedDateLabel: "\u0627\u0644\u062a\u0627\u0631\u064a\u062e",
       selectedTimeLabel: "\u0627\u0644\u0648\u0642\u062a",
@@ -369,7 +367,6 @@ const dictionaries = {
       noSlotDescription:
         "\u0627\u062e\u062a\u0631 \u0623\u062d\u062f \u0627\u0644\u0645\u0648\u0627\u0639\u064a\u062f \u0627\u0644\u0645\u062a\u0627\u062d\u0629 \u0623\u0639\u0644\u0627\u0647 \u0642\u0628\u0644 \u0625\u062f\u062e\u0627\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062a\u0648\u0627\u0635\u0644.",
       nameLabel: "\u0627\u0644\u0627\u0633\u0645 \u0627\u0644\u0643\u0627\u0645\u0644",
-      phoneLabel: "\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641",
       emailLabel: "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a",
       notesLabel: "\u0645\u0644\u0627\u062d\u0638\u0627\u062a",
       notesHint: "\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u062e\u062a\u064a\u0627\u0631\u064a\u0629 \u0644\u0644\u0635\u0627\u0644\u0648\u0646",
@@ -386,7 +383,7 @@ const dictionaries = {
       backToHomeLabel: "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629",
       contactTitle: "\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u062a\u0635\u0627\u0644 \u0627\u0644\u0635\u0627\u0644\u0648\u0646",
       errorMissingFields:
-        "\u0623\u062f\u062e\u0644 \u0627\u0644\u0627\u0633\u0645 \u0648\u0631\u0642\u0645 \u0627\u0644\u0647\u0627\u062a\u0641 \u0648\u0627\u062e\u062a\u0631 \u0648\u0642\u062a\u0627\u064b \u0635\u0627\u0644\u062d\u0627\u064b.",
+        "\u0623\u062f\u062e\u0644 \u0627\u0644\u0627\u0633\u0645 \u0648\u0627\u062e\u062a\u0631 \u0648\u0642\u062a\u0627\u064b \u0635\u0627\u0644\u062d\u0627\u064b.",
       errorInvalidEmail:
         "\u0623\u062f\u062e\u0644 \u0628\u0631\u064a\u062f\u0627\u064b \u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u0627\u064b \u0635\u062d\u064a\u062d\u0627\u064b \u0623\u0648 \u0627\u062a\u0631\u0643 \u0627\u0644\u062d\u0642\u0644 \u0641\u0627\u0631\u063a\u0627\u064b.",
       errorInvalidSelection:
@@ -484,7 +481,6 @@ const dictionaries = {
       noSlotTitle: string;
       noSlotDescription: string;
       nameLabel: string;
-      phoneLabel: string;
       emailLabel: string;
       notesLabel: string;
       notesHint: string;

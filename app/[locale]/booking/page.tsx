@@ -16,7 +16,6 @@ type BookingPageProps = {
     slotEmployee?: string;
     error?: string;
     name?: string;
-    phone?: string;
     email?: string;
     notes?: string;
   }>;
@@ -54,7 +53,6 @@ function bookingHref(
     start?: string;
     slotEmployee?: string;
     name?: string;
-    phone?: string;
     email?: string;
     notes?: string;
     error?: string;
@@ -90,7 +88,7 @@ function errorMessage(code: string | undefined, dictionary: ReturnType<typeof ge
 export default async function BookingPage({ params, searchParams }: BookingPageProps) {
   const [
     { locale },
-    { service, employee, date, start, slotEmployee, error, name, phone, email, notes }
+    { service, employee, date, start, slotEmployee, error, name, email, notes }
   ] = await Promise.all([params, searchParams]);
 
   if (!isLocale(locale)) {
@@ -246,7 +244,6 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                   start,
                   slotEmployee,
                   name,
-                  phone,
                   email,
                   notes,
                   error
@@ -692,7 +689,6 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                                 start: slot.start,
                                 slotEmployee: slot.employeeSlug,
                                 name,
-                                phone,
                                 email,
                                 notes
                               })}
@@ -878,43 +874,20 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                 </div>
               )}
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                  gap: 14
-                }}
-              >
-                <label style={{ display: "grid", gap: 8 }}>
-                  <span>{dictionary.booking.nameLabel}</span>
-                  <input
-                    name="customerName"
-                    defaultValue={name}
-                    required
-                    style={{
-                      padding: "14px 16px",
-                      borderRadius: 16,
-                      border: "1px solid var(--border)",
-                      background: "var(--surface)"
-                    }}
-                  />
-                </label>
-
-                <label style={{ display: "grid", gap: 8 }}>
-                  <span>{dictionary.booking.phoneLabel}</span>
-                  <input
-                    name="phone"
-                    defaultValue={phone}
-                    required
-                    style={{
-                      padding: "14px 16px",
-                      borderRadius: 16,
-                      border: "1px solid var(--border)",
-                      background: "var(--surface)"
-                    }}
-                  />
-                </label>
-              </div>
+              <label style={{ display: "grid", gap: 8 }}>
+                <span>{dictionary.booking.nameLabel}</span>
+                <input
+                  name="customerName"
+                  defaultValue={name}
+                  required
+                  style={{
+                    padding: "14px 16px",
+                    borderRadius: 16,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)"
+                  }}
+                />
+              </label>
 
               <label style={{ display: "grid", gap: 8 }}>
                 <span>{dictionary.booking.emailLabel}</span>

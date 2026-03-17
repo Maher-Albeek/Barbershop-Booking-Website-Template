@@ -15,7 +15,6 @@ export type BookingRecord = {
   durationSnapshot: number;
   priceSnapshot: string;
   customerName: string;
-  phone: string;
   email?: string;
   notes?: string;
   createdAt: string;
@@ -38,7 +37,6 @@ type CreateBookingInput = {
   date: string;
   start: string;
   customerName: string;
-  phone: string;
   email?: string;
   notes?: string;
 };
@@ -242,7 +240,6 @@ export function createConfirmedBooking(input: CreateBookingInput) {
     durationSnapshot: slot.durationMinutes,
     priceSnapshot: slot.priceLabel,
     customerName: input.customerName,
-    phone: input.phone,
     email: input.email,
     notes: input.notes,
     createdAt: new Date().toISOString()

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
+import { ContactForm } from "./contact-form";
+import { ContactMap } from "./contact-map";
 
 type ContactPageProps = {
   params: Promise<{ locale: string }>;
@@ -433,110 +435,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
               </p>
             </div>
 
-            <form style={{ display: "grid", gap: 16 }}>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                  gap: 14
-                }}
-              >
-                <label style={{ display: "grid", gap: 8 }}>
-                  <span>{contactContent.form.nameLabel}</span>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    style={{
-                      width: "100%",
-                      borderRadius: 16,
-                      border: "1px solid var(--border)",
-                      background: "rgba(255, 250, 244, 0.7)",
-                      padding: "14px 16px",
-                      color: "var(--foreground)"
-                    }}
-                  />
-                </label>
-
-                <label style={{ display: "grid", gap: 8 }}>
-                  <span>{contactContent.form.emailLabel}</span>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    style={{
-                      width: "100%",
-                      borderRadius: 16,
-                      border: "1px solid var(--border)",
-                      background: "rgba(255, 250, 244, 0.7)",
-                      padding: "14px 16px",
-                      color: "var(--foreground)"
-                    }}
-                  />
-                </label>
-              </div>
-
-              <div
-                style={{
-                  display: "grid"
-                }}
-              >
-                <label style={{ display: "grid", gap: 8 }}>
-                  <span>{contactContent.form.subjectLabel}</span>
-                  <input
-                    type="text"
-                    name="subject"
-                    required
-                    style={{
-                      width: "100%",
-                      borderRadius: 16,
-                      border: "1px solid var(--border)",
-                      background: "rgba(255, 250, 244, 0.7)",
-                      padding: "14px 16px",
-                      color: "var(--foreground)"
-                    }}
-                  />
-                </label>
-              </div>
-
-              <label style={{ display: "grid", gap: 8 }}>
-                <span>{contactContent.form.messageLabel}</span>
-                <textarea
-                  name="message"
-                  required
-                  rows={6}
-                  style={{
-                    width: "100%",
-                    borderRadius: 18,
-                    border: "1px solid var(--border)",
-                    background: "rgba(255, 250, 244, 0.7)",
-                    padding: "14px 16px",
-                    color: "var(--foreground)",
-                    resize: "vertical"
-                  }}
-                />
-              </label>
-
-              <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-                {contactContent.form.privacyNote}
-              </p>
-
-              <button
-                type="submit"
-                style={{
-                  justifySelf: "start",
-                  border: "none",
-                  borderRadius: 999,
-                  padding: "13px 18px",
-                  background: "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
-                  color: "#fffaf4",
-                  fontWeight: 700,
-                  cursor: "pointer"
-                }}
-              >
-                {contactContent.form.submitLabel}
-              </button>
-            </form>
+            <ContactForm locale={locale} labels={contactContent.form} />
           </article>
 
           <article
@@ -567,46 +466,16 @@ export default async function ContactPage({ params }: ContactPageProps) {
               </p>
             </div>
 
-            <div
-              style={{
-                borderRadius: 24,
-                overflow: "hidden",
-                border: "1px solid var(--border)",
-                minHeight: 340
-              }}
-            >
-              <iframe
-                title={`${siteConfig.brand.shopName} map`}
-                src={contactContent.map.embedUrl}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  minHeight: 340,
-                  border: 0
-                }}
-              />
-            </div>
-
-            <a
-              href={contactContent.map.directionsHref}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: "inline-flex",
-                justifyContent: "center",
-                justifySelf: "start",
-                padding: "13px 18px",
-                borderRadius: 999,
-                border: "1px solid var(--border)",
-                background: "rgba(214, 176, 125, 0.12)",
-                color: "var(--foreground)",
-                fontWeight: 700
-              }}
-            >
-              {contactContent.map.directionsLabel}
-            </a>
+            <ContactMap
+              shopName={siteConfig.brand.shopName}
+              embedUrl={contactContent.map.embedUrl}
+              directionsHref={contactContent.map.directionsHref}
+              directionsLabel={contactContent.map.directionsLabel}
+              consentTitle={contactContent.map.consentTitle}
+              consentDescription={contactContent.map.consentDescription}
+              consentButtonLabel={contactContent.map.consentButtonLabel}
+              privacyNotice={contactContent.map.privacyNotice}
+            />
           </article>
         </section>
       </div>

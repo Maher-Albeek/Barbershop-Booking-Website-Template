@@ -16,7 +16,6 @@ export async function submitBooking(formData: FormData) {
   const date = normalize(formData.get("date"));
   const start = normalize(formData.get("start"));
   const customerName = normalize(formData.get("customerName"));
-  const phone = normalize(formData.get("phone"));
   const email = normalize(formData.get("email"));
   const notes = normalize(formData.get("notes"));
 
@@ -46,10 +45,6 @@ export async function submitBooking(formData: FormData) {
     params.set("name", customerName);
   }
 
-  if (phone) {
-    params.set("phone", phone);
-  }
-
   if (email) {
     params.set("email", email);
   }
@@ -58,7 +53,7 @@ export async function submitBooking(formData: FormData) {
     params.set("notes", notes);
   }
 
-  if (!isLocale(locale) || !service || !employee || !date || !start || !customerName || !phone) {
+  if (!isLocale(locale) || !service || !employee || !date || !start || !customerName) {
     params.set("error", "missing_fields");
     redirect(`/${isLocale(locale) ? locale : "de"}/booking?${params.toString()}`);
   }
@@ -76,7 +71,6 @@ export async function submitBooking(formData: FormData) {
       date,
       start,
       customerName,
-      phone,
       email: email || undefined,
       notes: notes || undefined
     });

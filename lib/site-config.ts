@@ -108,10 +108,16 @@ type LocalizedContactContent = {
     description: string;
     nameLabel: string;
     emailLabel: string;
+    phoneLabel: string;
     subjectLabel: string;
     messageLabel: string;
     submitLabel: string;
+    submittingLabel: string;
     privacyNote: string;
+    successMessage: string;
+    errorMessage: string;
+    requiredMessage: string;
+    invalidEmailMessage: string;
   };
   map: {
     eyebrow: string;
@@ -120,6 +126,10 @@ type LocalizedContactContent = {
     directionsLabel: string;
     directionsHref: string;
     embedUrl: string;
+    consentTitle: string;
+    consentDescription: string;
+    consentButtonLabel: string;
+    privacyNotice: string;
   };
   items: {
     phone: ContactItem;
@@ -845,10 +855,16 @@ export const siteConfig: {
           "Share your message and preferred contact details. The shop can follow up by email or phone.",
         nameLabel: "Name",
         emailLabel: "Email",
+        phoneLabel: "Phone (optional)",
         subjectLabel: "Subject",
         messageLabel: "Message",
         submitLabel: "Send request",
-        privacyNote: "By sending this form, you agree that the shop may contact you about your request."
+        submittingLabel: "Sending...",
+        privacyNote: "By sending this form, you agree that the shop may contact you about your request.",
+        successMessage: "Your message has been sent. The shop will reply as soon as possible.",
+        errorMessage: "Check the form and correct the highlighted fields before sending.",
+        requiredMessage: "Complete all required fields before sending your message.",
+        invalidEmailMessage: "Enter a valid email address so the shop can reply to you."
       },
       map: {
         eyebrow: "Map",
@@ -859,7 +875,12 @@ export const siteConfig: {
         directionsHref:
           "https://www.google.com/maps/search/?api=1&query=Friedrichstrasse+148%2C+10117+Berlin",
         embedUrl:
-          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed"
+          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed",
+        consentTitle: "Load the embedded map",
+        consentDescription:
+          "The map uses a third-party provider. Load it only if you want to share data with that provider on this page.",
+        consentButtonLabel: "Load map",
+        privacyNotice: "You can use the directions link without loading the embedded map."
       },
       items: {
         phone: {
@@ -910,11 +931,19 @@ export const siteConfig: {
           "Teile deine Nachricht und passende Kontaktdaten mit. Der Shop kann per E-Mail oder Telefon reagieren.",
         nameLabel: "Name",
         emailLabel: "E-Mail",
+        phoneLabel: "Telefon (optional)",
         subjectLabel: "Betreff",
         messageLabel: "Nachricht",
         submitLabel: "Anfrage senden",
+        submittingLabel: "Wird gesendet...",
         privacyNote:
-          "Mit dem Absenden stimmst du zu, dass der Shop dich zu deiner Anfrage kontaktieren darf."
+          "Mit dem Absenden stimmst du zu, dass der Shop dich zu deiner Anfrage kontaktieren darf.",
+        successMessage: "Deine Nachricht wurde gesendet. Der Shop meldet sich so schnell wie moeglich.",
+        errorMessage:
+          "Pruefe das Formular und korrigiere die markierten Felder, bevor du es erneut sendest.",
+        requiredMessage: "Bitte fuelle alle Pflichtfelder aus, bevor du deine Nachricht sendest.",
+        invalidEmailMessage:
+          "Bitte gib eine gueltige E-Mail-Adresse an, damit der Shop dir antworten kann."
       },
       map: {
         eyebrow: "Karte",
@@ -925,7 +954,12 @@ export const siteConfig: {
         directionsHref:
           "https://www.google.com/maps/search/?api=1&query=Friedrichstrasse+148%2C+10117+Berlin",
         embedUrl:
-          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed"
+          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed",
+        consentTitle: "Eingebettete Karte laden",
+        consentDescription:
+          "Die Karte stammt von einem Drittanbieter. Lade sie nur, wenn du der Datenuebertragung an diesen Anbieter auf dieser Seite zustimmst.",
+        consentButtonLabel: "Karte laden",
+        privacyNotice: "Du kannst die Route auch ohne eingebettete Karte ueber den Link oeffnen."
       },
       items: {
         phone: {
@@ -976,11 +1010,21 @@ export const siteConfig: {
           "\u0627\u0643\u062a\u0628 \u0631\u0633\u0627\u0644\u062a\u0643 \u0648\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062a\u0648\u0627\u0635\u0644 \u0627\u0644\u0645\u0646\u0627\u0633\u0628\u0629\u060c \u0648\u0633\u064a\u0642\u0648\u0645 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0628\u0627\u0644\u0631\u062f \u0639\u0628\u0631 \u0627\u0644\u0628\u0631\u064a\u062f \u0623\u0648 \u0627\u0644\u0647\u0627\u062a\u0641.",
         nameLabel: "\u0627\u0644\u0627\u0633\u0645",
         emailLabel: "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a",
+        phoneLabel: "\u0627\u0644\u0647\u0627\u062a\u0641 (\u0627\u062e\u062a\u064a\u0627\u0631\u064a)",
         subjectLabel: "\u0627\u0644\u0645\u0648\u0636\u0648\u0639",
         messageLabel: "\u0627\u0644\u0631\u0633\u0627\u0644\u0629",
         submitLabel: "\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628",
+        submittingLabel: "\u062c\u0627\u0631\u064a \u0627\u0644\u0625\u0631\u0633\u0627\u0644...",
         privacyNote:
-          "\u0628\u0625\u0631\u0633\u0627\u0644 \u0647\u0630\u0627 \u0627\u0644\u0646\u0645\u0648\u0630\u062c \u0623\u0646\u062a \u062a\u0648\u0627\u0641\u0642 \u0639\u0644\u0649 \u0625\u0645\u0643\u0627\u0646\u064a\u0629 \u062a\u0648\u0627\u0635\u0644 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0645\u0639\u0643 \u0628\u062e\u0635\u0648\u0635 \u0637\u0644\u0628\u0643."
+          "\u0628\u0625\u0631\u0633\u0627\u0644 \u0647\u0630\u0627 \u0627\u0644\u0646\u0645\u0648\u0630\u062c \u0623\u0646\u062a \u062a\u0648\u0627\u0641\u0642 \u0639\u0644\u0649 \u0625\u0645\u0643\u0627\u0646\u064a\u0629 \u062a\u0648\u0627\u0635\u0644 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0645\u0639\u0643 \u0628\u062e\u0635\u0648\u0635 \u0637\u0644\u0628\u0643.",
+        successMessage:
+          "\u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0631\u0633\u0627\u0644\u062a\u0643 \u0628\u0646\u062c\u0627\u062d. \u0633\u064a\u0631\u062f \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0639\u0644\u064a\u0643 \u0641\u064a \u0623\u0642\u0631\u0628 \u0648\u0642\u062a.",
+        errorMessage:
+          "\u0631\u0627\u062c\u0639 \u0627\u0644\u0646\u0645\u0648\u0630\u062c \u0648\u0635\u062d\u062d \u0627\u0644\u062d\u0642\u0648\u0644 \u0627\u0644\u0645\u0638\u0644\u0644\u0629 \u0642\u0628\u0644 \u0627\u0644\u0625\u0631\u0633\u0627\u0644.",
+        requiredMessage:
+          "\u0623\u0643\u0645\u0644 \u062c\u0645\u064a\u0639 \u0627\u0644\u062d\u0642\u0648\u0644 \u0627\u0644\u0625\u0644\u0632\u0627\u0645\u064a\u0629 \u0642\u0628\u0644 \u0625\u0631\u0633\u0627\u0644 \u0631\u0633\u0627\u0644\u062a\u0643.",
+        invalidEmailMessage:
+          "\u0623\u062f\u062e\u0644 \u0628\u0631\u064a\u062f\u0627\u064b \u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u0627\u064b \u0635\u062d\u064a\u062d\u0627\u064b \u0644\u064a\u062a\u0645\u0643\u0646 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0645\u0646 \u0627\u0644\u0631\u062f."
       },
       map: {
         eyebrow: "\u0627\u0644\u062e\u0631\u064a\u0637\u0629",
@@ -991,7 +1035,13 @@ export const siteConfig: {
         directionsHref:
           "https://www.google.com/maps/search/?api=1&query=Friedrichstrasse+148%2C+10117+Berlin",
         embedUrl:
-          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed"
+          "https://www.google.com/maps?q=Friedrichstrasse+148,+10117+Berlin&z=15&output=embed",
+        consentTitle: "\u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062e\u0631\u064a\u0637\u0629 \u0627\u0644\u0645\u0636\u0645\u0646\u0629",
+        consentDescription:
+          "\u062a\u0633\u062a\u062e\u062f\u0645 \u0627\u0644\u062e\u0631\u064a\u0637\u0629 \u0645\u0648\u0641\u0631\u0627\u064b \u062e\u0627\u0631\u062c\u064a\u0627\u064b. \u062d\u0645\u0644\u0647\u0627 \u0641\u0642\u0637 \u0625\u0630\u0627 \u0643\u0646\u062a \u062a\u0648\u0627\u0641\u0642 \u0639\u0644\u0649 \u0645\u0634\u0627\u0631\u0643\u0629 \u0628\u0639\u0636 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0645\u0639 \u0647\u0630\u0627 \u0627\u0644\u0645\u0648\u0641\u0631 \u0641\u064a \u0647\u0630\u0647 \u0627\u0644\u0635\u0641\u062d\u0629.",
+        consentButtonLabel: "\u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062e\u0631\u064a\u0637\u0629",
+        privacyNotice:
+          "\u064a\u0645\u0643\u0646\u0643 \u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0631\u0627\u0628\u0637 \u0627\u0644\u0627\u062a\u062c\u0627\u0647\u0627\u062a \u062f\u0648\u0646 \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062e\u0631\u064a\u0637\u0629 \u0627\u0644\u0645\u0636\u0645\u0646\u0629."
       },
       items: {
         phone: {
