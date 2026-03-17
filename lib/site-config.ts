@@ -140,6 +140,30 @@ type LocalizedContactContent = {
   };
 };
 
+type LegalSection = {
+  title: string;
+  paragraphs: string[];
+};
+
+type LocalizedLegalContent = {
+  impressum: {
+    eyebrow: string;
+    title: string;
+    introduction: string;
+    ownerLabel: string;
+    ownerName: string;
+    responsibleLabel: string;
+    responsibleName: string;
+    sections: LegalSection[];
+  };
+  privacy: {
+    eyebrow: string;
+    title: string;
+    introduction: string;
+    sections: LegalSection[];
+  };
+};
+
 type EmployeeServiceAssignment = {
   employeeSlug: string;
   serviceSlug: string;
@@ -188,6 +212,7 @@ export const siteConfig: {
   gallery: Record<Locale, LocalizedGalleryContent>;
   offers: Record<Locale, LocalizedOffersContent>;
   contact: Record<Locale, LocalizedContactContent>;
+  legal: Record<Locale, LocalizedLegalContent>;
   booking: {
     slotIntervalMinutes: number;
     searchWindowDays: number;
@@ -1084,6 +1109,245 @@ export const siteConfig: {
       }
     }
   },
+  legal: {
+    en: {
+      impressum: {
+        eyebrow: "Legal notice",
+        title: "Imprint",
+        introduction:
+          "This page provides the operator details required for a Germany-focused barbershop website.",
+        ownerLabel: "Shop owner",
+        ownerName: "Mahir Barber GmbH",
+        responsibleLabel: "Responsible for content",
+        responsibleName: "Mahir Almasi",
+        sections: [
+          {
+            title: "Provider information",
+            paragraphs: [
+              "Mahir Barber GmbH",
+              "Friedrichstrasse 148",
+              "10117 Berlin",
+              "Germany"
+            ]
+          },
+          {
+            title: "Contact",
+            paragraphs: [
+              "Email: hello@crownandblade.de",
+              "Phone: +49 30 1234 5678"
+            ]
+          }
+        ]
+      },
+      privacy: {
+        eyebrow: "Privacy",
+        title: "Privacy policy",
+        introduction:
+          "This summary explains which personal data is processed on this website and for which purposes.",
+        sections: [
+          {
+            title: "Data collected on this website",
+            paragraphs: [
+              "When you use the booking or contact forms, the website processes your name, email address, phone number, selected service details, appointment data, and any message you provide.",
+              "Server logs may also store technical information such as IP address, browser type, referrer, and access time to keep the service secure and stable."
+            ]
+          },
+          {
+            title: "Booking and communication",
+            paragraphs: [
+              "Booking data is used to create, confirm, and manage appointments.",
+              "Email communication is used for booking confirmations, follow-up contact, and operational messages related to your request."
+            ]
+          },
+          {
+            title: "Hosting and service providers",
+            paragraphs: [
+              "The website can be hosted by a third-party hosting provider that processes technical access data on behalf of the shop.",
+              "Embedded maps or external communication tools should only be loaded when this is compatible with the visitor's privacy choices."
+            ]
+          },
+          {
+            title: "Cookies and similar technologies",
+            paragraphs: [
+              "Essential cookies may be used for session security, language preferences, and core booking functionality.",
+              "Functional or analytics cookies must remain disabled until the visitor has given valid consent."
+            ]
+          },
+          {
+            title: "Your rights under GDPR",
+            paragraphs: [
+              "You have the right to request access, rectification, erasure, restriction of processing, data portability, and to object to processing where applicable.",
+              "You also have the right to lodge a complaint with a supervisory authority."
+            ]
+          },
+          {
+            title: "Privacy contact",
+            paragraphs: [
+              "For privacy-related questions, contact: hello@crownandblade.de"
+            ]
+          }
+        ]
+      }
+    },
+    de: {
+      impressum: {
+        eyebrow: "Rechtliche Angaben",
+        title: "Impressum",
+        introduction:
+          "Diese Seite stellt die fuer eine auf Deutschland ausgerichtete Barbershop-Website erforderlichen Anbieterangaben bereit.",
+        ownerLabel: "Inhaber",
+        ownerName: "Mahir Barber GmbH",
+        responsibleLabel: "Verantwortlich fuer den Inhalt",
+        responsibleName: "Mahir Almasi",
+        sections: [
+          {
+            title: "Anbieterangaben",
+            paragraphs: [
+              "Mahir Barber GmbH",
+              "Friedrichstrasse 148",
+              "10117 Berlin",
+              "Deutschland"
+            ]
+          },
+          {
+            title: "Kontakt",
+            paragraphs: [
+              "E-Mail: hello@crownandblade.de",
+              "Telefon: +49 30 1234 5678"
+            ]
+          }
+        ]
+      },
+      privacy: {
+        eyebrow: "Datenschutz",
+        title: "Datenschutzerklaerung",
+        introduction:
+          "Diese Uebersicht erklaert, welche personenbezogenen Daten auf dieser Website verarbeitet werden und zu welchen Zwecken dies geschieht.",
+        sections: [
+          {
+            title: "Erhobene Daten",
+            paragraphs: [
+              "Bei der Nutzung des Buchungs- oder Kontaktformulars verarbeitet die Website insbesondere Name, E-Mail-Adresse, Telefonnummer, ausgewaehlte Leistungsdaten, Termindaten und freiwillige Nachrichteninhalte.",
+              "Zusaetzlich koennen Server-Logs technische Informationen wie IP-Adresse, Browsertyp, Referrer und Zeitpunkt des Zugriffs speichern, um Stabilitaet und Sicherheit zu gewaehrleisten."
+            ]
+          },
+          {
+            title: "Buchung und Kommunikation",
+            paragraphs: [
+              "Buchungsdaten werden verwendet, um Termine anzulegen, zu bestaetigen und zu verwalten.",
+              "E-Mail-Kommunikation wird fuer Terminbestaetigungen, Rueckfragen und organisatorische Hinweise zu deiner Anfrage verwendet."
+            ]
+          },
+          {
+            title: "Hosting und Dienstleister",
+            paragraphs: [
+              "Die Website kann bei einem Hosting-Anbieter betrieben werden, der technische Zugriffsdaten im Auftrag des Shops verarbeitet.",
+              "Eingebettete Karten oder externe Kommunikationstools duerfen nur geladen werden, wenn dies mit den Datenschutzentscheidungen der Besuchenden vereinbar ist."
+            ]
+          },
+          {
+            title: "Cookies und aehnliche Technologien",
+            paragraphs: [
+              "Essenzielle Cookies koennen fuer Sitzungssicherheit, Spracheinstellungen und grundlegende Buchungsfunktionen eingesetzt werden.",
+              "Funktionale oder analytische Cookies muessen bis zu einer wirksamen Einwilligung deaktiviert bleiben."
+            ]
+          },
+          {
+            title: "Deine Rechte nach DSGVO",
+            paragraphs: [
+              "Du hast das Recht auf Auskunft, Berichtigung, Loeschung, Einschraenkung der Verarbeitung, Datenuebertragbarkeit sowie auf Widerspruch, soweit die gesetzlichen Voraussetzungen vorliegen.",
+              "Ausserdem besteht ein Beschwerderecht bei einer zustaendigen Aufsichtsbehoerde."
+            ]
+          },
+          {
+            title: "Kontakt fuer Datenschutzanfragen",
+            paragraphs: [
+              "Bei Fragen zum Datenschutz: hello@crownandblade.de"
+            ]
+          }
+        ]
+      }
+    },
+    ar: {
+      impressum: {
+        eyebrow: "Legal notice",
+        title: "Imprint",
+        introduction:
+          "This page provides the operator details required for a Germany-focused barbershop website.",
+        ownerLabel: "Shop owner",
+        ownerName: "Mahir Barber GmbH",
+        responsibleLabel: "Responsible for content",
+        responsibleName: "Mahir Almasi",
+        sections: [
+          {
+            title: "Provider information",
+            paragraphs: [
+              "Mahir Barber GmbH",
+              "Friedrichstrasse 148",
+              "10117 Berlin",
+              "Germany"
+            ]
+          },
+          {
+            title: "Contact",
+            paragraphs: [
+              "Email: hello@crownandblade.de",
+              "Phone: +49 30 1234 5678"
+            ]
+          }
+        ]
+      },
+      privacy: {
+        eyebrow: "Privacy",
+        title: "Privacy policy",
+        introduction:
+          "This summary explains which personal data is processed on this website and for which purposes.",
+        sections: [
+          {
+            title: "Data collected on this website",
+            paragraphs: [
+              "When you use the booking or contact forms, the website processes your name, email address, phone number, selected service details, appointment data, and any message you provide.",
+              "Server logs may also store technical information such as IP address, browser type, referrer, and access time to keep the service secure and stable."
+            ]
+          },
+          {
+            title: "Booking and communication",
+            paragraphs: [
+              "Booking data is used to create, confirm, and manage appointments.",
+              "Email communication is used for booking confirmations, follow-up contact, and operational messages related to your request."
+            ]
+          },
+          {
+            title: "Hosting and service providers",
+            paragraphs: [
+              "The website can be hosted by a third-party hosting provider that processes technical access data on behalf of the shop.",
+              "Embedded maps or external communication tools should only be loaded when this is compatible with the visitor's privacy choices."
+            ]
+          },
+          {
+            title: "Cookies and similar technologies",
+            paragraphs: [
+              "Essential cookies may be used for session security, language preferences, and core booking functionality.",
+              "Functional or analytics cookies must remain disabled until the visitor has given valid consent."
+            ]
+          },
+          {
+            title: "Your rights under GDPR",
+            paragraphs: [
+              "You have the right to request access, rectification, erasure, restriction of processing, data portability, and to object to processing where applicable.",
+              "You also have the right to lodge a complaint with a supervisory authority."
+            ]
+          },
+          {
+            title: "Privacy contact",
+            paragraphs: [
+              "For privacy-related questions, contact: hello@crownandblade.de"
+            ]
+          }
+        ]
+      }
+    }
+  },
   booking: {
     slotIntervalMinutes: 15,
     searchWindowDays: 10,
@@ -1360,6 +1624,10 @@ export function getContactContent(locale: Locale) {
     siteConfig.contact[locale],
     siteConfig.contact[siteConfig.defaultLocale]
   );
+}
+
+export function getLegalContent(locale: Locale) {
+  return mergeWithDefaultLocale(locale, siteConfig.legal[locale], siteConfig.legal[siteConfig.defaultLocale]);
 }
 
 export function getServiceBySlug(locale: Locale, serviceSlug: string) {

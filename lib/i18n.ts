@@ -136,6 +136,11 @@ const dictionaries = {
       visitLabel: "Before your visit",
       visitTitle: "Plan the call, message, or walk-in.",
       bookingCta: "Continue to booking"
+    },
+    footer: {
+      legalLabel: "Legal",
+      impressum: "Imprint",
+      datenschutz: "Privacy policy"
     }
   },
   de: {
@@ -266,6 +271,11 @@ const dictionaries = {
       visitLabel: "Vor deinem Besuch",
       visitTitle: "Plane Anruf, Nachricht oder spontanen Besuch.",
       bookingCta: "Weiter zur Buchung"
+    },
+    footer: {
+      legalLabel: "Rechtliches",
+      impressum: "Impressum",
+      datenschutz: "Datenschutz"
     }
   },
   ar: {
@@ -398,6 +408,11 @@ const dictionaries = {
       visitLabel: "\u0642\u0628\u0644 \u0627\u0644\u0632\u064a\u0627\u0631\u0629",
       visitTitle: "\u062e\u0637\u0637 \u0644\u0644\u0627\u062a\u0635\u0627\u0644 \u0623\u0648 \u0627\u0644\u0631\u0633\u0627\u0644\u0629 \u0623\u0648 \u0627\u0644\u0632\u064a\u0627\u0631\u0629.",
       bookingCta: "\u0627\u0644\u0627\u0646\u062a\u0642\u0627\u0644 \u0625\u0644\u0649 \u0627\u0644\u062d\u062c\u0632"
+    },
+    footer: {
+      legalLabel: "\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0642\u0627\u0646\u0648\u0646\u064a\u0629",
+      impressum: "\u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0642\u0627\u0646\u0648\u0646\u064a\u0629",
+      datenschutz: "\u0633\u064a\u0627\u0633\u0629 \u0627\u0644\u062e\u0635\u0648\u0635\u064a\u0629"
     }
   }
 } as const satisfies Record<
@@ -506,6 +521,11 @@ const dictionaries = {
       visitLabel: string;
       visitTitle: string;
       bookingCta: string;
+    };
+    footer: {
+      legalLabel: string;
+      impressum: string;
+      datenschutz: string;
     };
   }
 >;

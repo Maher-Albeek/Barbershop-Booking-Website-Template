@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
+import { SiteFooter } from "@/components/site-footer";
 
 type LocaleLayoutProps = {
   children: ReactNode;
@@ -19,5 +20,10 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  return children;
+  return (
+    <>
+      {children}
+      <SiteFooter locale={locale} />
+    </>
+  );
 }
