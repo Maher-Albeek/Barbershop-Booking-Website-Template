@@ -626,5 +626,151 @@
       "Multi-language architecture",
       "Email confirmation flow"
     ]
+  },
+  "legal_compliance": {
+    "country": "Germany",
+    "laws": [
+      "GDPR / DSGVO",
+      "TTDSG",
+      "Telemediengesetz"
+    ]
+  },
+  "legal_pages": [
+    {
+      "id": "LEGAL-001",
+      "title": "Impressum page",
+      "as_a": "visitor",
+      "i_want": "to access the legally required Impressum page",
+      "so_that": "the website complies with German Telemediengesetz",
+      "acceptance_criteria": [
+        "The website contains a publicly accessible /impressum page",
+        "Page includes shop owner name",
+        "Page includes full address",
+        "Page includes contact email",
+        "Page includes phone number if available",
+        "Page includes responsible person for content",
+        "Page is linked in the website footer",
+        "Page is available in German"
+      ]
+    },
+    {
+      "id": "LEGAL-002",
+      "title": "Datenschutzerklärung page",
+      "as_a": "visitor",
+      "i_want": "to read how my data is processed",
+      "so_that": "the website complies with GDPR / DSGVO requirements",
+      "acceptance_criteria": [
+        "The website contains a /datenschutz page",
+        "Page explains what personal data is collected",
+        "Page explains booking data collection",
+        "Page explains email communication",
+        "Page explains server hosting provider",
+        "Page explains cookies and tracking technologies",
+        "Page describes user rights under GDPR",
+        "Page includes contact information for data protection inquiries",
+        "Page is linked in the footer"
+      ]
+    }
+  ],
+  "cookie_system": {
+    "description": "GDPR compliant cookie consent system for Germany",
+    "requirements": [
+      "Cookie banner must appear on first visit",
+      "Cookies that are not essential must not be activated before consent",
+      "User must be able to accept all cookies",
+      "User must be able to reject non-essential cookies",
+      "User must be able to customize cookie preferences",
+      "User must be able to change cookie preferences later"
+    ]
+  },
+  "cookie_categories": [
+    {
+      "name": "essential",
+      "description": "Required for basic website functionality",
+      "requires_consent": false,
+      "examples": [
+        "authentication cookies",
+        "session cookies",
+        "security cookies",
+        "language preference"
+      ]
+    },
+    {
+      "name": "functional",
+      "description": "Improves user experience",
+      "requires_consent": true,
+      "examples": [
+        "remember language",
+        "remember preferences"
+      ]
+    },
+    {
+      "name": "analytics",
+      "description": "Used to analyze website traffic",
+      "requires_consent": true,
+      "examples": [
+        "Google Analytics",
+        "Plausible analytics"
+      ]
+    }
+  ],
+  "cookie_user_stories": [
+    {
+      "id": "COOKIE-001",
+      "title": "Display cookie consent banner",
+      "as_a": "visitor",
+      "i_want": "to see a cookie consent banner on my first visit",
+      "so_that": "I can decide which cookies I allow",
+      "acceptance_criteria": [
+        "Cookie banner appears on first visit",
+        "Banner contains Accept All button",
+        "Banner contains Reject button",
+        "Banner contains Customize button",
+        "Banner links to Datenschutzerklärung"
+      ]
+    },
+    {
+      "id": "COOKIE-002",
+      "title": "Block non-essential cookies before consent",
+      "as_a": "visitor",
+      "i_want": "tracking cookies to be blocked before consent",
+      "so_that": "my privacy is respected",
+      "acceptance_criteria": [
+        "Analytics scripts are not loaded before consent",
+        "Only essential cookies are active before consent"
+      ]
+    },
+    {
+      "id": "COOKIE-003",
+      "title": "Allow cookie preference customization",
+      "as_a": "visitor",
+      "i_want": "to choose specific cookie categories",
+      "so_that": "I can control my privacy settings",
+      "acceptance_criteria": [
+        "User can enable or disable functional cookies",
+        "User can enable or disable analytics cookies",
+        "Essential cookies cannot be disabled"
+      ]
+    },
+    {
+      "id": "COOKIE-004",
+      "title": "Change cookie settings later",
+      "as_a": "visitor",
+      "i_want": "to change my cookie decision later",
+      "so_that": "I can adjust my privacy preferences",
+      "acceptance_criteria": [
+        "Website provides 'Cookie settings' link in footer",
+        "User can reopen cookie preferences panel",
+        "Changes take effect immediately"
+      ]
+    }
+  ],
+  "footer_requirements": {
+    "links": [
+      "Impressum",
+      "Datenschutz",
+      "Cookie settings"
+    ],
+    "visibility": "Footer must appear on all pages"
   }
 }

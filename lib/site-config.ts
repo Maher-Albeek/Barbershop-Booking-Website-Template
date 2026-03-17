@@ -46,6 +46,59 @@ type LocalizedTeamContent = {
   members: TeamMember[];
 };
 
+type GalleryImage = {
+  slug: string;
+  imageSrc: string;
+  alt: string;
+  caption: string;
+  isVisible: boolean;
+  sortOrder: number;
+};
+
+type LocalizedGalleryContent = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  images: GalleryImage[];
+};
+
+type Offer = {
+  slug: string;
+  isActive: boolean;
+  validFrom: string;
+  validUntil: string;
+  imageSrc?: string;
+  title: string;
+  description: string;
+};
+
+type LocalizedOffersContent = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  offers: Offer[];
+};
+
+type ContactItem = {
+  label: string;
+  value: string;
+  href?: string;
+};
+
+type LocalizedContactContent = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  visitNote: string;
+  responseNote: string;
+  items: {
+    phone: ContactItem;
+    email: ContactItem;
+    address: ContactItem;
+    whatsapp?: ContactItem;
+  };
+};
+
 export const siteConfig: {
   defaultLocale: Locale;
   locales: readonly Locale[];
@@ -56,6 +109,9 @@ export const siteConfig: {
   content: Record<Locale, LocalizedHomepageContent>;
   services: Record<Locale, LocalizedServicesContent>;
   team: Record<Locale, LocalizedTeamContent>;
+  gallery: Record<Locale, LocalizedGalleryContent>;
+  offers: Record<Locale, LocalizedOffersContent>;
+  contact: Record<Locale, LocalizedContactContent>;
 } = {
   defaultLocale,
   locales,
@@ -390,6 +446,385 @@ export const siteConfig: {
           bio: "\u0645\u0648\u062c\u0648\u062f \u0641\u064a \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0648\u0644\u0643\u0646\u0647 \u0645\u062e\u0641\u064a \u0639\u0646 \u0627\u0644\u0648\u0627\u062c\u0647\u0629 \u0627\u0644\u0639\u0627\u0645\u0629 \u0639\u0646\u062f \u062a\u0639\u0637\u064a\u0644\u0647."
         }
       ]
+    }
+  },
+  gallery: {
+    en: {
+      eyebrow: "Inside the shop",
+      title: "Browse the gallery before you book.",
+      subtitle:
+        "Only visible gallery images are shown here, ordered by sort order so the featured presentation stays consistent.",
+      images: [
+        {
+          slug: "interior-detail",
+          imageSrc:
+            "https://images.unsplash.com/photo-1512690459411-b0fd1c86b8c8?auto=format&fit=crop&w=1200&q=80",
+          alt: "Warm barbershop interior with leather chairs and mirrors",
+          caption: "A calm interior built around warm tones, clean stations, and comfortable waiting space.",
+          isVisible: true,
+          sortOrder: 1
+        },
+        {
+          slug: "service-finish",
+          imageSrc:
+            "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1200&q=80",
+          alt: "Barber refining a haircut with close finishing work",
+          caption: "Detail-focused finishing work that reflects the shop's precision and consistency.",
+          isVisible: true,
+          sortOrder: 2
+        },
+        {
+          slug: "tools-counter",
+          imageSrc:
+            "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=80",
+          alt: "Barber tools arranged neatly on a workstation",
+          caption: "Clean tools, organized stations, and presentation that supports a premium service standard.",
+          isVisible: true,
+          sortOrder: 3
+        },
+        {
+          slug: "hidden-campaign-shot",
+          imageSrc:
+            "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1200&q=80",
+          alt: "Customer in a barber chair during an appointment",
+          caption: "Kept in config for admin control, but hidden from the public page while not visible.",
+          isVisible: false,
+          sortOrder: 4
+        }
+      ]
+    },
+    de: {
+      eyebrow: "Ein Blick in den Shop",
+      title: "Sieh dir die Galerie vor der Buchung an.",
+      subtitle:
+        "Hier werden nur sichtbare Galeriebilder angezeigt, sortiert nach der festgelegten Reihenfolge.",
+      images: [
+        {
+          slug: "interior-detail",
+          imageSrc:
+            "https://images.unsplash.com/photo-1512690459411-b0fd1c86b8c8?auto=format&fit=crop&w=1200&q=80",
+          alt: "Warmer Barbershop-Innenraum mit Ledersesseln und Spiegeln",
+          caption:
+            "Ein ruhiger Innenraum mit warmen Tönen, sauberen Stationen und einem angenehmen Wartebereich.",
+          isVisible: true,
+          sortOrder: 1
+        },
+        {
+          slug: "service-finish",
+          imageSrc:
+            "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1200&q=80",
+          alt: "Barber bei der präzisen Abschlussarbeit am Haarschnitt",
+          caption:
+            "Präzise Finish-Arbeit, die den Anspruch des Shops an saubere und verlässliche Ergebnisse zeigt.",
+          isVisible: true,
+          sortOrder: 2
+        },
+        {
+          slug: "tools-counter",
+          imageSrc:
+            "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=80",
+          alt: "Ordentlich angeordnete Barber-Werkzeuge auf einer Arbeitsfläche",
+          caption:
+            "Saubere Werkzeuge, organisierte Arbeitsplätze und eine Präsentation mit hochwertigem Eindruck.",
+          isVisible: true,
+          sortOrder: 3
+        },
+        {
+          slug: "hidden-campaign-shot",
+          imageSrc:
+            "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1200&q=80",
+          alt: "Kunde während eines Termins im Barberstuhl",
+          caption:
+            "Bleibt zur Verwaltung in der Konfiguration, ist aber bei deaktivierter Sichtbarkeit nicht öffentlich zu sehen.",
+          isVisible: false,
+          sortOrder: 4
+        }
+      ]
+    },
+    ar: {
+      eyebrow: "من داخل الصالون",
+      title: "تصفح المعرض قبل الحجز.",
+      subtitle:
+        "تعرض هذه الصفحة صور المعرض الظاهرة فقط، مرتبة حسب ترتيب العرض المحدد.",
+      images: [
+        {
+          slug: "interior-detail",
+          imageSrc:
+            "https://images.unsplash.com/photo-1512690459411-b0fd1c86b8c8?auto=format&fit=crop&w=1200&q=80",
+          alt: "داخل صالون حلاقة دافئ مع كراسٍ جلدية ومرايا",
+          caption: "مساحة هادئة بألوان دافئة ومحطات مرتبة ومنطقة انتظار مريحة.",
+          isVisible: true,
+          sortOrder: 1
+        },
+        {
+          slug: "service-finish",
+          imageSrc:
+            "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1200&q=80",
+          alt: "حلاق ينهي تفاصيل قصة الشعر بدقة",
+          caption: "لمسات نهائية دقيقة تعكس مستوى العناية والثبات في جودة الخدمة داخل الصالون.",
+          isVisible: true,
+          sortOrder: 2
+        },
+        {
+          slug: "tools-counter",
+          imageSrc:
+            "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1200&q=80",
+          alt: "أدوات الحلاقة مرتبة بعناية على محطة العمل",
+          caption: "أدوات نظيفة ومحطات منظمة وعرض بصري يدعم إحساس الخدمة المميزة.",
+          isVisible: true,
+          sortOrder: 3
+        },
+        {
+          slug: "hidden-campaign-shot",
+          imageSrc:
+            "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1200&q=80",
+          alt: "عميل يجلس على كرسي الحلاقة أثناء الموعد",
+          caption: "تبقى الصورة في الإعدادات لإدارة المشرف لكنها مخفية عن الصفحة العامة عند تعطيلها.",
+          isVisible: false,
+          sortOrder: 4
+        }
+      ]
+    }
+  },
+  offers: {
+    en: {
+      eyebrow: "Current promotions",
+      title: "See what is running before you book.",
+      subtitle:
+        "Only active offers inside their live campaign window are shown here so the page always reflects current promotions.",
+      offers: [
+        {
+          slug: "weekday-beard-detail",
+          isActive: true,
+          validFrom: "2026-03-01",
+          validUntil: "2026-04-15",
+          imageSrc:
+            "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=1200&q=80",
+          title: "Weekday Beard Detail",
+          description:
+            "Book a beard service from Tuesday to Thursday and receive a complimentary conditioning finish during the promotion window."
+        },
+        {
+          slug: "father-son-session",
+          isActive: true,
+          validFrom: "2026-03-10",
+          validUntil: "2026-05-05",
+          title: "Father & Son Session",
+          description:
+            "Pair two appointments in one visit and receive a bundled promotional rate for a coordinated grooming session."
+        },
+        {
+          slug: "winter-refresh",
+          isActive: true,
+          validFrom: "2026-01-05",
+          validUntil: "2026-02-10",
+          imageSrc:
+            "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80",
+          title: "Winter Refresh",
+          description:
+            "Stored in content history but no longer displayed because the offer has passed its validity range."
+        },
+        {
+          slug: "members-preview",
+          isActive: false,
+          validFrom: "2026-03-20",
+          validUntil: "2026-04-30",
+          title: "Members Preview",
+          description:
+            "Configured for later activation but hidden from the public page until the campaign is marked active."
+        }
+      ]
+    },
+    de: {
+      eyebrow: "Aktuelle Aktionen",
+      title: "Sieh dir laufende Angebote vor der Buchung an.",
+      subtitle:
+        "Hier erscheinen nur aktive Angebote innerhalb ihres gueltigen Zeitraums, damit die Seite immer aktuell bleibt.",
+      offers: [
+        {
+          slug: "weekday-beard-detail",
+          isActive: true,
+          validFrom: "2026-03-01",
+          validUntil: "2026-04-15",
+          imageSrc:
+            "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=1200&q=80",
+          title: "Bart-Detail unter der Woche",
+          description:
+            "Buche einen Bartservice von Dienstag bis Donnerstag und erhalte im Aktionszeitraum ein pflegendes Finish dazu."
+        },
+        {
+          slug: "father-son-session",
+          isActive: true,
+          validFrom: "2026-03-10",
+          validUntil: "2026-05-05",
+          title: "Vater-und-Sohn-Termin",
+          description:
+            "Zwei Termine in einem Besuch mit Aktionspreis fuer eine gemeinsame Grooming-Session."
+        },
+        {
+          slug: "winter-refresh",
+          isActive: true,
+          validFrom: "2026-01-05",
+          validUntil: "2026-02-10",
+          imageSrc:
+            "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80",
+          title: "Winter Refresh",
+          description:
+            "Bleibt in der Inhaltsquelle erhalten, wird aber nicht mehr angezeigt, weil der Zeitraum abgelaufen ist."
+        },
+        {
+          slug: "members-preview",
+          isActive: false,
+          validFrom: "2026-03-20",
+          validUntil: "2026-04-30",
+          title: "Mitglieder-Vorschau",
+          description:
+            "Ist fuer eine spaetere Aktivierung vorbereitet und bleibt bis dahin auf der oeffentlichen Seite verborgen."
+        }
+      ]
+    },
+    ar: {
+      eyebrow: "العروض الحالية",
+      title: "اطلع على العروض الجارية قبل الحجز.",
+      subtitle:
+        "تعرض هذه الصفحة العروض النشطة فقط ضمن فترة صلاحيتها حتى يبقى المحتوى معبرا عن الحملات الحالية.",
+      offers: [
+        {
+          slug: "weekday-beard-detail",
+          isActive: true,
+          validFrom: "2026-03-01",
+          validUntil: "2026-04-15",
+          imageSrc:
+            "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=1200&q=80",
+          title: "تفاصيل اللحية خلال ايام الاسبوع",
+          description:
+            "احجز خدمة اللحية من الثلاثاء الى الخميس واحصل على لمسة عناية نهائية مجانية خلال فترة العرض."
+        },
+        {
+          slug: "father-son-session",
+          isActive: true,
+          validFrom: "2026-03-10",
+          validUntil: "2026-05-05",
+          title: "جلسة الاب والابن",
+          description:
+            "احجز موعدين في زيارة واحدة واحصل على سعر ترويجي لجلسة عناية منسقة."
+        },
+        {
+          slug: "winter-refresh",
+          isActive: true,
+          validFrom: "2026-01-05",
+          validUntil: "2026-02-10",
+          imageSrc:
+            "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1200&q=80",
+          title: "تجديد الشتاء",
+          description:
+            "يبقى هذا العرض في مصدر المحتوى لكنه لا يظهر بعد انتهاء فترة صلاحيته."
+        },
+        {
+          slug: "members-preview",
+          isActive: false,
+          validFrom: "2026-03-20",
+          validUntil: "2026-04-30",
+          title: "معاينة الاعضاء",
+          description:
+            "تم اعداده لحملة لاحقة لكنه يظل مخفيا حتى يتم تفعيله."
+        }
+      ]
+    }
+  },
+  contact: {
+    en: {
+      eyebrow: "Contact & location",
+      title: "Reach the shop before you arrive.",
+      subtitle:
+        "Phone, email, address, and messaging details are managed from one editable config so each deployment can publish the correct local contact information.",
+      visitNote:
+        "Walk-ins are welcome when capacity allows, but calling ahead is the fastest way to confirm same-day availability.",
+      responseNote:
+        "Messages sent through WhatsApp are typically answered during business hours.",
+      items: {
+        phone: {
+          label: "Phone",
+          value: "+49 30 1234 5678",
+          href: "tel:+493012345678"
+        },
+        email: {
+          label: "Email",
+          value: "hello@crownandblade.de",
+          href: "mailto:hello@crownandblade.de"
+        },
+        address: {
+          label: "Address",
+          value: "Friedrichstrasse 148, 10117 Berlin, Germany"
+        },
+        whatsapp: {
+          label: "WhatsApp",
+          value: "Chat with the shop",
+          href: "https://wa.me/493012345678"
+        }
+      }
+    },
+    de: {
+      eyebrow: "Kontakt & Standort",
+      title: "Erreiche den Shop vor deinem Besuch.",
+      subtitle:
+        "Telefon, E-Mail, Adresse und Messenger-Kontakt werden zentral gepflegt, damit jede Bereitstellung die korrekten lokalen Kontaktdaten zeigt.",
+      visitNote:
+        "Spontane Besuche sind moeglich, wenn Kapazitaet frei ist. Fuer Termine am selben Tag ist ein kurzer Anruf am schnellsten.",
+      responseNote:
+        "WhatsApp-Nachrichten werden in der Regel waehrend der Geschaeftszeiten beantwortet.",
+      items: {
+        phone: {
+          label: "Telefon",
+          value: "+49 30 1234 5678",
+          href: "tel:+493012345678"
+        },
+        email: {
+          label: "E-Mail",
+          value: "hello@crownandblade.de",
+          href: "mailto:hello@crownandblade.de"
+        },
+        address: {
+          label: "Adresse",
+          value: "Friedrichstrasse 148, 10117 Berlin, Deutschland"
+        },
+        whatsapp: {
+          label: "WhatsApp",
+          value: "Mit dem Shop chatten",
+          href: "https://wa.me/493012345678"
+        }
+      }
+    },
+    ar: {
+      eyebrow: "\u0627\u0644\u062a\u0648\u0627\u0635\u0644 \u0648\u0627\u0644\u0645\u0648\u0642\u0639",
+      title: "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639 \u0627\u0644\u0635\u0627\u0644\u0648\u0646 \u0642\u0628\u0644 \u0627\u0644\u0648\u0635\u0648\u0644.",
+      subtitle:
+        "\u064a\u062a\u0645 \u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0647\u0627\u062a\u0641 \u0648\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0648\u0627\u0644\u0639\u0646\u0648\u0627\u0646 \u0648\u0648\u0633\u0627\u0626\u0644 \u0627\u0644\u0645\u0631\u0627\u0633\u0644\u0629 \u0645\u0646 \u0645\u0635\u062f\u0631 \u0648\u0627\u062d\u062f \u0642\u0627\u0628\u0644 \u0644\u0644\u062a\u0639\u062f\u064a\u0644 \u0644\u0625\u0638\u0647\u0627\u0631 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0641\u0631\u0639 \u0627\u0644\u0635\u062d\u064a\u062d\u0629.",
+      visitNote:
+        "\u064a\u0645\u0643\u0646 \u0627\u0633\u062a\u0642\u0628\u0627\u0644 \u0627\u0644\u0632\u0648\u0627\u0631 \u062f\u0648\u0646 \u062d\u062c\u0632 \u0639\u0646\u062f \u062a\u0648\u0641\u0631 \u0627\u0644\u0633\u0639\u0629\u060c \u0648\u0644\u0643\u0646 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0645\u0633\u0628\u0642\u0627 \u0647\u0648 \u0627\u0644\u0623\u0633\u0631\u0639 \u0644\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062a\u0648\u0641\u0631 \u0641\u064a \u0646\u0641\u0633 \u0627\u0644\u064a\u0648\u0645.",
+      responseNote:
+        "\u062a\u064f\u0631\u062f \u0631\u0633\u0627\u0626\u0644 \u0648\u0627\u062a\u0633\u0627\u0628 \u0639\u0627\u062f\u0629 \u062e\u0644\u0627\u0644 \u0633\u0627\u0639\u0627\u062a \u0627\u0644\u0639\u0645\u0644.",
+      items: {
+        phone: {
+          label: "\u0627\u0644\u0647\u0627\u062a\u0641",
+          value: "+49 30 1234 5678",
+          href: "tel:+493012345678"
+        },
+        email: {
+          label: "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a",
+          value: "hello@crownandblade.de",
+          href: "mailto:hello@crownandblade.de"
+        },
+        address: {
+          label: "\u0627\u0644\u0639\u0646\u0648\u0627\u0646",
+          value: "Friedrichstrasse 148, 10117 Berlin, Germany"
+        },
+        whatsapp: {
+          label: "\u0648\u0627\u062a\u0633\u0627\u0628",
+          value: "\u0627\u0628\u062f\u0623 \u0627\u0644\u062f\u0631\u062f\u0634\u0629 \u0645\u0639 \u0627\u0644\u0635\u0627\u0644\u0648\u0646",
+          href: "https://wa.me/493012345678"
+        }
+      }
     }
   }
 };
