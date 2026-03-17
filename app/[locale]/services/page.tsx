@@ -12,6 +12,10 @@ function navHref(locale: Locale, path: string): Route {
   return `/${locale}${path}` as Route;
 }
 
+function bookingHref(locale: Locale, service: string): Route {
+  return `/${locale}/booking?service=${encodeURIComponent(service)}` as Route;
+}
+
 export default async function ServicesPage({ params }: ServicesPageProps) {
   const { locale } = await params;
 
@@ -273,7 +277,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                   </div>
 
                   <Link
-                    href={navHref(locale, "/booking")}
+                    href={bookingHref(locale, service.slug)}
                     style={{
                       padding: "13px 18px",
                       borderRadius: 999,

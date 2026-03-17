@@ -37,6 +37,7 @@ type TeamMember = {
   slug: string;
   isActive: boolean;
   imageSrc: string;
+  bookingServiceSlugs: string[];
   specialties: string[];
   name: string;
   bio?: string;
@@ -128,6 +129,38 @@ type LocalizedContactContent = {
   };
 };
 
+type EmployeeServiceAssignment = {
+  employeeSlug: string;
+  serviceSlug: string;
+  durationMinutes: number;
+  priceLabel: string;
+  isActive: boolean;
+};
+
+type EmployeeWorkingHours = {
+  employeeSlug: string;
+  weekday: number;
+  start: string;
+  end: string;
+  isOff?: boolean;
+};
+
+type EmployeeBlockedTime = {
+  employeeSlug: string;
+  date: string;
+  start: string;
+  end: string;
+  reason?: string;
+};
+
+type ExistingBooking = {
+  employeeSlug: string;
+  serviceSlug: string;
+  date: string;
+  start: string;
+  end: string;
+};
+
 export const siteConfig: {
   defaultLocale: Locale;
   locales: readonly Locale[];
@@ -141,6 +174,15 @@ export const siteConfig: {
   gallery: Record<Locale, LocalizedGalleryContent>;
   offers: Record<Locale, LocalizedOffersContent>;
   contact: Record<Locale, LocalizedContactContent>;
+  booking: {
+    slotIntervalMinutes: number;
+    searchWindowDays: number;
+    maxDaysWithSlots: number;
+    employeeServices: EmployeeServiceAssignment[];
+    workingHours: EmployeeWorkingHours[];
+    blockedTimes: EmployeeBlockedTime[];
+    existingBookings: ExistingBooking[];
+  };
 } = {
   defaultLocale,
   locales,
@@ -357,6 +399,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut", "beard-ritual", "full-grooming-session"],
           specialties: ["Skin fades", "Executive grooming"],
           name: "Marcus Reed",
           bio: "Known for calm consultations and sharp finishing work, Marcus handles precise cuts for clients who want a polished weekly look."
@@ -366,6 +409,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["beard-ritual", "full-grooming-session"],
           specialties: ["Beard sculpting", "Hot towel ritual"],
           name: "Samir Haddad",
           bio: "Samir focuses on beard architecture, detail lines, and a relaxed service flow that suits longer grooming appointments."
@@ -375,6 +419,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut"],
           specialties: ["Texture", "Modern crop cuts"],
           name: "Jonah Brooks"
         },
@@ -383,6 +428,7 @@ export const siteConfig: {
           isActive: false,
           imageSrc:
             "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut"],
           specialties: ["Classic scissor work"],
           name: "Oliver Stone",
           bio: "Shown in config but hidden from the public team page while inactive."
@@ -396,6 +442,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut", "beard-ritual", "full-grooming-session"],
           specialties: ["Skin Fades", "Executive Grooming"],
           name: "Marcus Reed",
           bio: "Marcus ist für ruhige Beratung und saubere Finishing-Details bekannt und betreut präzise Schnitte für einen gepflegten Alltagslook."
@@ -405,6 +452,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["beard-ritual", "full-grooming-session"],
           specialties: ["Bartkonturen", "Hot-Towel-Ritual"],
           name: "Samir Haddad",
           bio: "Samir konzentriert sich auf Bartarchitektur, exakte Linien und einen entspannten Serviceablauf für längere Grooming-Termine."
@@ -414,6 +462,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut"],
           specialties: ["Textur", "Moderne Crop Cuts"],
           name: "Jonah Brooks"
         },
@@ -422,6 +471,7 @@ export const siteConfig: {
           isActive: false,
           imageSrc:
             "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut"],
           specialties: ["Klassische Scherenarbeit"],
           name: "Oliver Stone",
           bio: "Im Inhalt gepflegt, aber bei inaktivem Status nicht öffentlich sichtbar."
@@ -435,6 +485,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut", "beard-ritual", "full-grooming-session"],
           specialties: [
             "\u062a\u062f\u0631\u062c \u0627\u0644\u0633\u0643\u0646 \u0641\u064a\u062f",
             "\u0639\u0646\u0627\u064a\u0629 \u0627\u062d\u062a\u0631\u0627\u0641\u064a\u0629"
@@ -447,6 +498,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["beard-ritual", "full-grooming-session"],
           specialties: [
             "\u0646\u062d\u062a \u0627\u0644\u0644\u062d\u064a\u0629",
             "\u0637\u0642\u0633 \u0627\u0644\u0645\u0646\u0634\u0641\u0629 \u0627\u0644\u0633\u0627\u062e\u0646\u0629"
@@ -459,6 +511,7 @@ export const siteConfig: {
           isActive: true,
           imageSrc:
             "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut"],
           specialties: [
             "\u062a\u0635\u0641\u064a\u0641 \u0628\u0627\u0644\u0645\u0644\u0645\u0633",
             "\u0642\u0635\u0627\u062a \u0643\u0631\u0648\u0628 \u0639\u0635\u0631\u064a\u0629"
@@ -470,6 +523,7 @@ export const siteConfig: {
           isActive: false,
           imageSrc:
             "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+          bookingServiceSlugs: ["signature-cut"],
           specialties: ["\u0627\u0644\u0642\u0635 \u0628\u0627\u0644\u0645\u0642\u0635"],
           name: "Oliver Stone",
           bio: "\u0645\u0648\u062c\u0648\u062f \u0641\u064a \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0648\u0644\u0643\u0646\u0647 \u0645\u062e\u0641\u064a \u0639\u0646 \u0627\u0644\u0648\u0627\u062c\u0647\u0629 \u0627\u0644\u0639\u0627\u0645\u0629 \u0639\u0646\u062f \u062a\u0639\u0637\u064a\u0644\u0647."
@@ -961,5 +1015,165 @@ export const siteConfig: {
         }
       }
     }
+  },
+  booking: {
+    slotIntervalMinutes: 15,
+    searchWindowDays: 10,
+    maxDaysWithSlots: 4,
+    employeeServices: [
+      {
+        employeeSlug: "marcus-reed",
+        serviceSlug: "signature-cut",
+        durationMinutes: 45,
+        priceLabel: "from $34",
+        isActive: true
+      },
+      {
+        employeeSlug: "marcus-reed",
+        serviceSlug: "beard-ritual",
+        durationMinutes: 30,
+        priceLabel: "from $24",
+        isActive: true
+      },
+      {
+        employeeSlug: "marcus-reed",
+        serviceSlug: "full-grooming-session",
+        durationMinutes: 60,
+        priceLabel: "from $48",
+        isActive: true
+      },
+      {
+        employeeSlug: "samir-haddad",
+        serviceSlug: "beard-ritual",
+        durationMinutes: 45,
+        priceLabel: "from $28",
+        isActive: true
+      },
+      {
+        employeeSlug: "samir-haddad",
+        serviceSlug: "full-grooming-session",
+        durationMinutes: 75,
+        priceLabel: "from $56",
+        isActive: true
+      },
+      {
+        employeeSlug: "jonah-brooks",
+        serviceSlug: "signature-cut",
+        durationMinutes: 30,
+        priceLabel: "from $30",
+        isActive: true
+      },
+      {
+        employeeSlug: "oliver-stone",
+        serviceSlug: "signature-cut",
+        durationMinutes: 45,
+        priceLabel: "from $32",
+        isActive: false
+      }
+    ],
+    workingHours: [
+      { employeeSlug: "marcus-reed", weekday: 1, start: "09:00", end: "17:00" },
+      { employeeSlug: "marcus-reed", weekday: 2, start: "09:00", end: "18:00" },
+      { employeeSlug: "marcus-reed", weekday: 3, start: "10:00", end: "19:00" },
+      { employeeSlug: "marcus-reed", weekday: 4, start: "09:00", end: "18:00" },
+      { employeeSlug: "marcus-reed", weekday: 5, start: "09:00", end: "18:00" },
+      { employeeSlug: "marcus-reed", weekday: 6, start: "10:00", end: "15:00" },
+      { employeeSlug: "marcus-reed", weekday: 0, start: "00:00", end: "00:00", isOff: true },
+      { employeeSlug: "samir-haddad", weekday: 1, start: "11:00", end: "19:00" },
+      { employeeSlug: "samir-haddad", weekday: 2, start: "12:00", end: "20:00" },
+      { employeeSlug: "samir-haddad", weekday: 3, start: "12:00", end: "20:00" },
+      { employeeSlug: "samir-haddad", weekday: 4, start: "11:00", end: "19:00" },
+      { employeeSlug: "samir-haddad", weekday: 5, start: "10:00", end: "17:00" },
+      { employeeSlug: "samir-haddad", weekday: 6, start: "00:00", end: "00:00", isOff: true },
+      { employeeSlug: "samir-haddad", weekday: 0, start: "00:00", end: "00:00", isOff: true },
+      { employeeSlug: "jonah-brooks", weekday: 1, start: "08:30", end: "16:30" },
+      { employeeSlug: "jonah-brooks", weekday: 2, start: "08:30", end: "16:30" },
+      { employeeSlug: "jonah-brooks", weekday: 3, start: "08:30", end: "16:30" },
+      { employeeSlug: "jonah-brooks", weekday: 4, start: "09:30", end: "17:30" },
+      { employeeSlug: "jonah-brooks", weekday: 5, start: "09:30", end: "14:30" },
+      { employeeSlug: "jonah-brooks", weekday: 6, start: "00:00", end: "00:00", isOff: true },
+      { employeeSlug: "jonah-brooks", weekday: 0, start: "00:00", end: "00:00", isOff: true }
+    ],
+    blockedTimes: [
+      {
+        employeeSlug: "marcus-reed",
+        date: "2026-03-17",
+        start: "13:00",
+        end: "14:00",
+        reason: "Team lunch"
+      },
+      {
+        employeeSlug: "marcus-reed",
+        date: "2026-03-18",
+        start: "15:00",
+        end: "16:00",
+        reason: "Inventory delivery"
+      },
+      {
+        employeeSlug: "samir-haddad",
+        date: "2026-03-18",
+        start: "16:00",
+        end: "18:00",
+        reason: "Private event prep"
+      },
+      {
+        employeeSlug: "jonah-brooks",
+        date: "2026-03-17",
+        start: "11:30",
+        end: "12:15",
+        reason: "Training session"
+      }
+    ],
+    existingBookings: [
+      {
+        employeeSlug: "marcus-reed",
+        serviceSlug: "signature-cut",
+        date: "2026-03-17",
+        start: "09:00",
+        end: "09:45"
+      },
+      {
+        employeeSlug: "marcus-reed",
+        serviceSlug: "beard-ritual",
+        date: "2026-03-17",
+        start: "10:15",
+        end: "10:45"
+      },
+      {
+        employeeSlug: "marcus-reed",
+        serviceSlug: "full-grooming-session",
+        date: "2026-03-18",
+        start: "11:00",
+        end: "12:00"
+      },
+      {
+        employeeSlug: "samir-haddad",
+        serviceSlug: "beard-ritual",
+        date: "2026-03-17",
+        start: "12:00",
+        end: "12:45"
+      },
+      {
+        employeeSlug: "samir-haddad",
+        serviceSlug: "full-grooming-session",
+        date: "2026-03-19",
+        start: "13:00",
+        end: "14:15"
+      },
+      {
+        employeeSlug: "jonah-brooks",
+        serviceSlug: "signature-cut",
+        date: "2026-03-17",
+        start: "09:30",
+        end: "10:00"
+      },
+      {
+        employeeSlug: "jonah-brooks",
+        serviceSlug: "signature-cut",
+        date: "2026-03-18",
+        start: "14:00",
+        end: "14:30"
+      }
+    ]
   }
 };
