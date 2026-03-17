@@ -46,7 +46,7 @@ export default async function EmployeeSchedulePage({ params }: EmployeeScheduleP
       <section
         style={{
           display: "grid",
-          gridTemplateColumns: "minmax(0, 1.2fr) minmax(280px, 0.9fr)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: 16
         }}
       >
