@@ -66,6 +66,20 @@ function firstNonEmptyArray(...values: Array<string[] | undefined>) {
   return [] as string[];
 }
 
+function firstNonEmptyTranslationValue<T>(
+  translations: Record<Locale, T>,
+  pick: (translation: T) => string | undefined
+) {
+  for (const locale of locales) {
+    const value = pick(translations[locale]);
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
 export function getBookingOptions(locale: Locale) {
   return {
     services: siteConfig.services[locale].services,
@@ -88,7 +102,7 @@ export function saveService(input: {
   isActive: boolean;
   translations: Record<Locale, { name: string; description: string; durationLabel: string; priceLabel: string }>;
 }) {
-  const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
+  const slug = slugify(input.slug || firstNonEmptyTranslationValue(input.translations, (item) => item.name));
   const existingSlug = input.serviceSlug;
   const fallbackLocale = siteConfig.defaultLocale;
   const fallbackTranslation = input.translations[fallbackLocale];
@@ -188,7 +202,7 @@ export function saveEmployee(input: {
   linkLogin: boolean;
   translations: Record<Locale, { name: string; bio: string; imageSrc: string; specialties: string[] }>;
 }) {
-  const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
+  const slug = slugify(input.slug || firstNonEmptyTranslationValue(input.translations, (item) => item.name));
   const existingSlug = input.employeeSlug;
   const fallbackLocale = siteConfig.defaultLocale;
   const fallbackTranslation = input.translations[fallbackLocale];
@@ -274,7 +288,7 @@ export function saveEmployee(input: {
         id: `employee-login-${slug}`,
         email: input.email,
         role: "employee",
-        displayName: input.translations.de.name || input.translations.en.name || slug,
+        displayName: firstNonEmptyTranslationValue(input.translations, (item) => item.name) || slug,
         employeeSlug: slug,
         canManageAvailability: true,
         passwordSalt: "b572d2ea55bd90b48d3cb074a32761d6",
@@ -506,7 +520,7 @@ export function saveOffer(input: {
   imageSrc?: string;
   translations: Record<Locale, { title: string; description: string }>;
 }) {
-  const slug = slugify(input.slug || input.translations.de.title || input.translations.en.title);
+  const slug = slugify(input.slug || firstNonEmptyTranslationValue(input.translations, (item) => item.title));
   const fallbackLocale = siteConfig.defaultLocale;
   const fallbackTranslation = input.translations[fallbackLocale];
   const fallbackExisting = siteConfig.offers[fallbackLocale].offers.find(

@@ -78,6 +78,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
     serviceSlug: filters.bookingService,
     status: filters.bookingStatus
   });
+  const currentLocaleLabel = localeLabels[locale];
 
   return (
     <AdminShell locale={locale} displayName={session?.displayName}>
@@ -191,54 +192,32 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             </div>
           ) : null}
           <div style={gridTwo}>
-            {locales.map((item) => (
-              <LocaleFields key={item} title={localeLabels[item]}>
-                <input
-                  name={`name_${item}`}
-                  defaultValue={
-                    serviceToEdit
-                      ? (siteConfig.services[item].services.find((service) => service.slug === serviceToEdit.slug)
-                          ?.name ?? "")
-                      : ""
-                  }
-                  placeholder="Name"
-                  style={inputStyle}
-                />
-                <input
-                  name={`description_${item}`}
-                  defaultValue={
-                    serviceToEdit
-                      ? (siteConfig.services[item].services.find((service) => service.slug === serviceToEdit.slug)
-                          ?.description ?? "")
-                      : ""
-                  }
-                  placeholder="Description"
-                  style={inputStyle}
-                />
-                <input
-                  name={`duration_${item}`}
-                  defaultValue={
-                    serviceToEdit
-                      ? (siteConfig.services[item].services.find((service) => service.slug === serviceToEdit.slug)
-                          ?.durationLabel ?? "")
-                      : ""
-                  }
-                  placeholder="Duration label"
-                  style={inputStyle}
-                />
-                <input
-                  name={`price_${item}`}
-                  defaultValue={
-                    serviceToEdit
-                      ? (siteConfig.services[item].services.find((service) => service.slug === serviceToEdit.slug)
-                          ?.priceLabel ?? "")
-                      : ""
-                  }
-                  placeholder="Price label"
-                  style={inputStyle}
-                />
-              </LocaleFields>
-            ))}
+            <LocaleFields title={`${currentLocaleLabel} content`}>
+              <input
+                name={`name_${locale}`}
+                defaultValue={serviceToEdit?.name ?? ""}
+                placeholder="Name"
+                style={inputStyle}
+              />
+              <input
+                name={`description_${locale}`}
+                defaultValue={serviceToEdit?.description ?? ""}
+                placeholder="Description"
+                style={inputStyle}
+              />
+              <input
+                name={`duration_${locale}`}
+                defaultValue={serviceToEdit?.durationLabel ?? ""}
+                placeholder="Duration label"
+                style={inputStyle}
+              />
+              <input
+                name={`price_${locale}`}
+                defaultValue={serviceToEdit?.priceLabel ?? ""}
+                placeholder="Price label"
+                style={inputStyle}
+              />
+            </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             {serviceToEdit ? "Update service" : "Save service"}
@@ -314,57 +293,33 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             </div>
           ) : null}
           <div style={gridTwo}>
-            {locales.map((item) => (
-              <LocaleFields key={item} title={localeLabels[item]}>
-                <input
-                  name={`name_${item}`}
-                  defaultValue={
-                    employeeToEdit
-                      ? (siteConfig.team[item].members.find((member) => member.slug === employeeToEdit.slug)?.name ??
-                        "")
-                      : ""
-                  }
-                  placeholder="Display name"
-                  style={inputStyle}
-                />
-                <input
-                  name={`image_${item}`}
-                  defaultValue={
-                    employeeToEdit
-                      ? (siteConfig.team[item].members.find((member) => member.slug === employeeToEdit.slug)
-                          ?.imageSrc ?? "")
-                      : ""
-                  }
-                  placeholder="Avatar URL"
-                  style={inputStyle}
-                />
-                <input
-                  name={`specialties_${item}`}
-                  defaultValue={
-                    employeeToEdit
-                      ? (
-                          siteConfig.team[item].members.find((member) => member.slug === employeeToEdit.slug)
-                            ?.specialties ?? []
-                        ).join(", ")
-                      : ""
-                  }
-                  placeholder="Comma-separated specialties"
-                  style={inputStyle}
-                />
-                <textarea
-                  name={`bio_${item}`}
-                  rows={4}
-                  defaultValue={
-                    employeeToEdit
-                      ? (siteConfig.team[item].members.find((member) => member.slug === employeeToEdit.slug)?.bio ??
-                        "")
-                      : ""
-                  }
-                  placeholder="Bio"
-                  style={inputStyle}
-                />
-              </LocaleFields>
-            ))}
+            <LocaleFields title={`${currentLocaleLabel} content`}>
+              <input
+                name={`name_${locale}`}
+                defaultValue={employeeToEdit?.name ?? ""}
+                placeholder="Display name"
+                style={inputStyle}
+              />
+              <input
+                name={`image_${locale}`}
+                defaultValue={employeeToEdit?.imageSrc ?? ""}
+                placeholder="Avatar URL"
+                style={inputStyle}
+              />
+              <input
+                name={`specialties_${locale}`}
+                defaultValue={(employeeToEdit?.specialties ?? []).join(", ")}
+                placeholder="Comma-separated specialties"
+                style={inputStyle}
+              />
+              <textarea
+                name={`bio_${locale}`}
+                rows={4}
+                defaultValue={employeeToEdit?.bio ?? ""}
+                placeholder="Bio"
+                style={inputStyle}
+              />
+            </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             {employeeToEdit ? "Update employee" : "Save employee"}
@@ -669,17 +624,15 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             </label>
           </div>
           <div style={gridTwo}>
-            {locales.map((item) => (
-              <LocaleFields key={item} title={localeLabels[item]}>
-                <input name={`title_${item}`} placeholder="Offer title" style={inputStyle} />
-                <textarea
-                  name={`description_${item}`}
-                  rows={4}
-                  placeholder="Description"
-                  style={inputStyle}
-                />
-              </LocaleFields>
-            ))}
+            <LocaleFields title={`${currentLocaleLabel} content`}>
+              <input name={`title_${locale}`} placeholder="Offer title" style={inputStyle} />
+              <textarea
+                name={`description_${locale}`}
+                rows={4}
+                placeholder="Description"
+                style={inputStyle}
+              />
+            </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             Save offer
@@ -744,27 +697,29 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                   />
                   Default locale
                 </label>
-                <input
-                  name={`hero_kicker_${item}`}
-                  defaultValue={siteConfig.content[item].hero.kicker}
-                  placeholder="Hero kicker"
-                  style={inputStyle}
-                />
-                <input
-                  name={`hero_title_${item}`}
-                  defaultValue={siteConfig.content[item].hero.title}
-                  placeholder="Hero title"
-                  style={inputStyle}
-                />
-                <textarea
-                  name={`hero_subtitle_${item}`}
-                  defaultValue={siteConfig.content[item].hero.subtitle}
-                  rows={4}
-                  placeholder="Hero subtitle"
-                  style={inputStyle}
-                />
               </div>
             ))}
+            <LocaleFields title={`${currentLocaleLabel} hero content`}>
+              <input
+                name={`hero_kicker_${locale}`}
+                defaultValue={siteConfig.content[locale].hero.kicker}
+                placeholder="Hero kicker"
+                style={inputStyle}
+              />
+              <input
+                name={`hero_title_${locale}`}
+                defaultValue={siteConfig.content[locale].hero.title}
+                placeholder="Hero title"
+                style={inputStyle}
+              />
+              <textarea
+                name={`hero_subtitle_${locale}`}
+                defaultValue={siteConfig.content[locale].hero.subtitle}
+                rows={4}
+                placeholder="Hero subtitle"
+                style={inputStyle}
+              />
+            </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             Save shop settings
@@ -873,37 +828,35 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
             </label>
           </div>
           <div style={gridTwo}>
-            {locales.map((item) => (
-              <LocaleFields key={item} title={localeLabels[item]}>
-                <input
-                  name={`title_${item}`}
-                  defaultValue={siteConfig.contact[item].title}
-                  placeholder="Page title"
-                  style={inputStyle}
-                />
-                <input
-                  name={`subtitle_${item}`}
-                  defaultValue={siteConfig.contact[item].subtitle}
-                  placeholder="Subtitle"
-                  style={inputStyle}
-                />
-                <input
-                  name={`addressLabel_${item}`}
-                  defaultValue={siteConfig.contact[item].items.address.label}
-                  placeholder="Address label"
-                  style={inputStyle}
-                />
-                <textarea
-                  name={`hours_${item}`}
-                  rows={5}
-                  defaultValue={siteConfig.contact[item].workingHours
-                    .map((entry) => `${entry.days}: ${entry.hours}`)
-                    .join("\n")}
-                  placeholder="One line per row: Day: hours"
-                  style={inputStyle}
-                />
-              </LocaleFields>
-            ))}
+            <LocaleFields title={`${currentLocaleLabel} content`}>
+              <input
+                name={`title_${locale}`}
+                defaultValue={siteConfig.contact[locale].title}
+                placeholder="Page title"
+                style={inputStyle}
+              />
+              <input
+                name={`subtitle_${locale}`}
+                defaultValue={siteConfig.contact[locale].subtitle}
+                placeholder="Subtitle"
+                style={inputStyle}
+              />
+              <input
+                name={`addressLabel_${locale}`}
+                defaultValue={siteConfig.contact[locale].items.address.label}
+                placeholder="Address label"
+                style={inputStyle}
+              />
+              <textarea
+                name={`hours_${locale}`}
+                rows={5}
+                defaultValue={siteConfig.contact[locale].workingHours
+                  .map((entry) => `${entry.days}: ${entry.hours}`)
+                  .join("\n")}
+                placeholder="One line per row: Day: hours"
+                style={inputStyle}
+              />
+            </LocaleFields>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             Save contact content
