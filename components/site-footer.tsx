@@ -1,5 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
+import { CookieSettingsButton } from "@/components/cookie-settings-button";
 import { getDictionary, type Locale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
 
@@ -52,6 +53,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
         >
           <Link href={localeHref(locale, "/impressum")}>{dictionary.footer.impressum}</Link>
           <Link href={localeHref(locale, "/datenschutz")}>{dictionary.footer.datenschutz}</Link>
+          <CookieSettingsButton label={dictionary.footer.cookieSettings} />
         </nav>
       </div>
     </footer>

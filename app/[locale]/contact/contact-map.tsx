@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  COOKIE_PREFERENCES_CHANGED_EVENT,
+  COOKIE_PREFERENCES_OPEN_EVENT,
+  readStoredCookiePreferences
+} from "@/lib/cookie-consent";
 
 type ContactMapProps = {
   shopName: string;
@@ -12,8 +17,6 @@ type ContactMapProps = {
   consentButtonLabel: string;
   privacyNotice: string;
 };
-
-const MAP_CONSENT_STORAGE_KEY = "barbershop-contact-map-consent";
 
 export function ContactMap({
   shopName,
@@ -28,12 +31,20 @@ export function ContactMap({
   const [hasConsent, setHasConsent] = useState(false);
 
   useEffect(() => {
-    setHasConsent(window.localStorage.getItem(MAP_CONSENT_STORAGE_KEY) === "granted");
+    function syncConsent() {
+      setHasConsent(Boolean(readStoredCookiePreferences()?.functional));
+    }
+
+    syncConsent();
+    window.addEventListener(COOKIE_PREFERENCES_CHANGED_EVENT, syncConsent);
+
+    return () => {
+      window.removeEventListener(COOKIE_PREFERENCES_CHANGED_EVENT, syncConsent);
+    };
   }, []);
 
   function handleConsent() {
-    window.localStorage.setItem(MAP_CONSENT_STORAGE_KEY, "granted");
-    setHasConsent(true);
+    window.dispatchEvent(new Event(COOKIE_PREFERENCES_OPEN_EVENT));
   }
 
   if (!hasConsent) {

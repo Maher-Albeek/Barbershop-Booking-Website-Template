@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
+import { CookieConsent } from "@/components/cookie-consent";
 import { isLocale } from "@/lib/i18n";
 import { SiteFooter } from "@/components/site-footer";
 
@@ -24,6 +25,7 @@ export default async function LocaleLayout({
     <>
       {children}
       <SiteFooter locale={locale} />
+      <CookieConsent locale={locale} />
     </>
   );
 }
