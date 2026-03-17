@@ -1,7 +1,7 @@
 "use server";
 
 import { isLocale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getContactContent } from "@/lib/site-config";
 import {
   emptyContactFormValues,
   normalizeContactValue,
@@ -25,7 +25,7 @@ export async function submitContactForm(
 ): Promise<ContactFormState> {
   const localeValue = normalizeContactValue(formData.get("locale"));
   const locale = isLocale(localeValue) ? localeValue : siteConfig.defaultLocale;
-  const contactFormContent = siteConfig.contact[locale].form;
+  const contactFormContent = getContactContent(locale).form;
   const values = {
     name: normalizeContactValue(formData.get("name")),
     email: normalizeContactValue(formData.get("email")),

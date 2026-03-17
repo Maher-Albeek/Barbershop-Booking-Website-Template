@@ -5,7 +5,7 @@ import {
   type BookingRecord
 } from "@/lib/booking";
 import { type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getEmployeeBySlug, getServiceBySlug } from "@/lib/site-config";
 
 const weekdayLabels = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -35,8 +35,8 @@ export function getEmployeeProfile(session: AuthSession, locale: Locale) {
   }
 
   return (
-    siteConfig.team[locale].members.find((member) => member.slug === slug) ??
-    siteConfig.team[siteConfig.defaultLocale].members.find((member) => member.slug === slug) ??
+    getEmployeeBySlug(locale, slug) ??
+    getEmployeeBySlug(siteConfig.defaultLocale, slug) ??
     null
   );
 }
@@ -72,8 +72,7 @@ export function listEmployeeAssignedServices(session: AuthSession, locale: Local
   return activeAssignments.map((assignment) => ({
     ...assignment,
     serviceName:
-      siteConfig.services[locale].services.find((service) => service.slug === assignment.serviceSlug)
-        ?.name ?? assignment.serviceSlug
+      getServiceBySlug(locale, assignment.serviceSlug)?.name ?? assignment.serviceSlug
   }));
 }
 

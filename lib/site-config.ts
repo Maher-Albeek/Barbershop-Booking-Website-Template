@@ -1253,3 +1253,119 @@ export const siteConfig: {
     internalNotificationEmail: "hello@crownandblade.de"
   }
 };
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function mergeLocalizedArray(localized: unknown[], fallback: unknown[]) {
+  if (localized.length === 0) {
+    return fallback.map((item) => mergeLocalizedValue(undefined, item));
+  }
+
+  const localizedHasSlug = localized.every(
+    (item) => isPlainObject(item) && typeof item.slug === "string"
+  );
+  const fallbackHasSlug = fallback.every(
+    (item) => isPlainObject(item) && typeof item.slug === "string"
+  );
+
+  if (localizedHasSlug && fallbackHasSlug) {
+    const localizedMap = new Map(
+      localized.map((item) => [String((item as { slug: string }).slug), item])
+    );
+    const fallbackMap = new Map(
+      fallback.map((item) => [String((item as { slug: string }).slug), item])
+    );
+    const orderedSlugs = [
+      ...new Set([
+        ...fallback.map((item) => String((item as { slug: string }).slug)),
+        ...localized.map((item) => String((item as { slug: string }).slug))
+      ])
+    ];
+
+    return orderedSlugs.map((slug) =>
+      mergeLocalizedValue(localizedMap.get(slug), fallbackMap.get(slug))
+    );
+  }
+
+  return localized.map((item, index) => mergeLocalizedValue(item, fallback[index]));
+}
+
+function mergeLocalizedValue(localized: unknown, fallback: unknown): any {
+  if (localized === undefined || localized === null) {
+    return fallback;
+  }
+
+  if (typeof localized === "string") {
+    return localized.trim() ? localized : fallback;
+  }
+
+  if (Array.isArray(localized)) {
+    return Array.isArray(fallback) ? mergeLocalizedArray(localized, fallback) : localized;
+  }
+
+  if (isPlainObject(localized) && isPlainObject(fallback)) {
+    const result: Record<string, unknown> = {};
+
+    for (const key of new Set([...Object.keys(fallback), ...Object.keys(localized)])) {
+      result[key] = mergeLocalizedValue(localized[key], fallback[key]);
+    }
+
+    return result;
+  }
+
+  return localized;
+}
+
+function mergeWithDefaultLocale<T>(locale: Locale, value: T, fallback: T): T {
+  return mergeLocalizedValue(value, fallback) as T;
+}
+
+export function getHomepageContent(locale: Locale) {
+  return mergeWithDefaultLocale(locale, siteConfig.content[locale], siteConfig.content[siteConfig.defaultLocale]);
+}
+
+export function getServicesContent(locale: Locale) {
+  return mergeWithDefaultLocale(
+    locale,
+    siteConfig.services[locale],
+    siteConfig.services[siteConfig.defaultLocale]
+  );
+}
+
+export function getTeamContent(locale: Locale) {
+  return mergeWithDefaultLocale(locale, siteConfig.team[locale], siteConfig.team[siteConfig.defaultLocale]);
+}
+
+export function getGalleryContent(locale: Locale) {
+  return mergeWithDefaultLocale(
+    locale,
+    siteConfig.gallery[locale],
+    siteConfig.gallery[siteConfig.defaultLocale]
+  );
+}
+
+export function getOffersContent(locale: Locale) {
+  return mergeWithDefaultLocale(
+    locale,
+    siteConfig.offers[locale],
+    siteConfig.offers[siteConfig.defaultLocale]
+  );
+}
+
+export function getContactContent(locale: Locale) {
+  return mergeWithDefaultLocale(
+    locale,
+    siteConfig.contact[locale],
+    siteConfig.contact[siteConfig.defaultLocale]
+  );
+}
+
+export function getServiceBySlug(locale: Locale, serviceSlug: string) {
+  return getServicesContent(locale).services.find((service) => service.slug === serviceSlug);
+}
+
+export function getEmployeeBySlug(locale: Locale, employeeSlug: string) {
+  return getTeamContent(locale).members.find((member) => member.slug === employeeSlug);
+}

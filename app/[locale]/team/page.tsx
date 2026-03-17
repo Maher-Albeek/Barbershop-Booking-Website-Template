@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getTeamContent } from "@/lib/site-config";
 
 type TeamPageProps = {
   params: Promise<{ locale: string }>;
@@ -20,7 +20,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
   }
 
   const dictionary = getDictionary(locale);
-  const teamContent = siteConfig.team[locale];
+  const teamContent = getTeamContent(locale);
   const activeMembers = teamContent.members.filter((member) => member.isActive);
 
   return (

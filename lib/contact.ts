@@ -1,5 +1,5 @@
 import type { Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { getContactContent } from "@/lib/site-config";
 
 export type ContactFormValues = {
   name: string;
@@ -58,7 +58,7 @@ export function validateContactForm(values: ContactFormValues) {
 }
 
 export async function sendContactMessage(locale: Locale, values: ContactFormValues) {
-  const recipient = siteConfig.contact[locale].items.email.value;
+  const recipient = getContactContent(locale).items.email.value;
 
   console.info("Contact form submission", {
     locale,

@@ -7,7 +7,7 @@ import {
   type BookingStatus
 } from "@/lib/booking";
 import { locales, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getContactContent, getHomepageContent } from "@/lib/site-config";
 
 export function slugify(value: string) {
   return value
@@ -44,6 +44,26 @@ export function getDashboardData(locale: Locale) {
   };
 }
 
+function firstNonEmptyString(...values: Array<string | undefined>) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function firstNonEmptyArray(...values: Array<string[] | undefined>) {
+  for (const value of values) {
+    if (Array.isArray(value) && value.length > 0) {
+      return [...value];
+    }
+  }
+
+  return [] as string[];
+}
+
 export function getBookingOptions(locale: Locale) {
   return {
     services: siteConfig.services[locale].services,
@@ -68,19 +88,50 @@ export function saveService(input: {
 }) {
   const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
   const existingSlug = input.serviceSlug;
+  const fallbackLocale = siteConfig.defaultLocale;
+  const fallbackTranslation = input.translations[fallbackLocale];
+  const fallbackExisting = siteConfig.services[fallbackLocale].services.find(
+    (service) => service.slug === existingSlug
+  );
 
   for (const locale of locales) {
     const services = siteConfig.services[locale].services;
     const index = services.findIndex((service) => service.slug === existingSlug);
     const payload = input.translations[locale];
+    const existing = index >= 0 ? services[index] : undefined;
     const nextService = {
       slug,
       isActive: input.isActive,
       pricing: "variable" as const,
-      priceLabel: payload.priceLabel || undefined,
-      durationLabel: payload.durationLabel || "30 min",
-      name: payload.name || slug,
-      description: payload.description || ""
+      priceLabel:
+        firstNonEmptyString(
+          payload.priceLabel,
+          existing?.priceLabel,
+          fallbackTranslation.priceLabel,
+          fallbackExisting?.priceLabel
+        ) || undefined,
+      durationLabel:
+        firstNonEmptyString(
+          payload.durationLabel,
+          existing?.durationLabel,
+          fallbackTranslation.durationLabel,
+          fallbackExisting?.durationLabel,
+          "30 min"
+        ) || "30 min",
+      name:
+        firstNonEmptyString(
+          payload.name,
+          existing?.name,
+          fallbackTranslation.name,
+          fallbackExisting?.name,
+          slug
+        ) || slug,
+      description: firstNonEmptyString(
+        payload.description,
+        existing?.description,
+        fallbackTranslation.description,
+        fallbackExisting?.description
+      )
     };
 
     if (index >= 0) {
@@ -117,23 +168,53 @@ export function saveEmployee(input: {
 }) {
   const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
   const existingSlug = input.employeeSlug;
+  const fallbackLocale = siteConfig.defaultLocale;
+  const fallbackTranslation = input.translations[fallbackLocale];
+  const fallbackExisting = siteConfig.team[fallbackLocale].members.find(
+    (member) => member.slug === existingSlug
+  );
 
   for (const locale of locales) {
     const members = siteConfig.team[locale].members;
     const index = members.findIndex((member) => member.slug === existingSlug);
     const payload = input.translations[locale];
+    const existing = index >= 0 ? members[index] : undefined;
     const bookingServiceSlugs =
       index >= 0 ? members[index].bookingServiceSlugs : [];
     const nextMember = {
       slug,
       isActive: input.isActive,
       imageSrc:
-        payload.imageSrc ||
+        firstNonEmptyString(
+          payload.imageSrc,
+          existing?.imageSrc,
+          fallbackTranslation.imageSrc,
+          fallbackExisting?.imageSrc,
+          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80"
+        ) ||
         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
       bookingServiceSlugs,
-      specialties: payload.specialties,
-      name: payload.name || slug,
-      bio: payload.bio || undefined
+      specialties: firstNonEmptyArray(
+        payload.specialties,
+        existing?.specialties,
+        fallbackTranslation.specialties,
+        fallbackExisting?.specialties
+      ),
+      name:
+        firstNonEmptyString(
+          payload.name,
+          existing?.name,
+          fallbackTranslation.name,
+          fallbackExisting?.name,
+          slug
+        ) || slug,
+      bio:
+        firstNonEmptyString(
+          payload.bio,
+          existing?.bio,
+          fallbackTranslation.bio,
+          fallbackExisting?.bio
+        ) || undefined
     };
 
     if (index >= 0) {
@@ -295,19 +376,37 @@ export function saveOffer(input: {
   translations: Record<Locale, { title: string; description: string }>;
 }) {
   const slug = slugify(input.slug || input.translations.de.title || input.translations.en.title);
+  const fallbackLocale = siteConfig.defaultLocale;
+  const fallbackTranslation = input.translations[fallbackLocale];
+  const fallbackExisting = siteConfig.offers[fallbackLocale].offers.find(
+    (offer) => offer.slug === input.offerSlug
+  );
 
   for (const locale of locales) {
     const offers = siteConfig.offers[locale].offers;
     const index = offers.findIndex((offer) => offer.slug === input.offerSlug);
     const payload = input.translations[locale];
+    const existing = index >= 0 ? offers[index] : undefined;
     const nextOffer = {
       slug,
       isActive: input.isActive,
       validFrom: input.validFrom,
       validUntil: input.validUntil,
       imageSrc: input.imageSrc || undefined,
-      title: payload.title || slug,
-      description: payload.description || ""
+      title:
+        firstNonEmptyString(
+          payload.title,
+          existing?.title,
+          fallbackTranslation.title,
+          fallbackExisting?.title,
+          slug
+        ) || slug,
+      description: firstNonEmptyString(
+        payload.description,
+        existing?.description,
+        fallbackTranslation.description,
+        fallbackExisting?.description
+      )
     };
 
     if (index >= 0) {
@@ -346,7 +445,22 @@ export function saveShopSettings(input: {
   mutableLocales.splice(0, mutableLocales.length, ...input.enabledLocales);
 
   for (const locale of locales) {
-    siteConfig.content[locale].hero = input.hero[locale];
+    const existingHero = getHomepageContent(locale).hero;
+    const fallbackHero = input.hero[siteConfig.defaultLocale];
+
+    siteConfig.content[locale].hero = {
+      kicker: firstNonEmptyString(
+        input.hero[locale].kicker,
+        existingHero.kicker,
+        fallbackHero.kicker
+      ),
+      title: firstNonEmptyString(input.hero[locale].title, existingHero.title, fallbackHero.title),
+      subtitle: firstNonEmptyString(
+        input.hero[locale].subtitle,
+        existingHero.subtitle,
+        fallbackHero.subtitle
+      )
+    };
   }
 }
 
@@ -372,13 +486,25 @@ export function saveContactContent(input: {
   mapVisible: boolean;
   translations: Record<Locale, { title: string; subtitle: string; addressLabel: string }>;
 }) {
+  const fallbackLocale = siteConfig.defaultLocale;
+
   for (const locale of locales) {
     const content = siteConfig.contact[locale];
+    const fallbackContent = getContactContent(locale);
     const payload = input.translations[locale];
+    const fallbackPayload = input.translations[fallbackLocale];
 
-    content.title = payload.title;
-    content.subtitle = payload.subtitle;
-    content.items.address.label = payload.addressLabel;
+    content.title = firstNonEmptyString(payload.title, fallbackContent.title, fallbackPayload.title);
+    content.subtitle = firstNonEmptyString(
+      payload.subtitle,
+      fallbackContent.subtitle,
+      fallbackPayload.subtitle
+    );
+    content.items.address.label = firstNonEmptyString(
+      payload.addressLabel,
+      fallbackContent.items.address.label,
+      fallbackPayload.addressLabel
+    );
     content.items.address.value = input.address;
     content.items.phone.value = input.phone;
     content.items.phone.href = `tel:${input.phone.replace(/[^\d+]/g, "")}`;
@@ -391,7 +517,10 @@ export function saveContactContent(input: {
           href: input.whatsapp
         }
       : undefined;
-    content.workingHours = input.workingHours[locale]
+    const workingHoursSource =
+      firstNonEmptyString(input.workingHours[locale], input.workingHours[fallbackLocale]) ||
+      fallbackContent.workingHours.map((entry) => `${entry.days}: ${entry.hours}`).join("\n");
+    content.workingHours = workingHoursSource
       .split(/\r?\n/)
       .map((line) => line.trim())
       .filter(Boolean)

@@ -1,5 +1,5 @@
 import { type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getEmployeeBySlug, getServiceBySlug, getServicesContent, getTeamContent } from "@/lib/site-config";
 
 export type BookingStatus = "confirmed" | "cancelled" | "completed" | "no_show";
 
@@ -56,11 +56,11 @@ declare global {
 }
 
 function getServiceName(locale: Locale, serviceSlug: string) {
-  return siteConfig.services[locale].services.find((service) => service.slug === serviceSlug)?.name;
+  return getServiceBySlug(locale, serviceSlug)?.name;
 }
 
 function getEmployeeName(locale: Locale, employeeSlug: string) {
-  return siteConfig.team[locale].members.find((member) => member.slug === employeeSlug)?.name;
+  return getEmployeeBySlug(locale, employeeSlug)?.name;
 }
 
 function seedBookings() {
@@ -136,9 +136,7 @@ function addDays(date: Date, days: number) {
 }
 
 function getActiveService(locale: Locale, serviceSlug: string) {
-  return siteConfig.services[locale].services.find(
-    (service) => service.isActive && service.slug === serviceSlug
-  );
+  return getServicesContent(locale).services.find((service) => service.isActive && service.slug === serviceSlug);
 }
 
 function getEligibleEmployees(locale: Locale, serviceSlug: string) {
@@ -146,7 +144,7 @@ function getEligibleEmployees(locale: Locale, serviceSlug: string) {
     (assignment) => assignment.isActive && assignment.serviceSlug === serviceSlug
   );
 
-  return siteConfig.team[locale].members.filter(
+  return getTeamContent(locale).members.filter(
     (member) =>
       member.isActive &&
       member.bookingServiceSlugs.includes(serviceSlug) &&

@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getServicesContent } from "@/lib/site-config";
 
 type ServicesPageProps = {
   params: Promise<{ locale: string }>;
@@ -24,7 +24,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
   }
 
   const dictionary = getDictionary(locale);
-  const servicesContent = siteConfig.services[locale];
+  const servicesContent = getServicesContent(locale);
   const activeServices = servicesContent.services.filter((service) => service.isActive);
 
   return (

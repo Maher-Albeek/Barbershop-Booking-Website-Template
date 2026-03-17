@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getGalleryContent } from "@/lib/site-config";
 
 type GalleryPageProps = {
   params: Promise<{ locale: string }>;
@@ -20,7 +20,7 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
   }
 
   const dictionary = getDictionary(locale);
-  const galleryContent = siteConfig.gallery[locale];
+  const galleryContent = getGalleryContent(locale);
   const visibleImages = galleryContent.images
     .filter((image) => image.isVisible)
     .sort((left, right) => left.sortOrder - right.sortOrder);

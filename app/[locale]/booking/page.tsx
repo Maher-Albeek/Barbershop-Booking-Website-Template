@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listAvailableSlots } from "@/lib/booking";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getServicesContent, getTeamContent } from "@/lib/site-config";
 import { submitBooking } from "./actions";
 
 type BookingPageProps = {
@@ -96,8 +96,8 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
   }
 
   const dictionary = getDictionary(locale);
-  const servicesContent = siteConfig.services[locale];
-  const teamContent = siteConfig.team[locale];
+  const servicesContent = getServicesContent(locale);
+  const teamContent = getTeamContent(locale);
   const bookingConfig = siteConfig.booking;
   const activeServices = servicesContent.services.filter((item) => item.isActive);
   const selectedService = activeServices.find((item) => item.slug === service);

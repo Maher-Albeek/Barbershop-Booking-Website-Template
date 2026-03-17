@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBookingById } from "@/lib/booking";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { getContactContent } from "@/lib/site-config";
 
 type BookingSuccessPageProps = {
   params: Promise<{ locale: string }>;
@@ -26,7 +26,7 @@ export default async function BookingSuccessPage({
 
   const dictionary = getDictionary(locale);
   const booking = id ? getBookingById(id) : undefined;
-  const contact = siteConfig.contact[locale].items;
+  const contact = getContactContent(locale).items;
 
   return (
     <main

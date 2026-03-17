@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getHomepageContent } from "@/lib/site-config";
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;
@@ -20,7 +20,7 @@ export default async function HomePage({ params }: HomePageProps) {
   }
 
   const dictionary = getDictionary(locale);
-  const content = siteConfig.content[locale];
+  const content = getHomepageContent(locale);
 
   return (
     <main

@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getOffersContent } from "@/lib/site-config";
 
 type OffersPageProps = {
   params: Promise<{ locale: string }>;
@@ -29,7 +29,7 @@ export default async function OffersPage({ params }: OffersPageProps) {
   }
 
   const dictionary = getDictionary(locale);
-  const offersContent = siteConfig.offers[locale];
+  const offersContent = getOffersContent(locale);
   const visibleOffers = offersContent.offers.filter(
     (offer) => offer.isActive && isOfferCurrentlyVisible(offer.validFrom, offer.validUntil)
   );

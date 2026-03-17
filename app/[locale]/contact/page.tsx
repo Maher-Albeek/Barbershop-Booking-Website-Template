@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, getContactContent } from "@/lib/site-config";
 import { ContactForm } from "./contact-form";
 import { ContactMap } from "./contact-map";
 
@@ -22,7 +22,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   }
 
   const dictionary = getDictionary(locale);
-  const contactContent = siteConfig.contact[locale];
+  const contactContent = getContactContent(locale);
   const contactItems = [
     contactContent.items.phone,
     contactContent.items.email,
