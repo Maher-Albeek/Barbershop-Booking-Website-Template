@@ -32,6 +32,14 @@ const dictionaries = {
       variablePriceLabel: "Price varies by barber",
       fixedPriceLabel: "Price",
       bookingCta: "Book this service"
+    },
+    team: {
+      eyebrow: "Meet the team",
+      title: "Choose the barber that fits your style.",
+      subtitle:
+        "Active team members are shown here with their specialties and personality so customers can decide who to book with.",
+      bioFallback: "Bio coming soon",
+      bookingCta: "Book with this barber"
     }
   },
   de: {
@@ -57,6 +65,14 @@ const dictionaries = {
       variablePriceLabel: "Preis variiert je Barber",
       fixedPriceLabel: "Preis",
       bookingCta: "Diese Leistung buchen"
+    },
+    team: {
+      eyebrow: "Lerne das Team kennen",
+      title: "Wähle den Barber, der zu deinem Stil passt.",
+      subtitle:
+        "Hier werden aktive Teammitglieder mit Spezialisierung und Persönlichkeit gezeigt, damit Kundinnen und Kunden gezielt wählen können.",
+      bioFallback: "Bio folgt in Kürze",
+      bookingCta: "Bei diesem Barber buchen"
     }
   },
   ar: {
@@ -82,6 +98,14 @@ const dictionaries = {
       variablePriceLabel: "\u0627\u0644\u0633\u0639\u0631 \u064a\u062e\u062a\u0644\u0641 \u062d\u0633\u0628 \u0627\u0644\u062d\u0644\u0627\u0642",
       fixedPriceLabel: "\u0627\u0644\u0633\u0639\u0631",
       bookingCta: "\u0627\u062d\u062c\u0632 \u0647\u0630\u0647 \u0627\u0644\u062e\u062f\u0645\u0629"
+    },
+    team: {
+      eyebrow: "\u062a\u0639\u0631\u0641 \u0639\u0644\u0649 \u0627\u0644\u0641\u0631\u064a\u0642",
+      title: "\u0627\u062e\u062a\u0631 \u0627\u0644\u062d\u0644\u0627\u0642 \u0627\u0644\u0630\u064a \u064a\u0646\u0627\u0633\u0628 \u0623\u0633\u0644\u0648\u0628\u0643.",
+      subtitle:
+        "\u062a\u0639\u0631\u0636 \u0647\u0630\u0647 \u0627\u0644\u0635\u0641\u062d\u0629 \u0623\u0639\u0636\u0627\u0621 \u0627\u0644\u0641\u0631\u064a\u0642 \u0627\u0644\u0646\u0634\u0637\u064a\u0646 \u0645\u0639 \u062a\u062e\u0635\u0635\u0627\u062a\u0647\u0645 \u0648\u0646\u0628\u0630\u0629 \u0639\u0646\u0647\u0645 \u0644\u064a\u062a\u0645\u0643\u0646 \u0627\u0644\u0639\u0645\u064a\u0644 \u0645\u0646 \u0627\u0644\u0627\u062e\u062a\u064a\u0627\u0631.",
+      bioFallback: "\u0627\u0644\u0633\u064a\u0631\u0629 \u0633\u062a\u062a\u0648\u0641\u0631 \u0642\u0631\u064a\u0628\u0627",
+      bookingCta: "\u0627\u062d\u062c\u0632 \u0645\u0639 \u0647\u0630\u0627 \u0627\u0644\u062d\u0644\u0627\u0642"
     }
   }
 } as const satisfies Record<
@@ -101,6 +125,13 @@ const dictionaries = {
       durationLabel: string;
       variablePriceLabel: string;
       fixedPriceLabel: string;
+      bookingCta: string;
+    };
+    team: {
+      eyebrow: string;
+      title: string;
+      subtitle: string;
+      bioFallback: string;
       bookingCta: string;
     };
   }

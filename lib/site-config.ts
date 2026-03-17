@@ -33,6 +33,19 @@ type LocalizedServicesContent = {
   services: Service[];
 };
 
+type TeamMember = {
+  slug: string;
+  isActive: boolean;
+  imageSrc: string;
+  specialties: string[];
+  name: string;
+  bio?: string;
+};
+
+type LocalizedTeamContent = {
+  members: TeamMember[];
+};
+
 export const siteConfig: {
   defaultLocale: Locale;
   locales: readonly Locale[];
@@ -42,6 +55,7 @@ export const siteConfig: {
   };
   content: Record<Locale, LocalizedHomepageContent>;
   services: Record<Locale, LocalizedServicesContent>;
+  team: Record<Locale, LocalizedTeamContent>;
 } = {
   defaultLocale,
   locales,
@@ -246,6 +260,134 @@ export const siteConfig: {
           name: "\u0642\u0635\u0629 \u0627\u0644\u0637\u0644\u0627\u0628",
           description:
             "\u062e\u062f\u0645\u0629 \u0635\u064a\u0627\u0646\u0629 \u0645\u0628\u0633\u0637\u0629 \u062a\u064f\u0637\u0631\u062d \u0641\u0642\u0637 \u0641\u064a \u0641\u062a\u0631\u0627\u062a \u0627\u0644\u0639\u0631\u0648\u0636."
+        }
+      ]
+    }
+  },
+  team: {
+    en: {
+      members: [
+        {
+          slug: "marcus-reed",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+          specialties: ["Skin fades", "Executive grooming"],
+          name: "Marcus Reed",
+          bio: "Known for calm consultations and sharp finishing work, Marcus handles precise cuts for clients who want a polished weekly look."
+        },
+        {
+          slug: "samir-haddad",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+          specialties: ["Beard sculpting", "Hot towel ritual"],
+          name: "Samir Haddad",
+          bio: "Samir focuses on beard architecture, detail lines, and a relaxed service flow that suits longer grooming appointments."
+        },
+        {
+          slug: "jonah-brooks",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+          specialties: ["Texture", "Modern crop cuts"],
+          name: "Jonah Brooks"
+        },
+        {
+          slug: "oliver-stone",
+          isActive: false,
+          imageSrc:
+            "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+          specialties: ["Classic scissor work"],
+          name: "Oliver Stone",
+          bio: "Shown in config but hidden from the public team page while inactive."
+        }
+      ]
+    },
+    de: {
+      members: [
+        {
+          slug: "marcus-reed",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+          specialties: ["Skin Fades", "Executive Grooming"],
+          name: "Marcus Reed",
+          bio: "Marcus ist für ruhige Beratung und saubere Finishing-Details bekannt und betreut präzise Schnitte für einen gepflegten Alltagslook."
+        },
+        {
+          slug: "samir-haddad",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+          specialties: ["Bartkonturen", "Hot-Towel-Ritual"],
+          name: "Samir Haddad",
+          bio: "Samir konzentriert sich auf Bartarchitektur, exakte Linien und einen entspannten Serviceablauf für längere Grooming-Termine."
+        },
+        {
+          slug: "jonah-brooks",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+          specialties: ["Textur", "Moderne Crop Cuts"],
+          name: "Jonah Brooks"
+        },
+        {
+          slug: "oliver-stone",
+          isActive: false,
+          imageSrc:
+            "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+          specialties: ["Klassische Scherenarbeit"],
+          name: "Oliver Stone",
+          bio: "Im Inhalt gepflegt, aber bei inaktivem Status nicht öffentlich sichtbar."
+        }
+      ]
+    },
+    ar: {
+      members: [
+        {
+          slug: "marcus-reed",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+          specialties: [
+            "\u062a\u062f\u0631\u062c \u0627\u0644\u0633\u0643\u0646 \u0641\u064a\u062f",
+            "\u0639\u0646\u0627\u064a\u0629 \u0627\u062d\u062a\u0631\u0627\u0641\u064a\u0629"
+          ],
+          name: "Marcus Reed",
+          bio: "\u064a\u0634\u062a\u0647\u0631 \u0645\u0627\u0631\u0643\u0633 \u0628\u0627\u0644\u0627\u0633\u062a\u0634\u0627\u0631\u0629 \u0627\u0644\u0647\u0627\u062f\u0626\u0629 \u0648\u0627\u0644\u0644\u0645\u0633\u0627\u062a \u0627\u0644\u0646\u0647\u0627\u0626\u064a\u0629 \u0627\u0644\u062f\u0642\u064a\u0642\u0629 \u0644\u0642\u0635\u0627\u062a \u0623\u0646\u064a\u0642\u0629 \u0648\u0645\u0646\u062a\u0638\u0645\u0629."
+        },
+        {
+          slug: "samir-haddad",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+          specialties: [
+            "\u0646\u062d\u062a \u0627\u0644\u0644\u062d\u064a\u0629",
+            "\u0637\u0642\u0633 \u0627\u0644\u0645\u0646\u0634\u0641\u0629 \u0627\u0644\u0633\u0627\u062e\u0646\u0629"
+          ],
+          name: "Samir Haddad",
+          bio: "\u064a\u0631\u0643\u0632 \u0633\u0645\u064a\u0631 \u0639\u0644\u0649 \u0647\u0646\u062f\u0633\u0629 \u0627\u0644\u0644\u062d\u064a\u0629 \u0648\u0631\u0633\u0645 \u0627\u0644\u062d\u0648\u0627\u0641 \u0628\u062f\u0642\u0629 \u0645\u0639 \u062a\u062c\u0631\u0628\u0629 \u0645\u0631\u064a\u062d\u0629 \u0644\u062c\u0644\u0633\u0627\u062a \u0627\u0644\u0639\u0646\u0627\u064a\u0629 \u0627\u0644\u0637\u0648\u064a\u0644\u0629."
+        },
+        {
+          slug: "jonah-brooks",
+          isActive: true,
+          imageSrc:
+            "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+          specialties: [
+            "\u062a\u0635\u0641\u064a\u0641 \u0628\u0627\u0644\u0645\u0644\u0645\u0633",
+            "\u0642\u0635\u0627\u062a \u0643\u0631\u0648\u0628 \u0639\u0635\u0631\u064a\u0629"
+          ],
+          name: "Jonah Brooks"
+        },
+        {
+          slug: "oliver-stone",
+          isActive: false,
+          imageSrc:
+            "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+          specialties: ["\u0627\u0644\u0642\u0635 \u0628\u0627\u0644\u0645\u0642\u0635"],
+          name: "Oliver Stone",
+          bio: "\u0645\u0648\u062c\u0648\u062f \u0641\u064a \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0648\u0644\u0643\u0646\u0647 \u0645\u062e\u0641\u064a \u0639\u0646 \u0627\u0644\u0648\u0627\u062c\u0647\u0629 \u0627\u0644\u0639\u0627\u0645\u0629 \u0639\u0646\u062f \u062a\u0639\u0637\u064a\u0644\u0647."
         }
       ]
     }
