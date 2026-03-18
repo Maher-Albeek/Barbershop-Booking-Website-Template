@@ -43,7 +43,19 @@ async function authorize(localeValue: string) {
 }
 
 function redirectToAdmin(locale: Locale, section?: string) {
-  redirect(`/${locale}/admin${section ? `#${section}` : ""}`);
+  const adminPathBySection: Record<string, string> = {
+    services: "/admin/services",
+    employees: "/admin/employees",
+    availability: "/admin/schedule",
+    bookings: "/admin/bookings",
+    gallery: "/admin/gallery",
+    offers: "/admin/offers",
+    settings: "/admin/settings",
+    email: "/admin/email",
+    contact: "/admin/contact"
+  };
+
+  redirect(`/${locale}${section ? adminPathBySection[section] ?? "/admin" : "/admin"}`);
 }
 
 export async function upsertServiceAction(formData: FormData) {

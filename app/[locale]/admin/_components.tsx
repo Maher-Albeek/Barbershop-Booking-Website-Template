@@ -5,8 +5,22 @@ import { logoutUser } from "../login/actions";
 type AdminShellProps = {
   locale: string;
   displayName?: string;
+  activePath?: string;
   children: ReactNode;
 };
+
+const adminNavItems = [
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/services", label: "Services" },
+  { href: "/admin/employees", label: "Employees" },
+  { href: "/admin/schedule", label: "Schedule" },
+  { href: "/admin/bookings", label: "Bookings" },
+  { href: "/admin/gallery", label: "Gallery" },
+  { href: "/admin/offers", label: "Offers" },
+  { href: "/admin/settings", label: "Settings" },
+  { href: "/admin/email", label: "Email" },
+  { href: "/admin/contact", label: "Contact" }
+] as const;
 
 export const sectionStyle = {
   border: "1px solid var(--border)",
@@ -51,7 +65,7 @@ export const weekdayLabels = [
   { value: 0, label: "So" }
 ] as const;
 
-export function AdminShell({ locale, displayName, children }: AdminShellProps) {
+export function AdminShell({ locale, displayName, activePath = "/admin", children }: AdminShellProps) {
   return (
     <main style={{ minHeight: "100vh", padding: "clamp(20px, 4vw, 32px) 20px 56px" }}>
       <div style={{ maxWidth: 1320, margin: "0 auto", display: "grid", gap: 20 }}>
@@ -113,6 +127,41 @@ export function AdminShell({ locale, displayName, children }: AdminShellProps) {
             </div>
           </div>
         </header>
+
+        <nav
+          aria-label="Admin navigation"
+          style={{
+            ...sectionStyle,
+            padding: 16,
+            gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))"
+          }}
+        >
+          {adminNavItems.map((item) => {
+            const isActive = activePath === item.href;
+
+            return (
+              <Link
+                key={item.href}
+                href={`/${locale}${item.href}`}
+                style={{
+                  borderRadius: 16,
+                  padding: "14px 16px",
+                  textAlign: "center",
+                  textDecoration: "none",
+                  border: isActive ? "1px solid transparent" : "1px solid var(--border)",
+                  background: isActive
+                    ? "linear-gradient(135deg, rgba(139, 94, 60, 0.22), rgba(34, 51, 59, 0.14))"
+                    : "var(--surface-strong)",
+                  color: "inherit",
+                  fontWeight: 700,
+                  boxShadow: isActive ? "var(--shadow)" : "none"
+                }}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
 
         {children}
       </div>
