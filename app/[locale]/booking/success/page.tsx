@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { cancelBooking } from "../actions";
 import { getBookingById } from "@/lib/booking";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { getContactContent } from "@/lib/site-config";
+import { getContactContent, siteConfig } from "@/lib/site-config";
+import { FullscreenHero } from "@/components/fullscreen-hero";
 
 type BookingSuccessPageProps = {
   params: Promise<{ locale: string }>;
@@ -29,48 +30,37 @@ export default async function BookingSuccessPage({
   const booking = id ? getBookingById(id) : undefined;
   const wasCancelled = cancelled === "1";
   const contact = getContactContent(locale).items;
+  const contactNav = dictionary.navigation.find((item) => item.href === "/contact");
 
   return (
-    <main
-      lang={locale}
-      dir={dictionary.direction}
-      style={{ minHeight: "100vh", padding: "32px 20px 56px" }}
-    >
-      <div style={{ maxWidth: 960, margin: "0 auto", display: "grid", gap: 24 }}>
-        <section
-          style={{
-            borderRadius: 32,
-            padding: "34px 28px",
-            background:
-              "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))",
-            color: "#fffaf4",
-            boxShadow: "var(--shadow)"
-          }}
-        >
-          <div
-            style={{
-              display: "inline-flex",
-              padding: "8px 14px",
-              borderRadius: 999,
-              background: "rgba(255, 250, 244, 0.14)",
-              border: "1px solid rgba(255, 250, 244, 0.18)",
-              fontSize: 12,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase"
-            }}
-          >
-            {booking ? dictionary.booking.successEyebrow : dictionary.booking.successMissingTitle}
-          </div>
+    <main lang={locale} dir={dictionary.direction}>
+      <FullscreenHero
+        locale={locale}
+        direction={dictionary.direction}
+        brandName={siteConfig.brand.shopName}
+        sinceLabel={dictionary.labels.since}
+        logoText={siteConfig.brand.logoText}
+        title={booking ? dictionary.booking.successTitle : dictionary.booking.successMissingTitle}
+        kicker={booking ? dictionary.booking.successEyebrow : dictionary.booking.successMissingTitle}
+        description={
+          booking ? dictionary.booking.successDescription : dictionary.booking.successMissingDescription
+        }
+        navigation={dictionary.navigation.map((item) => ({
+          label: item.label,
+          href: navHref(locale, item.href)
+        }))}
+        primaryAction={{
+          href: navHref(locale, "/booking"),
+          label: dictionary.booking.backToBookingLabel
+        }}
+        secondaryAction={
+          contactNav
+            ? { label: contactNav.label, href: navHref(locale, contactNav.href) }
+            : { label: dictionary.booking.backToHomeLabel, href: navHref(locale, "/") }
+        }
+      />
 
-          <h1 style={{ margin: "18px 0 12px", fontSize: "clamp(2.4rem, 5vw, 4rem)" }}>
-            {booking ? dictionary.booking.successTitle : dictionary.booking.successMissingTitle}
-          </h1>
-          <p style={{ margin: 0, color: "rgba(255, 250, 244, 0.82)", lineHeight: 1.7 }}>
-            {booking
-              ? dictionary.booking.successDescription
-              : dictionary.booking.successMissingDescription}
-          </p>
-        </section>
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 20px 56px", display: "grid", gap: 24 }}>
 
         {booking ? (
           <section

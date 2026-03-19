@@ -21,78 +21,45 @@ export default async function HomePage({ params }: HomePageProps) {
 
   const dictionary = getDictionary(locale);
   const content = getHomepageContent(locale);
+  const firstHighlight = content.highlights[0];
 
   return (
-    <main
-      lang={locale}
-      dir={dictionary.direction}
-      style={{
-        minHeight: "100vh",
-        padding: "32px 20px 56px"
-      }}
-    >
-      <div
+    <main lang={locale} dir={dictionary.direction}>
+      <section
         style={{
-          maxWidth: 1200,
-          margin: "0 auto"
+          position: "relative",
+          minHeight: "100vh",
+          width: "100%",
+          overflow: "hidden",
+          color: "#fffaf4",
+          background:
+            "linear-gradient(120deg, rgba(4, 9, 14, 0.74), rgba(8, 12, 19, 0.46) 46%, rgba(20, 11, 6, 0.7)), radial-gradient(circle at 78% 20%, rgba(232, 183, 122, 0.22), transparent 34%), url('/images/hero-barbershop.jpg') center/cover no-repeat"
         }}
       >
         <header
           style={{
-            border: "1px solid var(--border)",
-            background: "var(--surface)",
-            backdropFilter: "blur(18px)",
-            borderRadius: 28,
-            boxShadow: "var(--shadow)",
-            padding: "18px 22px",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 3,
             display: "flex",
-            gap: 16,
             alignItems: "center",
             justifyContent: "space-between",
-            flexWrap: "wrap"
+            flexWrap: "wrap",
+            gap: 18,
+            padding: "22px clamp(14px, 4vw, 44px)"
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div
-              aria-hidden="true"
-              style={{
-                width: 52,
-                height: 52,
-                borderRadius: 18,
-                background:
-                  "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
-                display: "grid",
-                placeItems: "center",
-                color: "#fffaf4",
-                fontWeight: 700,
-                letterSpacing: "0.08em"
-              }}
-            >
-              {siteConfig.brand.logoText}
-            </div>
-            <div>
-              <div
-                style={{
-                  fontSize: 12,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.18em",
-                  color: "var(--muted)"
-                }}
-              >
-                {dictionary.labels.since}
-              </div>
-              <div style={{ fontSize: 24, fontWeight: 700 }}>{siteConfig.brand.shopName}</div>
-            </div>
-          </div>
-
           <nav
             aria-label={dictionary.labels.primaryNavigation}
             style={{
               display: "flex",
-              flexWrap: "wrap",
-              gap: 14,
               alignItems: "center",
-              justifyContent: "center"
+              flexWrap: "wrap",
+              gap: 18,
+              fontSize: 15,
+              color: "rgba(255, 250, 244, 0.86)"
             }}
           >
             {dictionary.navigation.map((item) => (
@@ -102,151 +69,134 @@ export default async function HomePage({ params }: HomePageProps) {
             ))}
           </nav>
 
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                {siteConfig.locales.map((item) => (
-              <Link
-                key={item}
-                href={`/${item}` as Route}
-                style={{
-                  border: locale === item ? "1px solid transparent" : "1px solid var(--border)",
-                  background:
-                    locale === item
-                      ? "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))"
-                      : "var(--surface-strong)",
-                  color: locale === item ? "#fffaf4" : "inherit",
-                  borderRadius: 999,
-                  padding: "8px 12px",
-                  fontSize: 13,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em"
-                }}
-              >
-                {item}
-              </Link>
-            ))}
+          <div
+            style={{
+              fontSize: "clamp(1.7rem, 2.6vw, 2.25rem)",
+              letterSpacing: "0.02em",
+              color: "#f8f2ea"
+            }}
+          >
+            {siteConfig.brand.shopName}
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <Link
+              href={navHref(locale, "/contact")}
+              style={{
+                color: "rgba(255, 250, 244, 0.9)",
+                fontSize: 15
+              }}
+            >
+              {dictionary.navigation.find((item) => item.href === "/contact")?.label ??
+                content.hero.kicker}
+            </Link>
+            <Link
+              href={navHref(locale, "/booking")}
+              style={{
+                background: "#fffaf4",
+                color: "#17120f",
+                borderRadius: 999,
+                padding: "9px 16px",
+                fontSize: 14,
+                fontWeight: 700
+              }}
+            >
+              {dictionary.actions.bookNow}
+            </Link>
           </div>
         </header>
 
-        <section
+        <div
           style={{
-            marginTop: 24,
-            borderRadius: 36,
-            overflow: "hidden",
-            boxShadow: "var(--shadow)",
-            background:
-              "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))"
+            position: "absolute",
+            left: "clamp(16px, 4vw, 44px)",
+            right: "clamp(16px, 4vw, 44px)",
+            bottom: "clamp(16px, 4vh, 44px)",
+            zIndex: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            gap: 20,
+            flexWrap: "wrap"
           }}
         >
+          <div style={{ maxWidth: 840 }}>
+            <div
+              style={{
+                marginBottom: 16,
+                fontSize: 12,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "rgba(255, 250, 244, 0.72)"
+              }}
+            >
+              {dictionary.labels.since} {siteConfig.brand.logoText}
+            </div>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: "clamp(2.8rem, 8.8vw, 6.4rem)",
+                lineHeight: 0.92,
+                color: "#fffaf4",
+                textWrap: "balance"
+              }}
+            >
+              {content.hero.title}
+            </h1>
+          </div>
+
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 28,
-              padding: "48px 28px"
+              gap: 18,
+              justifyItems: "end",
+              maxWidth: 340
             }}
           >
-            <div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  padding: "8px 14px",
-                  borderRadius: 999,
-                  background: "rgba(255, 250, 244, 0.14)",
-                  border: "1px solid rgba(255, 250, 244, 0.18)",
-                  color: "#f7f1e8",
-                  fontSize: 12,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase"
-                }}
-              >
-                {content.hero.kicker}
-              </div>
-
-              <h1
-                style={{
-                  margin: "18px 0 14px",
-                  color: "#fffaf4",
-                  fontSize: "clamp(2.8rem, 7vw, 5.6rem)",
-                  lineHeight: 0.96
-                }}
-              >
-                {content.hero.title}
-              </h1>
-
-              <p
-                style={{
-                  margin: 0,
-                  maxWidth: 560,
-                  color: "rgba(255, 250, 244, 0.82)",
-                  fontSize: 18,
-                  lineHeight: 1.7
-                }}
-              >
-                {content.hero.subtitle}
-              </p>
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: 14,
-                  flexWrap: "wrap",
-                  marginTop: 26
-                }}
-              >
-                <Link
-                  href={navHref(locale, "/booking")}
-                  style={{
-                    padding: "14px 22px",
-                    borderRadius: 999,
-                    background: "#fffaf4",
-                    color: "var(--brand-accent)",
-                    fontWeight: 700
-                  }}
-                >
-                  {dictionary.actions.bookNow}
-                </Link>
-                <Link
-                  href={navHref(locale, "/services")}
-                  style={{
-                    padding: "14px 22px",
-                    borderRadius: 999,
-                    border: "1px solid rgba(255, 250, 244, 0.26)",
-                    color: "#fffaf4"
-                  }}
-                >
-                  {dictionary.actions.viewServices}
-                </Link>
-              </div>
-            </div>
-
-            <div
+            <p
               style={{
-                display: "grid",
-                gap: 16,
-                alignContent: "center"
+                margin: 0,
+                color: "rgba(255, 250, 244, 0.9)",
+                fontSize: 20,
+                lineHeight: 1.45,
+                textAlign: "right"
               }}
             >
-              {content.highlights.map((highlight) => (
-                <article
-                  key={highlight.title}
-                  style={{
-                    borderRadius: 24,
-                    background: "rgba(255, 250, 244, 0.09)",
-                    border: "1px solid rgba(255, 250, 244, 0.14)",
-                    padding: "20px 18px",
-                    color: "#fffaf4"
-                  }}
-                >
-                  <h2 style={{ margin: "0 0 8px", fontSize: 22 }}>{highlight.title}</h2>
-                  <p style={{ margin: 0, color: "rgba(255, 250, 244, 0.78)", lineHeight: 1.7 }}>
-                    {highlight.description}
-                  </p>
-                </article>
-              ))}
-            </div>
+              {firstHighlight?.description ?? content.hero.subtitle}
+            </p>
+            <Link
+              href={navHref(locale, "/booking")}
+              style={{
+                width: 148,
+                height: 148,
+                borderRadius: "50%",
+                border: "1px solid rgba(255, 250, 244, 0.78)",
+                background: "rgba(15, 10, 7, 0.25)",
+                display: "grid",
+                placeItems: "center",
+                textAlign: "center",
+                color: "#fffaf4",
+                fontSize: 21,
+                lineHeight: 1.2,
+                padding: 18
+              }}
+            >
+              {dictionary.actions.bookNow}
+            </Link>
           </div>
-        </section>
-      </div>
+        </div>
+
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 1,
+            background:
+              "linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.5) 68%, rgba(0, 0, 0, 0.72) 100%)"
+          }}
+        />
+      </section>
     </main>
   );
 }
