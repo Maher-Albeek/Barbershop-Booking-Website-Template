@@ -1,5 +1,7 @@
 import type { Route } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import { HeroHeader } from "@/components/hero-header";
 
 type HeroHref =
   | Route
@@ -56,6 +58,8 @@ export function FullscreenHero({
   secondaryAction,
   localeItems
 }: FullscreenHeroProps) {
+  const imageSrc = backgroundImageSrc || "/images/hero-barbershop.svg";
+
   return (
     <section
       lang={locale}
@@ -65,11 +69,37 @@ export function FullscreenHero({
         minHeight: "100vh",
         width: "100%",
         overflow: "hidden",
-        color: "#fffaf4",
-        background:
-          `linear-gradient(120deg, rgba(4, 9, 14, 0.74), rgba(8, 12, 19, 0.46) 46%, rgba(20, 11, 6, 0.7)), radial-gradient(circle at 78% 20%, rgba(232, 183, 122, 0.22), transparent 34%), url('${backgroundImageSrc || "/images/hero-barbershop.svg"}') center/cover no-repeat`
+        color: "#fffaf4"
       }}
     >
+      <Image
+        src={imageSrc}
+        alt=""
+        fill
+        priority
+        aria-hidden="true"
+        style={{ objectFit: "cover", objectPosition: "center", zIndex: 0 }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          background:
+            "linear-gradient(120deg, rgba(4, 9, 14, 0.74), rgba(8, 12, 19, 0.46) 46%, rgba(20, 11, 6, 0.7))"
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          background:
+            "radial-gradient(circle at 78% 20%, rgba(232, 183, 122, 0.22), transparent 34%)"
+        }}
+      />
       <div
         aria-hidden="true"
         style={{
@@ -81,103 +111,18 @@ export function FullscreenHero({
         }}
       />
 
-      <header
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 3,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 18,
-          padding: "22px clamp(14px, 4vw, 44px)"
-        }}
-      >
-        <nav
-          style={{
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 18,
-            fontSize: 15,
-            color: "rgba(255, 250, 244, 0.86)"
-          }}
-          aria-label="Primary navigation"
-        >
-          {navigation.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div
-          style={{
-            fontSize: "clamp(1.7rem, 2.6vw, 2.25rem)",
-            letterSpacing: "0.02em",
-            color: "#f8f2ea"
-          }}
-        >
-          {brandName}
-        </div>
-
-        <div style={{ display: "grid", justifyItems: "end", gap: 10 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-            {secondaryAction ? (
-              <Link
-                href={secondaryAction.href}
-                style={{
-                  color: "rgba(255, 250, 244, 0.9)",
-                  fontSize: 15
-                }}
-              >
-                {secondaryAction.label}
-              </Link>
-            ) : null}
-            <Link
-              href={primaryAction.href}
-              style={{
-                background: "#fffaf4",
-                color: "#17120f",
-                borderRadius: 999,
-                padding: "9px 16px",
-                fontSize: 14,
-                fontWeight: 700
-              }}
-            >
-              {primaryAction.label}
-            </Link>
-          </div>
-
-          {localeItems && localeItems.length > 0 ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              {localeItems.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  style={{
-                    border: item.isActive
-                      ? "1px solid rgba(255, 250, 244, 0.72)"
-                      : "1px solid rgba(255, 250, 244, 0.28)",
-                    background: item.isActive ? "rgba(255, 250, 244, 0.2)" : "rgba(0, 0, 0, 0.2)",
-                    color: "#fffaf4",
-                    borderRadius: 999,
-                    padding: "6px 11px",
-                    fontSize: 12,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.1em"
-                  }}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </header>
+      <HeroHeader
+        brandName={brandName}
+        navItems={navigation.map((item) => ({ href: item.href, label: item.label }))}
+        localeItems={localeItems
+          ? localeItems.map((item) => ({
+              href: item.href as Route,
+              label: item.label,
+              isActive: item.isActive
+            }))
+          : []
+        }
+      />
 
       <div
         style={{
