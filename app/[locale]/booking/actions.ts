@@ -63,6 +63,8 @@ export async function submitBooking(formData: FormData) {
     redirect(`/${locale}/booking?${params.toString()}`);
   }
 
+  let bookingId = "";
+
   try {
     const booking = createConfirmedBooking({
       locale,
@@ -76,13 +78,19 @@ export async function submitBooking(formData: FormData) {
     });
 
     if (booking.email) {
-      sendBookingConfirmationEmail(booking);
+      try {
+        await sendBookingConfirmationEmail(booking);
+      } catch (emailError) {
+        console.error("Booking email delivery failed", emailError);
+      }
     }
 
-    redirect(`/${locale}/booking/success?id=${encodeURIComponent(booking.id)}`);
+    bookingId = booking.id;
   } catch (error) {
     const code = error instanceof Error ? error.message : "slot_unavailable";
     params.set("error", code === "slot_unavailable" ? "slot_unavailable" : "invalid_selection");
     redirect(`/${locale}/booking?${params.toString()}`);
   }
+
+  redirect(`/${locale}/booking/success?id=${encodeURIComponent(bookingId)}`);
 }
