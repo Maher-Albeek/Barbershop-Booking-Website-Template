@@ -6,6 +6,16 @@ type HeroContent = {
   subtitle: string;
 };
 
+export type HeroImagePage =
+  | "home"
+  | "services"
+  | "team"
+  | "offers"
+  | "gallery"
+  | "booking"
+  | "bookingSuccess"
+  | "contact";
+
 type Highlight = {
   title: string;
   description: string;
@@ -205,6 +215,7 @@ export const siteConfig: {
     primaryColor: string;
     secondaryColor: string;
     accentColor: string;
+    heroImages: Record<HeroImagePage, string>;
   };
   content: Record<Locale, LocalizedHomepageContent>;
   services: Record<Locale, LocalizedServicesContent>;
@@ -238,7 +249,17 @@ export const siteConfig: {
     logoText: "CB",
     primaryColor: "#8b5e3c",
     secondaryColor: "#d6b07d",
-    accentColor: "#22333b"
+    accentColor: "#22333b",
+    heroImages: {
+      home: "/images/hero-barbershop.svg",
+      services: "/images/hero-barbershop.svg",
+      team: "/images/hero-barbershop.svg",
+      offers: "/images/hero-barbershop.svg",
+      gallery: "/images/hero-barbershop.svg",
+      booking: "/images/hero-barbershop.svg",
+      bookingSuccess: "/images/hero-barbershop.svg",
+      contact: "/images/hero-barbershop.svg"
+    }
   },
   content: {
     en: {
@@ -1636,4 +1657,14 @@ export function getServiceBySlug(locale: Locale, serviceSlug: string) {
 
 export function getEmployeeBySlug(locale: Locale, employeeSlug: string) {
   return getTeamContent(locale).members.find((member) => member.slug === employeeSlug);
+}
+
+export function getHeroImage(page: HeroImagePage) {
+  const configured = siteConfig.brand.heroImages[page] || siteConfig.brand.heroImages.home;
+
+  if (configured === "/images/hero-barbershop.jpg") {
+    return "/images/hero-barbershop.svg";
+  }
+
+  return configured;
 }

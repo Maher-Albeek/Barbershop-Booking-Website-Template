@@ -7,7 +7,12 @@ import {
   type BookingStatus
 } from "@/lib/booking";
 import { locales, type Locale } from "@/lib/i18n";
-import { siteConfig, getContactContent, getHomepageContent } from "@/lib/site-config";
+import {
+  siteConfig,
+  getContactContent,
+  getHomepageContent,
+  type HeroImagePage
+} from "@/lib/site-config";
 
 export function slugify(value: string) {
   return value
@@ -434,12 +439,17 @@ export function saveShopSettings(input: {
   enabledLocales: Locale[];
   defaultLocale: Locale;
   hero: Record<Locale, { title: string; subtitle: string; kicker: string }>;
+  heroImages: Record<HeroImagePage, string>;
 }) {
   siteConfig.brand.shopName = input.shopName;
   siteConfig.brand.logoText = input.logoText;
   siteConfig.brand.primaryColor = input.primaryColor;
   siteConfig.brand.secondaryColor = input.secondaryColor;
   siteConfig.brand.accentColor = input.accentColor;
+  const heroImageUpdates = Object.fromEntries(
+    Object.entries(input.heroImages).filter(([, v]) => v.trim() !== "")
+  ) as Partial<Record<HeroImagePage, string>>;
+  siteConfig.brand.heroImages = { ...siteConfig.brand.heroImages, ...heroImageUpdates };
   siteConfig.defaultLocale = input.defaultLocale;
   const mutableLocales = siteConfig.locales as Locale[];
   mutableLocales.splice(0, mutableLocales.length, ...input.enabledLocales);

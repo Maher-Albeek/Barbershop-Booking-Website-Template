@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getTeamContent } from "@/lib/site-config";
+import { siteConfig, getHeroImage, getTeamContent } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 
 type TeamPageProps = {
@@ -36,6 +36,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
         title={dictionary.team.title}
         kicker={dictionary.team.eyebrow}
         description={dictionary.team.subtitle}
+        backgroundImageSrc={getHeroImage("team")}
         navigation={dictionary.navigation.map((item) => ({
           label: item.label,
           href: navHref(locale, item.href)

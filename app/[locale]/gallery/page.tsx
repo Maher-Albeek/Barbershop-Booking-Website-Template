@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getGalleryContent } from "@/lib/site-config";
+import { siteConfig, getGalleryContent, getHeroImage } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 
 type GalleryPageProps = {
@@ -38,6 +38,7 @@ export default async function GalleryPage({ params }: GalleryPageProps) {
         title={galleryContent.title}
         kicker={galleryContent.eyebrow}
         description={galleryContent.subtitle}
+        backgroundImageSrc={getHeroImage("gallery")}
         navigation={dictionary.navigation.map((item) => ({
           label: item.label,
           href: navHref(locale, item.href)

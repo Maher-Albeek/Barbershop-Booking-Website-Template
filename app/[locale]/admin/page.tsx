@@ -35,6 +35,7 @@ import {
   surfaceCardStyle,
   weekdayLabels
 } from "./_components";
+import { HeroImageField } from "./hero-image-field";
 
 type AdminPageProps = {
   params: Promise<{ locale: string }>;
@@ -572,6 +573,54 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
                 />
               </div>
             ))}
+          </div>
+          <div style={{ ...surfaceCardStyle, display: "grid", gap: 12 }}>
+            <strong>Hero image per page</strong>
+            <p style={{ margin: 0, color: "var(--muted)" }}>
+              Use a public path like /images/hero-services.jpg or an absolute URL.
+            </p>
+            <div style={gridTwo}>
+              <HeroImageField
+                name="hero_image_home"
+                defaultValue={siteConfig.brand.heroImages.home}
+                label="Home"
+              />
+              <HeroImageField
+                name="hero_image_services"
+                defaultValue={siteConfig.brand.heroImages.services}
+                label="Services"
+              />
+              <HeroImageField
+                name="hero_image_team"
+                defaultValue={siteConfig.brand.heroImages.team}
+                label="Team"
+              />
+              <HeroImageField
+                name="hero_image_offers"
+                defaultValue={siteConfig.brand.heroImages.offers}
+                label="Offers"
+              />
+              <HeroImageField
+                name="hero_image_gallery"
+                defaultValue={siteConfig.brand.heroImages.gallery}
+                label="Gallery"
+              />
+              <HeroImageField
+                name="hero_image_booking"
+                defaultValue={siteConfig.brand.heroImages.booking}
+                label="Booking"
+              />
+              <HeroImageField
+                name="hero_image_bookingSuccess"
+                defaultValue={siteConfig.brand.heroImages.bookingSuccess}
+                label="Booking Success"
+              />
+              <HeroImageField
+                name="hero_image_contact"
+                defaultValue={siteConfig.brand.heroImages.contact}
+                label="Contact"
+              />
+            </div>
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             Save shop settings

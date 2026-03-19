@@ -263,6 +263,16 @@ export async function updateShopSettingsAction(formData: FormData) {
         title: normalize(formData.get("hero_title_ar")),
         subtitle: normalize(formData.get("hero_subtitle_ar"))
       }
+    },
+    heroImages: {
+      home: normalize(formData.get("hero_image_home")),
+      services: normalize(formData.get("hero_image_services")),
+      team: normalize(formData.get("hero_image_team")),
+      offers: normalize(formData.get("hero_image_offers")),
+      gallery: normalize(formData.get("hero_image_gallery")),
+      booking: normalize(formData.get("hero_image_booking")),
+      bookingSuccess: normalize(formData.get("hero_image_bookingSuccess")),
+      contact: normalize(formData.get("hero_image_contact"))
     }
   });
 

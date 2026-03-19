@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listAvailableSlots } from "@/lib/booking";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getServicesContent, getTeamContent } from "@/lib/site-config";
+import { siteConfig, getHeroImage, getServicesContent, getTeamContent } from "@/lib/site-config";
 import { submitBooking } from "./actions";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 
@@ -218,6 +218,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
         title={dictionary.booking.title}
         kicker={dictionary.booking.eyebrow}
         description={dictionary.booking.subtitle}
+        backgroundImageSrc={getHeroImage("booking")}
         navigation={dictionary.navigation.map((item) => ({
           label: item.label,
           href: navHref(locale, item.href)

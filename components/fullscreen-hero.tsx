@@ -34,6 +34,7 @@ type FullscreenHeroProps = {
   title: string;
   kicker: string;
   description: string;
+  backgroundImageSrc?: string;
   navigation: HeroNavigationItem[];
   primaryAction: HeroAction;
   secondaryAction?: HeroAction;
@@ -49,6 +50,7 @@ export function FullscreenHero({
   title,
   kicker,
   description,
+  backgroundImageSrc,
   navigation,
   primaryAction,
   secondaryAction,
@@ -65,7 +67,7 @@ export function FullscreenHero({
         overflow: "hidden",
         color: "#fffaf4",
         background:
-          "linear-gradient(120deg, rgba(4, 9, 14, 0.74), rgba(8, 12, 19, 0.46) 46%, rgba(20, 11, 6, 0.7)), radial-gradient(circle at 78% 20%, rgba(232, 183, 122, 0.22), transparent 34%), url('/images/hero-barbershop.jpg') center/cover no-repeat"
+          `linear-gradient(120deg, rgba(4, 9, 14, 0.74), rgba(8, 12, 19, 0.46) 46%, rgba(20, 11, 6, 0.7)), radial-gradient(circle at 78% 20%, rgba(232, 183, 122, 0.22), transparent 34%), url('${backgroundImageSrc || "/images/hero-barbershop.svg"}') center/cover no-repeat`
       }}
     >
       <div

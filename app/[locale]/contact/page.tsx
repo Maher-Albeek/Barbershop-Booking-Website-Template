@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getContactContent } from "@/lib/site-config";
+import { siteConfig, getContactContent, getHeroImage } from "@/lib/site-config";
 import { ContactForm } from "./contact-form";
 import { ContactMap } from "./contact-map";
 import { FullscreenHero } from "@/components/fullscreen-hero";
@@ -43,6 +43,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
         title={contactContent.title}
         kicker={contactContent.eyebrow}
         description={contactContent.subtitle}
+        backgroundImageSrc={getHeroImage("contact")}
         navigation={dictionary.navigation.map((item) => ({
           label: item.label,
           href: navHref(locale, item.href)

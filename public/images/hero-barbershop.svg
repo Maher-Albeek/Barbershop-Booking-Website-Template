@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1000" role="img" aria-labelledby="title desc" preserveAspectRatio="xMidYMid slice">
+  <title id="title">Barbershop Hero Background</title>
+  <desc id="desc">Warm, dark gradient hero background with subtle highlight accents.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#15100d" />
+      <stop offset="52%" stop-color="#1f1812" />
+      <stop offset="100%" stop-color="#2b2018" />
+    </linearGradient>
+    <radialGradient id="glowA" cx="72%" cy="16%" r="34%">
+      <stop offset="0%" stop-color="#d6b07d" stop-opacity="0.42" />
+      <stop offset="100%" stop-color="#d6b07d" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowB" cx="24%" cy="78%" r="42%">
+      <stop offset="0%" stop-color="#8b5e3c" stop-opacity="0.34" />
+      <stop offset="100%" stop-color="#8b5e3c" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="grain" width="120" height="120" patternUnits="userSpaceOnUse">
+      <circle cx="9" cy="15" r="1" fill="#ffffff" fill-opacity="0.08" />
+      <circle cx="41" cy="27" r="1" fill="#ffffff" fill-opacity="0.06" />
+      <circle cx="77" cy="8" r="1" fill="#ffffff" fill-opacity="0.07" />
+      <circle cx="101" cy="51" r="1" fill="#ffffff" fill-opacity="0.05" />
+      <circle cx="33" cy="85" r="1" fill="#ffffff" fill-opacity="0.06" />
+      <circle cx="69" cy="111" r="1" fill="#ffffff" fill-opacity="0.08" />
+      <circle cx="110" cy="98" r="1" fill="#ffffff" fill-opacity="0.05" />
+    </pattern>
+  </defs>
+
+  <rect width="1800" height="1000" fill="url(#bg)" />
+  <rect width="1800" height="1000" fill="url(#glowA)" />
+  <rect width="1800" height="1000" fill="url(#glowB)" />
+  <rect width="1800" height="1000" fill="url(#grain)" opacity="0.26" />
+
+  <g opacity="0.22" stroke="#f3e0c4" stroke-width="2" fill="none">
+    <path d="M-120 860 C 300 700, 620 980, 1080 770 C 1380 640, 1600 760, 1920 640" />
+    <path d="M-180 760 C 260 600, 600 860, 1040 650 C 1320 520, 1580 620, 1980 500" />
+  </g>
+</svg>

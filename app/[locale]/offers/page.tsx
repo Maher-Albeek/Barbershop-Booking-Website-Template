@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getOffersContent } from "@/lib/site-config";
+import { siteConfig, getHeroImage, getOffersContent } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 
 type OffersPageProps = {
@@ -47,6 +47,7 @@ export default async function OffersPage({ params }: OffersPageProps) {
         title={offersContent.title}
         kicker={offersContent.eyebrow}
         description={offersContent.subtitle}
+        backgroundImageSrc={getHeroImage("offers")}
         navigation={dictionary.navigation.map((item) => ({
           label: item.label,
           href: navHref(locale, item.href)
