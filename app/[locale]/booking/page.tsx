@@ -32,12 +32,33 @@ type SlotResult = {
   priceLabel: string;
 };
 
+type BookingHref =
+  | Route
+  | {
+      pathname: Route;
+      query: Record<string, string>;
+      hash: string;
+    };
+
 function formatDateLabel(locale: Locale, date: Date) {
   return new Intl.DateTimeFormat(locale, {
     weekday: "short",
     day: "numeric",
     month: "short"
   }).format(date);
+}
+
+function toDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function addDays(date: Date, days: number) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
 }
 
 function navHref(locale: Locale, path: string): Route {
@@ -56,18 +77,25 @@ function bookingHref(
     email?: string;
     notes?: string;
     error?: string;
-  }
-): Route {
-  const search = new URLSearchParams();
+  },
+  hash?: string
+) : BookingHref {
+  const query: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(params)) {
     if (value) {
-      search.set(key, value);
+      query[key] = value;
     }
   }
 
-  const query = search.toString();
-  return `/${locale}/booking${query ? `?${query}` : ""}` as Route;
+  const pathname = `/${locale}/booking` as Route;
+
+  if (hash) {
+    return { pathname, query, hash };
+  }
+
+  const search = new URLSearchParams(query).toString();
+  return `${pathname}${search ? `?${search}` : ""}` as Route;
 }
 
 function errorMessage(code: string | undefined, dictionary: ReturnType<typeof getDictionary>) {
@@ -128,7 +156,10 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
         selectedEmployeeValue === "any" ? undefined : selectedEmployeeValue
       )
     : [];
-  const visibleSlots = rawSlots
+  const calendarMinDate = toDateKey(new Date());
+  const calendarMaxDate = toDateKey(addDays(new Date(), bookingConfig.searchWindowDays - 1));
+  const scopedSlots = date ? rawSlots.filter((slot) => slot.dateKey === date) : rawSlots;
+  const visibleSlots = scopedSlots
     .slice(0, selectedEmployeeValue === "any" ? 12 : 16)
     .map<SlotResult>((slot) => ({
       ...slot,
@@ -152,6 +183,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
     },
     []
   );
+  const selectedDateGroup = date ? slotsByDate.find((group) => group.dateKey === date) : undefined;
+  const selectedDateLabel = date ? formatDateLabel(locale, new Date(`${date}T00:00:00`)) : undefined;
+  const slotsForSelectedDate = selectedDateGroup?.slots ?? [];
 
   const selectedSlot =
     selectedService && date && start && slotEmployee
@@ -314,6 +348,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
         </section>
 
         <section
+          id="booking-flow"
           style={{
             marginTop: 24,
             display: "grid",
@@ -323,6 +358,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
         >
           <div style={{ display: "grid", gap: 18 }}>
             <form
+              action={`/${locale}/booking#booking-flow`}
               method="get"
               style={{
                 borderRadius: 28,
@@ -653,9 +689,69 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
 
               {selectedService && visibleSlots.length > 0 ? (
                 <div style={{ display: "grid", gap: 12 }}>
-                  {slotsByDate.slice(0, bookingConfig.maxDaysWithSlots).map((group) => (
+                  <section
+                    style={{
+                      display: "grid",
+                      gap: 10,
+                      padding: 14,
+                      borderRadius: 16,
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)"
+                    }}
+                  >
+                    <strong>{dictionary.booking.selectedDateLabel}</strong>
+                    <form
+                      method="get"
+                      action={`/${locale}/booking#booking-flow`}
+                      style={{ display: "grid", gap: 10 }}
+                    >
+                      <input type="hidden" name="service" value={selectedService.slug} />
+                      <input type="hidden" name="employee" value={selectedEmployeeValue} />
+                      <input type="hidden" name="name" value={name ?? ""} />
+                      <input type="hidden" name="email" value={email ?? ""} />
+                      <input type="hidden" name="notes" value={notes ?? ""} />
+
+                      <label style={{ display: "grid", gap: 8 }}>
+                        <span style={{ color: "var(--muted)", fontSize: 14 }}>
+                          {dictionary.booking.selectedDateLabel}
+                        </span>
+                        <input
+                          type="date"
+                          name="date"
+                          defaultValue={date ?? ""}
+                          min={calendarMinDate}
+                          max={calendarMaxDate}
+                          required
+                          style={{
+                            padding: "12px 14px",
+                            borderRadius: 12,
+                            border: "1px solid var(--border)",
+                            background: "var(--surface-strong)"
+                          }}
+                        />
+                      </label>
+
+                      <button
+                        type="submit"
+                        style={{
+                          width: "fit-content",
+                          borderRadius: 999,
+                          border: "none",
+                          padding: "10px 16px",
+                          fontWeight: 700,
+                          background:
+                            "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
+                          color: "#fffaf4",
+                          cursor: "pointer"
+                        }}
+                      >
+                        {dictionary.booking.timeStepTitle}
+                      </button>
+                    </form>
+                  </section>
+
+                  {date && slotsForSelectedDate.length > 0 ? (
                     <section
-                      key={group.dateKey}
                       style={{
                         display: "grid",
                         gap: 10,
@@ -665,7 +761,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                         border: "1px solid var(--border)"
                       }}
                     >
-                      <strong>{group.label}</strong>
+                      <strong>{selectedDateLabel ?? date}</strong>
                       <div
                         style={{
                           display: "grid",
@@ -673,7 +769,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                           gap: 10
                         }}
                       >
-                        {group.slots.map((slot) => {
+                        {slotsForSelectedDate.map((slot) => {
                           const isActive =
                             selectedSlot?.dateKey === slot.dateKey &&
                             selectedSlot.start === slot.start &&
@@ -691,7 +787,10 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                                 name,
                                 email,
                                 notes
-                              })}
+                              },
+                              "booking-flow"
+                            )}
+                              scroll={false}
                               style={{
                                 borderRadius: 14,
                                 padding: 12,
@@ -726,7 +825,32 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                         })}
                       </div>
                     </section>
-                  ))}
+                  ) : date ? (
+                    <div
+                      style={{
+                        borderRadius: 16,
+                        padding: 16,
+                        background: "rgba(214, 176, 125, 0.12)",
+                        color: "var(--brand-accent)",
+                        display: "grid",
+                        gap: 8
+                      }}
+                    >
+                      <strong>{dictionary.booking.slotEmptyTitle}</strong>
+                      <span style={{ lineHeight: 1.6 }}>{dictionary.booking.slotEmptyDescription}</span>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        borderRadius: 16,
+                        border: "1px dashed var(--border)",
+                        padding: 16,
+                        background: "var(--surface)"
+                      }}
+                    >
+                      {dictionary.booking.selectedDateLabel}
+                    </div>
+                  )}
                 </div>
               ) : selectedService && (selectedEmployeeValue === "any" || selectedEmployee) ? (
                 <div

@@ -104,6 +104,7 @@ const dictionaries = {
       selectedPriceLabel: "Price snapshot",
       selectedStatusLabel: "Booking status",
       confirmedStatus: "Confirmed",
+      cancelledStatus: "Cancelled",
       noSlotTitle: "Choose a time slot first",
       noSlotDescription:
         "Select one of the available appointments above before entering your contact details.",
@@ -120,6 +121,9 @@ const dictionaries = {
       successMissingTitle: "Booking not found",
       successMissingDescription:
         "The success page could not load that booking reference. Start a new booking from the booking page.",
+      cancellationSuccessMessage:
+        "Your appointment has been cancelled. You can book another appointment at any time.",
+      cancelBookingLabel: "Cancel appointment",
       backToBookingLabel: "Book another appointment",
       backToHomeLabel: "Back to homepage",
       contactTitle: "Shop contact details",
@@ -258,6 +262,7 @@ const dictionaries = {
       selectedPriceLabel: "Preis-Snapshot",
       selectedStatusLabel: "Buchungsstatus",
       confirmedStatus: "Bestaetigt",
+      cancelledStatus: "Storniert",
       noSlotTitle: "Waehle zuerst ein Zeitfenster",
       noSlotDescription:
         "Waehle oben einen verfuegbaren Termin aus, bevor du deine Kontaktdaten eingibst.",
@@ -274,6 +279,9 @@ const dictionaries = {
       successMissingTitle: "Buchung nicht gefunden",
       successMissingDescription:
         "Zu dieser Referenz konnten keine Buchungsdaten geladen werden. Starte die Buchung erneut auf der Buchungsseite.",
+      cancellationSuccessMessage:
+        "Dein Termin wurde storniert. Du kannst jederzeit einen neuen Termin buchen.",
+      cancelBookingLabel: "Termin stornieren",
       backToBookingLabel: "Weiteren Termin buchen",
       backToHomeLabel: "Zur Startseite",
       contactTitle: "Kontakt des Shops",
@@ -415,6 +423,7 @@ const dictionaries = {
       selectedPriceLabel: "\u0644\u0642\u0637\u0629 \u0627\u0644\u0633\u0639\u0631",
       selectedStatusLabel: "\u062d\u0627\u0644\u0629 \u0627\u0644\u062d\u062c\u0632",
       confirmedStatus: "\u0645\u0624\u0643\u062f",
+      cancelledStatus: "\u0645\u0644\u063a\u0649",
       noSlotTitle: "\u0627\u062e\u062a\u0631 \u0648\u0642\u062a\u0627\u064b \u0623\u0648\u0644\u0627\u064b",
       noSlotDescription:
         "\u0627\u062e\u062a\u0631 \u0623\u062d\u062f \u0627\u0644\u0645\u0648\u0627\u0639\u064a\u062f \u0627\u0644\u0645\u062a\u0627\u062d\u0629 \u0623\u0639\u0644\u0627\u0647 \u0642\u0628\u0644 \u0625\u062f\u062e\u0627\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062a\u0648\u0627\u0635\u0644.",
@@ -431,6 +440,9 @@ const dictionaries = {
       successMissingTitle: "\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u062d\u062c\u0632",
       successMissingDescription:
         "\u062a\u0639\u0630\u0631 \u062a\u062d\u0645\u064a\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0647\u0630\u0647 \u0627\u0644\u0645\u0631\u062c\u0639\u064a\u0629. \u0627\u0628\u062f\u0623 \u062d\u062c\u0632\u0627\u064b \u062c\u062f\u064a\u062f\u0627\u064b \u0645\u0646 \u0635\u0641\u062d\u0629 \u0627\u0644\u062d\u062c\u0632.",
+      cancellationSuccessMessage:
+        "\u062a\u0645 \u0625\u0644\u063a\u0627\u0621 \u0645\u0648\u0639\u062f\u0643. \u064a\u0645\u0643\u0646\u0643 \u062d\u062c\u0632 \u0645\u0648\u0639\u062f \u0622\u062e\u0631 \u0641\u064a \u0623\u064a \u0648\u0642\u062a.",
+      cancelBookingLabel: "\u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u0645\u0648\u0639\u062f",
       backToBookingLabel: "\u0627\u062d\u062c\u0632 \u0645\u0648\u0639\u062f\u0627\u064b \u0622\u062e\u0631",
       backToHomeLabel: "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629",
       contactTitle: "\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u062a\u0635\u0627\u0644 \u0627\u0644\u0635\u0627\u0644\u0648\u0646",
@@ -559,6 +571,7 @@ const dictionaries = {
       selectedPriceLabel: string;
       selectedStatusLabel: string;
       confirmedStatus: string;
+      cancelledStatus: string;
       noSlotTitle: string;
       noSlotDescription: string;
       nameLabel: string;
@@ -572,6 +585,8 @@ const dictionaries = {
       successDescription: string;
       successMissingTitle: string;
       successMissingDescription: string;
+      cancellationSuccessMessage: string;
+      cancelBookingLabel: string;
       backToBookingLabel: string;
       backToHomeLabel: string;
       contactTitle: string;

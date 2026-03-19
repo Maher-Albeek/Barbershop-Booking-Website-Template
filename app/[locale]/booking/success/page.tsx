@@ -1,13 +1,14 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cancelBooking } from "../actions";
 import { getBookingById } from "@/lib/booking";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { getContactContent } from "@/lib/site-config";
 
 type BookingSuccessPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; cancelled?: string }>;
 };
 
 function navHref(locale: Locale, path: string): Route {
@@ -18,7 +19,7 @@ export default async function BookingSuccessPage({
   params,
   searchParams
 }: BookingSuccessPageProps) {
-  const [{ locale }, { id }] = await Promise.all([params, searchParams]);
+  const [{ locale }, { id, cancelled }] = await Promise.all([params, searchParams]);
 
   if (!isLocale(locale)) {
     notFound();
@@ -26,6 +27,7 @@ export default async function BookingSuccessPage({
 
   const dictionary = getDictionary(locale);
   const booking = id ? getBookingById(id) : undefined;
+  const wasCancelled = cancelled === "1";
   const contact = getContactContent(locale).items;
 
   return (
@@ -106,7 +108,11 @@ export default async function BookingSuccessPage({
                   <div style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--muted)" }}>
                     {dictionary.booking.selectedStatusLabel}
                   </div>
-                  <strong>{dictionary.booking.confirmedStatus}</strong>
+                  <strong>
+                    {booking.status === "cancelled"
+                      ? dictionary.booking.cancelledStatus
+                      : dictionary.booking.confirmedStatus}
+                  </strong>
                 </div>
                 <div>
                   <div style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--muted)" }}>
@@ -188,7 +194,42 @@ export default async function BookingSuccessPage({
           </section>
         ) : null}
 
+        {booking && booking.status === "cancelled" && wasCancelled ? (
+          <p
+            style={{
+              margin: 0,
+              padding: "12px 14px",
+              borderRadius: 14,
+              border: "1px solid rgba(89, 35, 22, 0.28)",
+              background: "rgba(166, 90, 70, 0.1)",
+              color: "#592316"
+            }}
+          >
+            {dictionary.booking.cancellationSuccessMessage}
+          </p>
+        ) : null}
+
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          {booking && booking.status !== "cancelled" ? (
+            <form action={cancelBooking}>
+              <input type="hidden" name="locale" value={locale} />
+              <input type="hidden" name="id" value={booking.id} />
+              <button
+                type="submit"
+                style={{
+                  padding: "13px 18px",
+                  borderRadius: 999,
+                  border: "1px solid rgba(89, 35, 22, 0.35)",
+                  background: "#fff1ec",
+                  color: "#592316",
+                  cursor: "pointer",
+                  font: "inherit"
+                }}
+              >
+                {dictionary.booking.cancelBookingLabel}
+              </button>
+            </form>
+          ) : null}
           <Link
             href={navHref(locale, "/booking")}
             style={{

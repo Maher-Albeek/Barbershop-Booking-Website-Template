@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createConfirmedBooking } from "@/lib/booking";
-import { sendBookingConfirmationEmail } from "@/lib/booking-email";
+import { createConfirmedBooking, getBookingById, updateBookingStatus } from "@/lib/booking";
+import { sendBookingConfirmationEmail, sendCancellationEmail } from "@/lib/booking-email";
 import { isLocale } from "@/lib/i18n";
 
 function normalize(value: FormDataEntryValue | null) {
@@ -93,4 +93,33 @@ export async function submitBooking(formData: FormData) {
   }
 
   redirect(`/${locale}/booking/success?id=${encodeURIComponent(bookingId)}`);
+}
+
+export async function cancelBooking(formData: FormData) {
+  const locale = normalize(formData.get("locale"));
+  const bookingId = normalize(formData.get("id"));
+
+  if (!isLocale(locale) || !bookingId) {
+    redirect(`/${isLocale(locale) ? locale : "de"}/booking`);
+  }
+
+  const booking = getBookingById(bookingId);
+
+  if (!booking) {
+    redirect(`/${locale}/booking/success?id=${encodeURIComponent(bookingId)}`);
+  }
+
+  if (booking.status !== "cancelled") {
+    const cancelledBooking = updateBookingStatus(bookingId, "cancelled");
+
+    if (cancelledBooking?.email) {
+      try {
+        await sendCancellationEmail(cancelledBooking);
+      } catch (emailError) {
+        console.error("Booking cancellation email delivery failed", emailError);
+      }
+    }
+  }
+
+  redirect(`/${locale}/booking/success?id=${encodeURIComponent(bookingId)}&cancelled=1`);
 }
