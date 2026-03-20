@@ -40,7 +40,7 @@ type FullscreenHeroProps = {
   kicker: string;
   description: string;
   navigation: HeroNavigationItem[];
-  primaryAction: HeroAction;
+  primaryAction?: HeroAction;
   secondaryAction?: HeroAction;
   localeItems?: HeroLocaleItem[];
   heroImageUrl?: string;
@@ -161,7 +161,7 @@ export function FullscreenHero({
           >
             {description}
           </p>
-          <HeroCtaButton href={primaryAction.href} label={primaryAction.label} />
+          {primaryAction && <HeroCtaButton href={primaryAction.href} label={primaryAction.label} />}
         </div>
       </div>
 

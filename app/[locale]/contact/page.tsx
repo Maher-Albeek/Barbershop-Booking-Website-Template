@@ -50,7 +50,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
         }))}
         primaryAction={{
           href: navHref(locale, "/booking"),
-          label: dictionary.contact.bookingCta
+          label: dictionary.actions.bookNow
         }}
         secondaryAction={
           servicesNav

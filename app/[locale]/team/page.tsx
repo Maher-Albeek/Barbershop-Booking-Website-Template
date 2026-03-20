@@ -43,7 +43,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
         }))}
         primaryAction={{
           href: navHref(locale, "/booking"),
-          label: dictionary.team.bookingCta
+          label: dictionary.actions.bookNow
         }}
         secondaryAction={
           contactNav

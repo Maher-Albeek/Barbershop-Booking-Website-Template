@@ -52,7 +52,7 @@ export default async function BookingSuccessPage({
         }))}
         primaryAction={{
           href: navHref(locale, "/booking"),
-          label: dictionary.booking.backToBookingLabel
+          label: dictionary.actions.bookNow
         }}
         heroImageUrl={getHeroImageUrl("home")}
         secondaryAction={

@@ -223,20 +223,6 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
           label: item.label,
           href: navHref(locale, item.href)
         }))}
-        primaryAction={{
-          href: bookingHref(locale, {
-            service: selectedService?.slug,
-            employee: selectedEmployeeValue,
-            date,
-            start,
-            slotEmployee,
-            name,
-            email,
-            notes,
-            error
-          }),
-          label: dictionary.actions.bookNow
-        }}
         heroImageUrl={getHeroImageUrl("booking")}
         secondaryAction={
           contactNav
