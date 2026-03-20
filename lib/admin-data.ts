@@ -1,3 +1,5 @@
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { authUsers } from "@/lib/auth-users";
 import type { CSSProperties } from "react";
 import {
@@ -69,6 +71,20 @@ function firstNonEmptyArray(...values: Array<string[] | undefined>) {
   return [] as string[];
 }
 
+function firstNonEmptyTranslationValue<T>(
+  translations: Record<Locale, T>,
+  pick: (translation: T) => string | undefined
+) {
+  for (const locale of locales) {
+    const value = pick(translations[locale]);
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
 export function getBookingOptions(locale: Locale) {
   return {
     services: siteConfig.services[locale].services,
@@ -91,7 +107,7 @@ export function saveService(input: {
   isActive: boolean;
   translations: Record<Locale, { name: string; description: string; durationLabel: string; priceLabel: string }>;
 }) {
-  const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
+  const slug = slugify(input.slug || firstNonEmptyTranslationValue(input.translations, (item) => item.name));
   const existingSlug = input.serviceSlug;
   const fallbackLocale = siteConfig.defaultLocale;
   const fallbackTranslation = input.translations[fallbackLocale];
@@ -163,6 +179,26 @@ export function saveService(input: {
   }
 }
 
+export function deleteService(serviceSlug: string) {
+  if (!serviceSlug) {
+    return;
+  }
+
+  for (const locale of locales) {
+    siteConfig.services[locale].services = siteConfig.services[locale].services.filter(
+      (service) => service.slug !== serviceSlug
+    );
+
+    for (const member of siteConfig.team[locale].members) {
+      member.bookingServiceSlugs = member.bookingServiceSlugs.filter((slug) => slug !== serviceSlug);
+    }
+  }
+
+  siteConfig.booking.employeeServices = siteConfig.booking.employeeServices.filter(
+    (entry) => entry.serviceSlug !== serviceSlug
+  );
+}
+
 export function saveEmployee(input: {
   employeeSlug?: string;
   slug?: string;
@@ -171,7 +207,7 @@ export function saveEmployee(input: {
   linkLogin: boolean;
   translations: Record<Locale, { name: string; bio: string; imageSrc: string; specialties: string[] }>;
 }) {
-  const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
+  const slug = slugify(input.slug || firstNonEmptyTranslationValue(input.translations, (item) => item.name));
   const existingSlug = input.employeeSlug;
   const fallbackLocale = siteConfig.defaultLocale;
   const fallbackTranslation = input.translations[fallbackLocale];
@@ -257,7 +293,7 @@ export function saveEmployee(input: {
         id: `employee-login-${slug}`,
         email: input.email,
         role: "employee",
-        displayName: input.translations.de.name || input.translations.en.name || slug,
+        displayName: firstNonEmptyTranslationValue(input.translations, (item) => item.name) || slug,
         employeeSlug: slug,
         canManageAvailability: true,
         passwordSalt: "b572d2ea55bd90b48d3cb074a32761d6",
@@ -266,6 +302,33 @@ export function saveEmployee(input: {
       });
     }
   }
+}
+
+export function deleteEmployee(employeeSlug: string) {
+  if (!employeeSlug) {
+    return;
+  }
+
+  for (const locale of locales) {
+    siteConfig.team[locale].members = siteConfig.team[locale].members.filter(
+      (member) => member.slug !== employeeSlug
+    );
+  }
+
+  siteConfig.booking.employeeServices = siteConfig.booking.employeeServices.filter(
+    (entry) => entry.employeeSlug !== employeeSlug
+  );
+  siteConfig.booking.workingHours = siteConfig.booking.workingHours.filter(
+    (entry) => entry.employeeSlug !== employeeSlug
+  );
+  siteConfig.booking.blockedTimes = siteConfig.booking.blockedTimes.filter(
+    (entry) => entry.employeeSlug !== employeeSlug
+  );
+
+  const nextUsers = authUsers.filter(
+    (user) => !(user.role === "employee" && user.employeeSlug === employeeSlug)
+  );
+  authUsers.splice(0, authUsers.length, ...nextUsers);
 }
 
 export function saveAssignment(input: {
@@ -292,6 +355,24 @@ export function saveAssignment(input: {
 
     if (member && !member.bookingServiceSlugs.includes(input.serviceSlug)) {
       member.bookingServiceSlugs.push(input.serviceSlug);
+    }
+  }
+}
+
+export function deleteAssignment(employeeSlug: string, serviceSlug: string) {
+  if (!employeeSlug || !serviceSlug) {
+    return;
+  }
+
+  siteConfig.booking.employeeServices = siteConfig.booking.employeeServices.filter(
+    (entry) => !(entry.employeeSlug === employeeSlug && entry.serviceSlug === serviceSlug)
+  );
+
+  for (const locale of locales) {
+    const member = siteConfig.team[locale].members.find((item) => item.slug === employeeSlug);
+
+    if (member) {
+      member.bookingServiceSlugs = member.bookingServiceSlugs.filter((slug) => slug !== serviceSlug);
     }
   }
 }
@@ -333,6 +414,58 @@ export function addBlockedTime(input: {
   });
 }
 
+export function updateBlockedTime(input: {
+  employeeSlug: string;
+  originalDate: string;
+  originalStart: string;
+  originalEnd: string;
+  date: string;
+  start: string;
+  end: string;
+  reason?: string;
+}) {
+  const existing = siteConfig.booking.blockedTimes.find(
+    (entry) =>
+      entry.employeeSlug === input.employeeSlug &&
+      entry.date === input.originalDate &&
+      entry.start === input.originalStart &&
+      entry.end === input.originalEnd
+  );
+
+  if (existing) {
+    existing.date = input.date;
+    existing.start = input.start;
+    existing.end = input.end;
+    existing.reason = input.reason || undefined;
+    return;
+  }
+
+  addBlockedTime({
+    employeeSlug: input.employeeSlug,
+    date: input.date,
+    start: input.start,
+    end: input.end,
+    reason: input.reason
+  });
+}
+
+export function deleteBlockedTime(input: {
+  employeeSlug: string;
+  date: string;
+  start: string;
+  end: string;
+}) {
+  siteConfig.booking.blockedTimes = siteConfig.booking.blockedTimes.filter(
+    (entry) =>
+      !(
+        entry.employeeSlug === input.employeeSlug &&
+        entry.date === input.date &&
+        entry.start === input.start &&
+        entry.end === input.end
+      )
+  );
+}
+
 export function saveGalleryImage(input: {
   slug?: string;
   imageSrc: string;
@@ -363,12 +496,94 @@ export function saveGalleryImage(input: {
   }
 }
 
+const galleryUploadDirectory = path.join(process.cwd(), "public", "uploads", "gallery");
+
+function sanitizeFilenamePart(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9.-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function getGalleryUploadFilename(fileName: string, slug?: string, caption?: string) {
+  const extension = path.extname(fileName).toLowerCase() || ".jpg";
+  const baseName = sanitizeFilenamePart(path.basename(fileName, extension));
+  const preferredBase = sanitizeFilenamePart(slug || caption || baseName || `gallery-${Date.now()}`);
+  return `${preferredBase}-${Date.now()}${extension}`;
+}
+
+export async function uploadGalleryImage(input: { file: File; slug?: string; caption?: string }) {
+  const { file, slug, caption } = input;
+
+  if (!file || file.size === 0) {
+    throw new Error("Gallery image file is required.");
+  }
+
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Only image uploads are allowed for gallery items.");
+  }
+
+  await mkdir(galleryUploadDirectory, { recursive: true });
+  const fileName = getGalleryUploadFilename(file.name, slug, caption);
+  const buffer = Buffer.from(await file.arrayBuffer());
+  await writeFile(path.join(galleryUploadDirectory, fileName), buffer);
+  return `/uploads/gallery/${fileName}`;
+}
+
+function getLocalGalleryUploadPath(imageSrc: string) {
+  if (!imageSrc.startsWith("/uploads/gallery/")) {
+    return null;
+  }
+
+  const relativePath = imageSrc.replace(/^\/+/, "").split("/").join(path.sep);
+  return path.join(process.cwd(), "public", relativePath);
+}
+
 export function deleteGalleryImage(slug: string) {
+  let deletedImageSrc: string | undefined;
+
   for (const locale of locales) {
+    const existing = siteConfig.gallery[locale].images.find((image) => image.slug === slug);
+    if (!deletedImageSrc && existing) {
+      deletedImageSrc = existing.imageSrc;
+    }
+
     siteConfig.gallery[locale].images = siteConfig.gallery[locale].images.filter(
       (image) => image.slug !== slug
     );
   }
+
+  if (deletedImageSrc) {
+    void deleteGalleryUploadIfUnused(deletedImageSrc);
+  }
+}
+
+async function deleteGalleryUploadIfUnused(imageSrc: string) {
+  const isStillUsed = locales.some((locale) =>
+    siteConfig.gallery[locale].images.some((image) => image.imageSrc === imageSrc)
+  );
+
+  if (isStillUsed) {
+    return;
+  }
+
+  const filePath = getLocalGalleryUploadPath(imageSrc);
+  if (!filePath) {
+    return;
+  }
+
+  try {
+    await unlink(filePath);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw error;
+    }
+  }
+}
+
+export function cleanupGalleryUpload(imageSrc: string) {
+  void deleteGalleryUploadIfUnused(imageSrc);
 }
 
 export function saveOffer(input: {
@@ -380,11 +595,12 @@ export function saveOffer(input: {
   imageSrc?: string;
   translations: Record<Locale, { title: string; description: string }>;
 }) {
-  const slug = slugify(input.slug || input.translations.de.title || input.translations.en.title);
+  const slug = slugify(input.slug || firstNonEmptyTranslationValue(input.translations, (item) => item.title));
+  const existingSlug = input.offerSlug;
   const fallbackLocale = siteConfig.defaultLocale;
   const fallbackTranslation = input.translations[fallbackLocale];
   const fallbackExisting = siteConfig.offers[fallbackLocale].offers.find(
-    (offer) => offer.slug === input.offerSlug
+    (offer) => offer.slug === existingSlug
   );
 
   for (const locale of locales) {
@@ -420,9 +636,21 @@ export function saveOffer(input: {
       offers.push(nextOffer);
     }
   }
+
+  if (existingSlug && existingSlug !== slug) {
+    for (const locale of locales) {
+      siteConfig.offers[locale].offers = siteConfig.offers[locale].offers.filter(
+        (offer) => offer.slug !== existingSlug || offer.slug === slug
+      );
+    }
+  }
 }
 
 export function deleteOffer(slug: string) {
+  if (!slug) {
+    return;
+  }
+
   for (const locale of locales) {
     siteConfig.offers[locale].offers = siteConfig.offers[locale].offers.filter(
       (offer) => offer.slug !== slug

@@ -28,6 +28,7 @@ body {
     var(--background);
   color: var(--foreground);
   font-family: Georgia, "Times New Roman", serif;
+  overflow-x: hidden;
 }
 
 a {
@@ -35,9 +36,237 @@ a {
   text-decoration: none;
 }
 
+img {
+  max-width: 100%;
+}
+
 button,
 input,
 textarea,
 select {
   font: inherit;
+  max-width: 100%;
+}
+
+.page-main {
+  min-height: 100vh;
+  padding: 32px 20px 56px;
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-container--narrow {
+  max-width: 960px;
+}
+
+.page-header {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  padding: 18px 22px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.page-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.page-nav,
+.page-locale-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.page-nav {
+  gap: 14px;
+  justify-content: center;
+}
+
+.page-locale-switcher {
+  gap: 8px;
+}
+
+.hero-panel {
+  margin-top: 24px;
+  border-radius: 36px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  background:
+    linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82));
+  padding: 42px 28px 34px;
+  overflow-wrap: anywhere;
+}
+
+.hero-panel--home {
+  padding: 48px 28px;
+}
+
+.hero-grid {
+  display: grid;
+  gap: 28px;
+}
+
+.hero-grid--split {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.hero-title {
+  margin: 18px 0 14px;
+  color: #fffaf4;
+  line-height: 1;
+  font-size: clamp(2.5rem, 6vw, 4.8rem);
+  overflow-wrap: anywhere;
+}
+
+.hero-title--home {
+  font-size: clamp(2.8rem, 7vw, 5.6rem);
+  line-height: 0.96;
+}
+
+.content-grid-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.9fr);
+  gap: 18px;
+}
+
+.content-grid-success {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 18px;
+}
+
+.auto-grid-180,
+.auto-grid-220,
+.auto-grid-260,
+.auto-grid-280,
+.auto-grid-320 {
+  display: grid;
+  gap: 18px;
+}
+
+.auto-grid-180 {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.auto-grid-220 {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.auto-grid-260 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.auto-grid-280 {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.auto-grid-320 {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.surface-panel {
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.surface-panel-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.mobile-stack > * {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .content-grid-2,
+  .content-grid-success {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .page-main {
+    padding: 20px 14px 40px;
+  }
+
+  .page-header {
+    border-radius: 22px;
+    padding: 16px;
+    justify-content: center;
+  }
+
+  .page-brand,
+  .page-nav,
+  .page-locale-switcher {
+    width: 100%;
+  }
+
+  .page-nav,
+  .page-locale-switcher {
+    justify-content: center;
+  }
+
+  .hero-panel,
+  .hero-panel--home {
+    border-radius: 24px;
+    padding: 28px 18px 24px;
+  }
+
+  .hero-grid {
+    gap: 20px;
+  }
+
+  .hero-title,
+  .hero-title--home {
+    font-size: clamp(2rem, 11vw, 3rem);
+    line-height: 1.02;
+  }
+
+  .surface-panel {
+    border-radius: 22px;
+    padding: 18px;
+  }
+
+  .auto-grid-180,
+  .auto-grid-220,
+  .auto-grid-260,
+  .auto-grid-280,
+  .auto-grid-320,
+  .slot-grid,
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -22,14 +22,11 @@ export function SiteFooter({ locale }: SiteFooterProps) {
       }}
     >
       <div
+        className="page-container page-header"
         style={{
-          maxWidth: 1200,
-          margin: "0 auto",
-          borderRadius: 28,
           border: "1px solid var(--border)",
           background: "var(--surface)",
           boxShadow: "var(--shadow)",
-          padding: "20px 22px",
           display: "flex",
           gap: 16,
           alignItems: "center",
@@ -43,6 +40,7 @@ export function SiteFooter({ locale }: SiteFooterProps) {
         </div>
 
         <nav
+          className="page-nav"
           aria-label={dictionary.footer.legalLabel}
           style={{
             display: "flex",
