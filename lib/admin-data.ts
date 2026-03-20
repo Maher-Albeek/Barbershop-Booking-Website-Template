@@ -474,6 +474,22 @@ export function saveShopSettings(input: {
   }
 }
 
+export function saveHomepageHeroContent(input: {
+  locale: Locale;
+  kicker: string;
+  title: string;
+  subtitle: string;
+}) {
+  const existingHero = getHomepageContent(input.locale).hero;
+
+  siteConfig.content[input.locale].hero = {
+    ...siteConfig.content[input.locale].hero,
+    kicker: firstNonEmptyString(input.kicker, existingHero.kicker),
+    subtitle: firstNonEmptyString(input.subtitle, existingHero.subtitle),
+    title: firstNonEmptyString(input.title, existingHero.title)
+  };
+}
+
 export function saveEmailSettings(input: {
   providerName: string;
   fromEmail: string;

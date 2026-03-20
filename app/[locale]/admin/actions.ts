@@ -1,7 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { writeFile, mkdir, readdir, unlink } from "fs/promises";
+import { join } from "path";
 import { requireRole } from "@/lib/auth";
+import { isHeroImageKey } from "@/lib/hero-image";
 import {
   addBlockedTime,
   ensureLocale,
@@ -12,6 +15,7 @@ import {
   saveEmployee,
   saveGalleryImage,
   saveOffer,
+  saveHomepageHeroContent,
   saveService,
   saveShopSettings,
   saveWorkingHours,
@@ -330,4 +334,68 @@ export async function updateContactContentAction(formData: FormData) {
   });
 
   redirectToAdmin(locale, "contact");
+}
+
+export async function updateHomepageHeroContentAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+
+  saveHomepageHeroContent({
+    locale,
+    kicker: normalize(formData.get("heroKicker")),
+    subtitle: normalize(formData.get("heroSubtitle")),
+    title: normalize(formData.get("heroTitle"))
+  });
+
+  redirect(`/${locale}/admin/pages/hero`);
+}
+
+export async function uploadHeroImageAction(formData: FormData) {
+  try {
+    const locale = normalize(formData.get("locale"));
+    const page = normalize(formData.get("page"));
+    await authorize(locale);
+
+    const file = formData.get("file") as File;
+    const format = normalize(formData.get("format")) as "avif" | "webp" | "jpg";
+    const alt = normalize(formData.get("alt"));
+
+    if (!isHeroImageKey(page)) {
+      return { success: false, error: "Invalid hero image target" };
+    }
+
+    if (!file) {
+      return { success: false, error: "No file provided" };
+    }
+
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    // Create directory if it doesn't exist
+    const uploadDir = join(process.cwd(), "public", "heros", page);
+    await mkdir(uploadDir, { recursive: true });
+
+    const existingFiles = await readdir(uploadDir);
+    await Promise.all(
+      existingFiles.map((existingFile) => unlink(join(uploadDir, existingFile)))
+    );
+
+    // Generate filename with timestamp
+    const timestamp = Date.now();
+    const filename = `hero-${timestamp}.${format}`;
+    const filepath = join(uploadDir, filename);
+
+    // Save file
+    await writeFile(filepath, Buffer.from(bytes));
+
+    return {
+      success: true,
+      imageUrl: `/heros/${page}/${filename}`,
+      alt
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Upload failed"
+    };
+  }
 }

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { logoutUser } from "../login/actions";
+import { AdminSidebar } from "./_sidebar";
 
 type AdminShellProps = {
   locale: string;
@@ -114,7 +115,12 @@ export function AdminShell({ locale, displayName, children }: AdminShellProps) {
           </div>
         </header>
 
-        {children}
+        <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
+          <AdminSidebar locale={locale} />
+          <div style={{ flex: 1, minWidth: 0, display: "grid", gap: 20 }}>
+            {children}
+          </div>
+        </div>
       </div>
     </main>
   );
