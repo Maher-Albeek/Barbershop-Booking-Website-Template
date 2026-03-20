@@ -56,7 +56,7 @@ export function HeroHeader({ brandName, navItems, localeItems }: HeroHeaderProps
           gap: 18px;
         }
         .hero-header__nav {
-          display: flex;
+          display: none;
           align-items: center;
           gap: 18px;
           font-size: 15px;
@@ -83,7 +83,7 @@ export function HeroHeader({ brandName, navItems, localeItems }: HeroHeaderProps
           gap: 10px;
         }
         .hero-header__hamburger {
-          display: none;
+          display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
@@ -155,14 +155,6 @@ export function HeroHeader({ brandName, navItems, localeItems }: HeroHeaderProps
         }
         .hero-header__drawer-locale {
           margin-top: 28px;
-        }
-        @media (max-width: 768px) {
-          .hero-header__nav {
-            display: none;
-          }
-          .hero-header__hamburger {
-            display: flex;
-          }
         }
       `}</style>
 
