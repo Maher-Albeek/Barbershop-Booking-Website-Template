@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
-import { deleteOfferAction, upsertOfferAction } from "../actions";
+import { deleteOfferAction, upsertOfferAction } from "../../actions";
 import {
   AdminShell,
   SectionTitle,
@@ -9,7 +9,7 @@ import {
   inputStyle,
   sectionStyle,
   surfaceCardStyle
-} from "../_components";
+} from "../../_components";
 
 type AdminOffersPageProps = {
   params: Promise<{ locale: string }>;

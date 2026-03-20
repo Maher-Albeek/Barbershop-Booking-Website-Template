@@ -4,7 +4,7 @@ import {
   listFilteredBookings
 } from "@/lib/admin-data";
 import { isLocale } from "@/lib/i18n";
-import { updateBookingStatusAction } from "../actions";
+import { updateBookingStatusAction } from "../../actions";
 import {
   AdminShell,
   SectionTitle,
@@ -12,7 +12,7 @@ import {
   inputStyle,
   sectionStyle,
   surfaceCardStyle
-} from "../_components";
+} from "../../_components";
 
 type AdminBookingsPageProps = {
   params: Promise<{ locale: string }>;
@@ -98,18 +98,16 @@ export default async function AdminBookingsPage({ params, searchParams }: AdminB
               </div>
               <form action={updateBookingStatusAction} style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 <input type="hidden" name="locale" value={locale} />
-                <input type="hidden" name="bookingId" value={booking.id} />
-                <select name="status" defaultValue={booking.status} style={{ ...inputStyle, maxWidth: 220 }}>
+                <input type="hidden" name="id" value={booking.id} />
+                <select name="status" style={inputStyle}>
+                  <option value={booking.status}>{booking.status}</option>
                   <option value="confirmed">confirmed</option>
                   <option value="cancelled">cancelled</option>
                   <option value="completed">completed</option>
                   <option value="no_show">no_show</option>
                 </select>
-                <button
-                  type="submit"
-                  style={{ ...inputStyle, maxWidth: 180, cursor: "pointer", fontWeight: 700 }}
-                >
-                  Update status
+                <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+                  Update
                 </button>
               </form>
             </article>

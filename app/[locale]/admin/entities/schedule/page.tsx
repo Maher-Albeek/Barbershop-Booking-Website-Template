@@ -9,7 +9,7 @@ import {
   addBlockedTimeAction,
   upsertAssignmentAction,
   upsertWorkingHoursAction
-} from "../actions";
+} from "../../actions";
 import {
   AdminShell,
   SectionTitle,
@@ -18,7 +18,7 @@ import {
   sectionStyle,
   surfaceCardStyle,
   weekdayLabels
-} from "../_components";
+} from "../../_components";
 
 type AdminSchedulePageProps = {
   params: Promise<{ locale: string }>;
@@ -103,7 +103,7 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
 
           <form action={upsertWorkingHoursAction} style={sectionStyle}>
             <input type="hidden" name="locale" value={locale} />
-            <strong>Weekly working hours</strong>
+            <strong>Working hours</strong>
             <select name="employeeSlug" style={inputStyle}>
               {siteConfig.team[locale].members.map((member) => (
                 <option key={member.slug} value={member.slug}>
@@ -112,26 +112,28 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
               ))}
             </select>
             <select name="weekday" style={inputStyle}>
-              {weekdayLabels.map((day) => (
-                <option key={day.value} value={day.value}>
-                  {day.label}
+              {weekdayLabels.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
                 </option>
               ))}
             </select>
-            <input name="start" type="time" style={inputStyle} />
-            <input name="end" type="time" style={inputStyle} />
+            <input name="start" type="time" placeholder="Start time" style={inputStyle} />
+            <input name="end" type="time" placeholder="End time" style={inputStyle} />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isOff" />
-              Mark day off
+              <input type="checkbox" name="isActive" defaultChecked />
+              Active
             </label>
             <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
               Save hours
             </button>
           </form>
+        </div>
 
-          <form action={addBlockedTimeAction} style={sectionStyle}>
-            <input type="hidden" name="locale" value={locale} />
-            <strong>Blocked time</strong>
+        <form action={addBlockedTimeAction} style={{ ...sectionStyle, marginTop: 14 }}>
+          <input type="hidden" name="locale" value={locale} />
+          <strong>Add blocked time</strong>
+          <div style={gridTwo}>
             <select name="employeeSlug" style={inputStyle}>
               {siteConfig.team[locale].members.map((member) => (
                 <option key={member.slug} value={member.slug}>
@@ -139,15 +141,15 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
                 </option>
               ))}
             </select>
-            <input name="date" type="date" style={inputStyle} />
-            <input name="start" type="time" style={inputStyle} />
-            <input name="end" type="time" style={inputStyle} />
-            <input name="reason" placeholder="Optional reason" style={inputStyle} />
-            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-              Add blocked time
-            </button>
-          </form>
-        </div>
+            <input name="date" type="date" placeholder="Date" style={inputStyle} />
+            <input name="start" type="time" placeholder="Start time" style={inputStyle} />
+            <input name="end" type="time" placeholder="End time" style={inputStyle} />
+            <textarea name="reason" placeholder="Reason (optional)" style={inputStyle} />
+          </div>
+          <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+            Block time
+          </button>
+        </form>
       </section>
     </AdminShell>
   );

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
-import { upsertEmployeeAction } from "../actions";
+import { upsertEmployeeAction } from "../../actions";
 import {
   AdminShell,
   SectionTitle,
@@ -9,8 +9,8 @@ import {
   inputStyle,
   sectionStyle,
   surfaceCardStyle
-} from "../_components";
-import { HeroImageManager } from "../_hero-image-manager";
+} from "../../_components";
+import { HeroImageManager } from "../../_hero-image-manager";
 
 type AdminEmployeesPageProps = {
   params: Promise<{ locale: string }>;

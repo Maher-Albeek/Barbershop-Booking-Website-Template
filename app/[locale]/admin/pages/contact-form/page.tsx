@@ -1,20 +1,20 @@
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
-import { updateContactContentAction } from "../actions";
+import { updateContactContentAction } from "../../actions";
 import {
   AdminShell,
   SectionTitle,
   gridTwo,
   inputStyle,
   sectionStyle
-} from "../_components";
+} from "../../_components";
 
-type AdminContactPageProps = {
+type AdminContactFormPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function AdminContactPage({ params }: AdminContactPageProps) {
+export default async function AdminContactFormPage({ params }: AdminContactFormPageProps) {
   const { locale } = await params;
 
   if (!isLocale(locale)) {
@@ -98,12 +98,12 @@ export default async function AdminContactPage({ params }: AdminContactPageProps
               defaultValue={siteConfig.contact[locale].workingHours
                 .map((entry) => `${entry.days}: ${entry.hours}`)
                 .join("\n")}
-              placeholder="One line per row: Day: hours"
+              placeholder="Working hours (one line per entry)"
               style={inputStyle}
             />
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            Save contact content
+            Save contact page
           </button>
         </form>
       </section>

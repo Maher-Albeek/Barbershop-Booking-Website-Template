@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
-import { deleteGalleryAction, upsertGalleryAction } from "../actions";
+import { deleteGalleryAction, upsertGalleryAction } from "../../actions";
 import {
   AdminShell,
   SectionTitle,
@@ -9,7 +9,7 @@ import {
   inputStyle,
   sectionStyle,
   surfaceCardStyle
-} from "../_components";
+} from "../../_components";
 
 type AdminGalleryPageProps = {
   params: Promise<{ locale: string }>;
