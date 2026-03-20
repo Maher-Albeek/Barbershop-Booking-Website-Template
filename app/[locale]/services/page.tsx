@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getHeroImage, getServicesContent } from "@/lib/site-config";
+import { siteConfig, getServicesContent } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 
 type ServicesPageProps = {
@@ -41,7 +41,6 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
         title={servicesContent.title}
         kicker={servicesContent.eyebrow}
         description={servicesContent.subtitle}
-        backgroundImageSrc={getHeroImage("services")}
         navigation={dictionary.navigation.map((item) => ({
           label: item.label,
           href: navHref(locale, item.href)

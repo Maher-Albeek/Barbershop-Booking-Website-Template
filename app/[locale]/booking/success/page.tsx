@@ -5,7 +5,7 @@ import { cancelBooking } from "../actions";
 import { getBookingById } from "@/lib/booking";
 import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { getContactContent, getHeroImage, siteConfig } from "@/lib/site-config";
+import { getContactContent, siteConfig } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 
 type BookingSuccessPageProps = {
@@ -46,7 +46,6 @@ export default async function BookingSuccessPage({
         description={
           booking ? dictionary.booking.successDescription : dictionary.booking.successMissingDescription
         }
-        backgroundImageSrc={getHeroImage("bookingSuccess")}
         navigation={dictionary.navigation.map((item) => ({
           label: item.label,
           href: navHref(locale, item.href)
