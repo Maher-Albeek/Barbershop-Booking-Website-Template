@@ -1,17 +1,13 @@
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
-import {
-  AdminShell,
-  SectionTitle,
-  sectionStyle
-} from "../../_components";
+import { AdminShell, SectionTitle, sectionStyle } from "../../_components";
 import { PageHeroEditor } from "../_page-hero-editor";
 
-type AdminHeroPageProps = {
+type AdminServicesPageProps = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function AdminHeroPage({ params }: AdminHeroPageProps) {
+export default async function AdminServicesHeroPage({ params }: AdminServicesPageProps) {
   const { locale } = await params;
 
   if (!isLocale(locale)) {
@@ -21,12 +17,12 @@ export default async function AdminHeroPage({ params }: AdminHeroPageProps) {
   return (
     <AdminShell locale={locale}>
       <section style={sectionStyle}>
-        <SectionTitle story="ADMIN-013" title="Manage home page" />
+        <SectionTitle story="ADMIN-014" title="Manage services page" />
         <PageHeroEditor
           locale={locale}
-          page="home"
-          label="Home page hero image"
-          description="Upload the hero image used on the public home page."
+          page="services"
+          label="Services page hero image"
+          description="Upload the hero image used on the public services page."
         />
       </section>
     </AdminShell>

@@ -11,7 +11,6 @@ import {
   sectionStyle,
   surfaceCardStyle
 } from "../_components";
-import { HeroImageManager } from "../_hero-image-manager";
 
 type AdminSettingsPageProps = {
   params: Promise<{ locale: string }>;
@@ -85,12 +84,6 @@ export default async function AdminSettingsPage({ params }: AdminSettingsPagePro
               style={inputStyle}
             />
           </div>
-
-          <div style={{ ...surfaceCardStyle, display: "grid", gap: 12 }}>
-            <strong>Hero Images</strong>
-            <HeroImageManager locale={locale} />
-          </div>
-
           <div style={gridTwo}>
             {locales.map((item) => (
               <div key={item} style={{ ...surfaceCardStyle, display: "grid", gap: 12 }}>

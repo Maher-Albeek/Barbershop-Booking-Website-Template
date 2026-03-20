@@ -1,9 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { writeFile, mkdir } from "fs/promises";
+import { writeFile, mkdir, readdir, unlink } from "fs/promises";
 import { join } from "path";
 import { requireRole } from "@/lib/auth";
+import { isHeroImageKey } from "@/lib/hero-image";
 import {
   addBlockedTime,
   ensureLocale,
@@ -327,30 +328,32 @@ export async function updateContactContentAction(formData: FormData) {
 export async function uploadHeroImageAction(formData: FormData) {
   try {
     const locale = normalize(formData.get("locale"));
+    const page = normalize(formData.get("page"));
     await authorize(locale);
 
     const file = formData.get("file") as File;
     const format = normalize(formData.get("format")) as "avif" | "webp" | "jpg";
     const alt = normalize(formData.get("alt"));
 
+    if (!isHeroImageKey(page)) {
+      return { success: false, error: "Invalid hero image target" };
+    }
+
     if (!file) {
       return { success: false, error: "No file provided" };
     }
 
-    // Convert buffer to base64 data URI
     const buffer = await file.arrayBuffer();
     const bytes = new Uint8Array(buffer);
-    let binary = "";
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    const base64 = btoa(binary);
-    const mimeType = file.type || "image/jpeg";
-    const dataUri = `data:${mimeType};base64,${base64}`;
 
     // Create directory if it doesn't exist
-    const uploadDir = join(process.cwd(), "public", "uploads", "hero");
+    const uploadDir = join(process.cwd(), "public", "heros", page);
     await mkdir(uploadDir, { recursive: true });
+
+    const existingFiles = await readdir(uploadDir);
+    await Promise.all(
+      existingFiles.map((existingFile) => unlink(join(uploadDir, existingFile)))
+    );
 
     // Generate filename with timestamp
     const timestamp = Date.now();
@@ -358,11 +361,11 @@ export async function uploadHeroImageAction(formData: FormData) {
     const filepath = join(uploadDir, filename);
 
     // Save file
-    await writeFile(filepath, buffer);
+    await writeFile(filepath, Buffer.from(bytes));
 
     return {
       success: true,
-      imageUrl: `/uploads/hero/${filename}`,
+      imageUrl: `/heros/${page}/${filename}`,
       alt
     };
   } catch (error) {

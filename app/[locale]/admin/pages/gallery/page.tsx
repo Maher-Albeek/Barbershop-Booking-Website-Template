@@ -10,6 +10,7 @@ import {
   sectionStyle,
   surfaceCardStyle
 } from "../../_components";
+import { PageHeroEditor } from "../_page-hero-editor";
 
 type AdminGalleryPageProps = {
   params: Promise<{ locale: string }>;
@@ -25,7 +26,13 @@ export default async function AdminGalleryPage({ params }: AdminGalleryPageProps
   return (
     <AdminShell locale={locale}>
       <section style={sectionStyle}>
-        <SectionTitle story="ADMIN-008" title="Manage gallery" />
+        <SectionTitle story="ADMIN-008" title="Manage gallery page" />
+        <PageHeroEditor
+          locale={locale}
+          page="gallery"
+          label="Gallery page hero image"
+          description="Upload the hero image used on the public gallery page."
+        />
         <div style={gridTwo}>
           {siteConfig.gallery[locale].images
             .sort((left, right) => left.sortOrder - right.sortOrder)

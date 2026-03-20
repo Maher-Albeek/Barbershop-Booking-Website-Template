@@ -13,8 +13,12 @@ const navGroups = [
   {
     label: "PAGES MANAGEMENT",
     items: [
-      { label: "Hero Images", path: "pages/hero" },
-      { label: "Gallery", path: "pages/gallery" },
+      { label: "Home Page", path: "pages/hero" },
+      { label: "Services Page", path: "pages/services" },
+      { label: "Team Page", path: "pages/team" },
+      { label: "Gallery Page", path: "pages/gallery" },
+      { label: "Offers Page", path: "pages/offers" },
+      { label: "Booking Page", path: "pages/booking" },
       { label: "Contact Page", path: "pages/contact-form" }
     ]
   },

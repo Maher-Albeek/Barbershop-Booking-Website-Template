@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig, getHomepageContent } from "@/lib/site-config";
 
@@ -22,6 +23,7 @@ export default async function HomePage({ params }: HomePageProps) {
   const dictionary = getDictionary(locale);
   const content = getHomepageContent(locale);
   const firstHighlight = content.highlights[0];
+  const heroImageUrl = getHeroImageUrl("home");
 
   return (
     <main lang={locale} dir={dictionary.direction}>
@@ -33,7 +35,7 @@ export default async function HomePage({ params }: HomePageProps) {
           overflow: "hidden",
           color: "#fffaf4",
           background:
-            "linear-gradient(120deg, rgba(4, 9, 14, 0.74), rgba(8, 12, 19, 0.46) 46%, rgba(20, 11, 6, 0.7)), radial-gradient(circle at 78% 20%, rgba(232, 183, 122, 0.22), transparent 34%), url('/images/hero-barbershop.jpg') center/cover no-repeat"
+            `linear-gradient(120deg, rgba(4, 9, 14, 0.74), rgba(8, 12, 19, 0.46) 46%, rgba(20, 11, 6, 0.7)), radial-gradient(circle at 78% 20%, rgba(232, 183, 122, 0.22), transparent 34%), url('${heroImageUrl}') center/cover no-repeat`
         }}
       >
         <header

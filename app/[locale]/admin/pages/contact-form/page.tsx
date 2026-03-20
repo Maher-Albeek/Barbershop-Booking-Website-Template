@@ -9,6 +9,7 @@ import {
   inputStyle,
   sectionStyle
 } from "../../_components";
+import { PageHeroEditor } from "../_page-hero-editor";
 
 type AdminContactFormPageProps = {
   params: Promise<{ locale: string }>;
@@ -25,6 +26,12 @@ export default async function AdminContactFormPage({ params }: AdminContactFormP
     <AdminShell locale={locale}>
       <section style={sectionStyle}>
         <SectionTitle story="ADMIN-012" title="Manage contact page content" />
+        <PageHeroEditor
+          locale={locale}
+          page="contact"
+          label="Contact page hero image"
+          description="Upload the hero image used on the public contact page."
+        />
         <form action={updateContactContentAction} style={{ display: "grid", gap: 14 }}>
           <input type="hidden" name="locale" value={locale} />
           <div style={gridTwo}>

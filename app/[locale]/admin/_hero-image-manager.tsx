@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { HeroImageKey } from "@/lib/hero-image";
 import { uploadHeroImageAction } from "./actions";
 
 const inputStyle = {
@@ -11,10 +12,16 @@ const inputStyle = {
   background: "var(--surface-strong)"
 } as const;
 
-export function HeroImageManager({ locale }: { locale: string }) {
+type HeroImageManagerProps = {
+  locale: string;
+  page: HeroImageKey;
+  initialImageUrl?: string;
+};
+
+export function HeroImageManager({ locale, page, initialImageUrl = "" }: HeroImageManagerProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState(initialImageUrl);
   const [altText, setAltText] = useState("");
   const [imageFormat, setImageFormat] = useState<"avif" | "webp" | "jpg">("avif");
   const [error, setError] = useState("");
@@ -62,6 +69,7 @@ export function HeroImageManager({ locale }: { locale: string }) {
       formData.append("format", imageFormat);
       formData.append("locale", locale);
       formData.append("alt", altText);
+      formData.append("page", page);
 
       const result = await uploadHeroImageAction(formData);
 
@@ -80,6 +88,14 @@ export function HeroImageManager({ locale }: { locale: string }) {
 
   return (
     <div style={{ display: "grid", gap: 12 }}>
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={altText || `${page} hero image`}
+          style={{ width: "100%", maxHeight: 240, objectFit: "cover", borderRadius: 18 }}
+        />
+      ) : null}
+
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -101,9 +117,9 @@ export function HeroImageManager({ locale }: { locale: string }) {
           onChange={handleFileInput}
           disabled={isUploading}
           style={{ display: "none" }}
-          id="hero-image-input"
+          id={`hero-image-input-${page}`}
         />
-        <label htmlFor="hero-image-input" style={{ cursor: "pointer", display: "block" }}>
+        <label htmlFor={`hero-image-input-${page}`} style={{ cursor: "pointer", display: "block" }}>
           <p style={{ margin: "0 0 8px", fontWeight: 700 }}>
             Drag & drop image or click to select
           </p>
@@ -179,20 +195,16 @@ export function HeroImageManager({ locale }: { locale: string }) {
             readOnly
             style={inputStyle}
           />
-          <img
-            src={imageUrl}
-            alt={altText}
-            style={{
-              width: "100%",
-              maxHeight: 200,
-              objectFit: "cover",
-              borderRadius: 14
-            }}
-          />
         </div>
       )}
 
       <button
+        onClick={() => {
+          if (imageUrl) {
+            navigator.clipboard.writeText(imageUrl);
+            setSuccess("Image URL copied to clipboard!");
+          }
+        }}
         disabled={isUploading || !imageUrl}
         style={{
           ...inputStyle,
@@ -202,7 +214,7 @@ export function HeroImageManager({ locale }: { locale: string }) {
           opacity: isUploading ? 0.6 : 1
         }}
       >
-        {isUploading ? "Converting..." : "Save Hero Image"}
+        {isUploading ? "Converting..." : "Copy Image URL"}
       </button>
     </div>
   );

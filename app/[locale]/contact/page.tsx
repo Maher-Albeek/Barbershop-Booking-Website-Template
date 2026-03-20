@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig, getContactContent } from "@/lib/site-config";
 import { ContactForm } from "./contact-form";
@@ -56,6 +57,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
             ? { label: servicesNav.label, href: navHref(locale, servicesNav.href) }
             : undefined
         }
+        heroImageUrl={getHeroImageUrl("contact")}
         localeItems={siteConfig.locales.map((item) => ({
           label: item,
           href: `/${item}/contact` as Route,

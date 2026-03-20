@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig, getOffersContent } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
@@ -60,6 +61,7 @@ export default async function OffersPage({ params }: OffersPageProps) {
             ? { label: contactNav.label, href: navHref(locale, contactNav.href) }
             : undefined
         }
+        heroImageUrl={getHeroImageUrl("offers")}
         localeItems={siteConfig.locales.map((item) => ({
           label: item,
           href: `/${item}/offers` as Route,

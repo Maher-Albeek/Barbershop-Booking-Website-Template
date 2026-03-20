@@ -1,6 +1,7 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig, getTeamContent } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
@@ -49,6 +50,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
             ? { label: contactNav.label, href: navHref(locale, contactNav.href) }
             : undefined
         }
+        heroImageUrl={getHeroImageUrl("team")}
         localeItems={siteConfig.locales.map((item) => ({
           label: item,
           href: `/${item}/team` as Route,

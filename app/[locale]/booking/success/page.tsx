@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cancelBooking } from "../actions";
 import { getBookingById } from "@/lib/booking";
+import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { getContactContent, siteConfig } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
@@ -53,6 +54,7 @@ export default async function BookingSuccessPage({
           href: navHref(locale, "/booking"),
           label: dictionary.booking.backToBookingLabel
         }}
+        heroImageUrl={getHeroImageUrl("home")}
         secondaryAction={
           contactNav
             ? { label: contactNav.label, href: navHref(locale, contactNav.href) }

@@ -10,7 +10,6 @@ import {
   sectionStyle,
   surfaceCardStyle
 } from "../../_components";
-import { HeroImageManager } from "../../_hero-image-manager";
 
 type AdminServicesPageProps = {
   params: Promise<{ locale: string }>;
@@ -55,12 +54,6 @@ export default async function AdminServicesPage({ params }: AdminServicesPagePro
             <input name={`duration_${locale}`} placeholder="Duration label (e.g. 30 Min.)" style={inputStyle} />
             <input name={`price_${locale}`} placeholder="Price label" style={inputStyle} />
           </div>
-
-          <div style={{ ...surfaceCardStyle, display: "grid", gap: 12 }}>
-            <strong>Service Hero Image</strong>
-            <HeroImageManager locale={locale} />
-          </div>
-
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             Save service
           </button>

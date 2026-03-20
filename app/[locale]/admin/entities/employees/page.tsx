@@ -10,7 +10,6 @@ import {
   sectionStyle,
   surfaceCardStyle
 } from "../../_components";
-import { HeroImageManager } from "../../_hero-image-manager";
 
 type AdminEmployeesPageProps = {
   params: Promise<{ locale: string }>;
@@ -63,10 +62,6 @@ export default async function AdminEmployeesPage({ params }: AdminEmployeesPageP
               style={inputStyle}
             />
             <textarea name={`bio_${locale}`} rows={4} placeholder="Bio" style={inputStyle} />
-          </div>
-          <div style={{ ...surfaceCardStyle }}>
-            <strong>Employee Avatar</strong>
-            <HeroImageManager locale={locale} />
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             Save employee

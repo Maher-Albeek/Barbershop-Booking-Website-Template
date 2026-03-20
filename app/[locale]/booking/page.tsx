@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listAvailableSlots } from "@/lib/booking";
+import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig, getServicesContent, getTeamContent } from "@/lib/site-config";
 import { submitBooking } from "./actions";
@@ -236,6 +237,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
           }),
           label: dictionary.actions.bookNow
         }}
+        heroImageUrl={getHeroImageUrl("booking")}
         secondaryAction={
           contactNav
             ? { label: contactNav.label, href: navHref(locale, contactNav.href) }
