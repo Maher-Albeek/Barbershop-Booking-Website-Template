@@ -15,6 +15,7 @@ import {
   saveEmployee,
   saveGalleryImage,
   saveOffer,
+  saveHomepageHeroContent,
   saveService,
   saveShopSettings,
   saveWorkingHours,
@@ -323,6 +324,19 @@ export async function updateContactContentAction(formData: FormData) {
   });
 
   redirectToAdmin(locale, "contact");
+}
+
+export async function updateHomepageHeroContentAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+
+  saveHomepageHeroContent({
+    locale,
+    kicker: normalize(formData.get("heroKicker")),
+    subtitle: normalize(formData.get("heroSubtitle")),
+    title: normalize(formData.get("heroTitle"))
+  });
+
+  redirect(`/${locale}/admin/pages/hero`);
 }
 
 export async function uploadHeroImageAction(formData: FormData) {
