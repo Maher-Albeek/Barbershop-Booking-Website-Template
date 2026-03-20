@@ -2,9 +2,11 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { listAvailableSlots } from "@/lib/booking";
+import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getServicesContent, getTeamContent } from "@/lib/site-config";
+import { siteConfig, getHeroImage, getServicesContent, getTeamContent } from "@/lib/site-config";
 import { submitBooking } from "./actions";
+import { FullscreenHero } from "@/components/fullscreen-hero";
 
 type BookingPageProps = {
   params: Promise<{ locale: string }>;
@@ -32,12 +34,33 @@ type SlotResult = {
   priceLabel: string;
 };
 
+type BookingHref =
+  | Route
+  | {
+      pathname: Route;
+      query: Record<string, string>;
+      hash: string;
+    };
+
 function formatDateLabel(locale: Locale, date: Date) {
   return new Intl.DateTimeFormat(locale, {
     weekday: "short",
     day: "numeric",
     month: "short"
   }).format(date);
+}
+
+function toDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function addDays(date: Date, days: number) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
 }
 
 function navHref(locale: Locale, path: string): Route {
@@ -56,18 +79,25 @@ function bookingHref(
     email?: string;
     notes?: string;
     error?: string;
-  }
-): Route {
-  const search = new URLSearchParams();
+  },
+  hash?: string
+) : BookingHref {
+  const query: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(params)) {
     if (value) {
-      search.set(key, value);
+      query[key] = value;
     }
   }
 
-  const query = search.toString();
-  return `/${locale}/booking${query ? `?${query}` : ""}` as Route;
+  const pathname = `/${locale}/booking` as Route;
+
+  if (hash) {
+    return { pathname, query, hash };
+  }
+
+  const search = new URLSearchParams(query).toString();
+  return `${pathname}${search ? `?${search}` : ""}` as Route;
 }
 
 function errorMessage(code: string | undefined, dictionary: ReturnType<typeof getDictionary>) {
@@ -128,7 +158,10 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
         selectedEmployeeValue === "any" ? undefined : selectedEmployeeValue
       )
     : [];
-  const visibleSlots = rawSlots
+  const calendarMinDate = toDateKey(new Date());
+  const calendarMaxDate = toDateKey(addDays(new Date(), bookingConfig.searchWindowDays - 1));
+  const scopedSlots = date ? rawSlots.filter((slot) => slot.dateKey === date) : rawSlots;
+  const visibleSlots = scopedSlots
     .slice(0, selectedEmployeeValue === "any" ? 12 : 16)
     .map<SlotResult>((slot) => ({
       ...slot,
@@ -152,6 +185,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
     },
     []
   );
+  const selectedDateGroup = date ? slotsByDate.find((group) => group.dateKey === date) : undefined;
+  const selectedDateLabel = date ? formatDateLabel(locale, new Date(`${date}T00:00:00`)) : undefined;
+  const slotsForSelectedDate = selectedDateGroup?.slots ?? [];
 
   const selectedSlot =
     selectedService && date && start && slotEmployee
@@ -170,163 +206,81 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
     selectedEmployee?.name ||
     dictionary.booking.employeeAnyOption;
   const feedbackMessage = errorMessage(error, dictionary);
+  const contactNav = dictionary.navigation.find((item) => item.href === "/contact");
 
   return (
-    <main className="page-main" lang={locale} dir={dictionary.direction} style={{ minHeight: "100vh" }}>
-      <div className="page-container">
-        <header
-          className="page-header"
-          style={{
-            border: "1px solid var(--border)",
-            background: "var(--surface)",
-            backdropFilter: "blur(18px)",
-            boxShadow: "var(--shadow)",
-            display: "flex",
-            gap: 16,
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap"
-          }}
-        >
-          <div className="page-brand" style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div
-              aria-hidden="true"
-              style={{
-                width: 52,
-                height: 52,
-                borderRadius: 18,
-                background:
-                  "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
-                display: "grid",
-                placeItems: "center",
-                color: "#fffaf4",
-                fontWeight: 700,
-                letterSpacing: "0.08em"
-              }}
-            >
-              {siteConfig.brand.logoText}
-            </div>
-            <div>
-              <div
-                style={{
-                  fontSize: 12,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.18em",
-                  color: "var(--muted)"
-                }}
-              >
-                {dictionary.labels.since}
-              </div>
-              <div style={{ fontSize: 24, fontWeight: 700 }}>{siteConfig.brand.shopName}</div>
-            </div>
-          </div>
+    <main lang={locale} dir={dictionary.direction}>
+      <FullscreenHero
+        locale={locale}
+        direction={dictionary.direction}
+        brandName={siteConfig.brand.shopName}
+        sinceLabel={dictionary.labels.since}
+        logoText={siteConfig.brand.logoText}
+        title={dictionary.booking.title}
+        kicker={dictionary.booking.eyebrow}
+        description={dictionary.booking.subtitle}
+        backgroundImageSrc={getHeroImage("booking")}
+        navigation={dictionary.navigation.map((item) => ({
+          label: item.label,
+          href: navHref(locale, item.href)
+        }))}
+        primaryAction={{
+          href: bookingHref(locale, {
+            service: selectedService?.slug,
+            employee: selectedEmployeeValue,
+            date,
+            start,
+            slotEmployee,
+            name,
+            email,
+            notes,
+            error
+          }),
+          label: dictionary.actions.bookNow
+        }}
+        heroImageUrl={getHeroImageUrl("booking")}
+        secondaryAction={
+          contactNav
+            ? { label: contactNav.label, href: navHref(locale, contactNav.href) }
+            : undefined
+        }
+        localeItems={siteConfig.locales.map((item) => ({
+          label: item,
+          href: bookingHref(item, {
+            service: selectedService?.slug,
+            employee: selectedEmployeeValue,
+            date,
+            start,
+            slotEmployee,
+            name,
+            email,
+            notes,
+            error
+          }),
+          isActive: item === locale
+        }))}
+      />
 
-          <nav
-            className="page-nav"
-            aria-label={dictionary.labels.primaryNavigation}
-            style={{ display: "flex", flexWrap: "wrap", gap: 14, alignItems: "center", justifyContent: "center" }}
-          >
-            {dictionary.navigation.map((item) => (
-              <Link key={item.href} href={navHref(locale, item.href)}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="page-locale-switcher" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            {siteConfig.locales.map((item) => (
-              <Link
-                key={item}
-                href={bookingHref(item, {
-                  service: selectedService?.slug,
-                  employee: selectedEmployeeValue,
-                  date,
-                  start,
-                  slotEmployee,
-                  name,
-                  email,
-                  notes,
-                  error
-                })}
-                style={{
-                  border: locale === item ? "1px solid transparent" : "1px solid var(--border)",
-                  background:
-                    locale === item
-                      ? "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))"
-                      : "var(--surface-strong)",
-                  color: locale === item ? "#fffaf4" : "inherit",
-                  borderRadius: 999,
-                  padding: "8px 12px",
-                  fontSize: 13,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em"
-                }}
-              >
-                {item}
-              </Link>
-            ))}
-          </div>
-        </header>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px 56px" }}>
 
         <section
-          className="hero-panel"
+          id="booking-flow"
           style={{
-            marginTop: 24,
-            overflow: "hidden",
-            boxShadow: "var(--shadow)",
-            background:
-              "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))"
-          }}
-        >
-          <div style={{ maxWidth: 760 }}>
-            <div
-              style={{
-                display: "inline-flex",
-                padding: "8px 14px",
-                borderRadius: 999,
-                background: "rgba(255, 250, 244, 0.14)",
-                border: "1px solid rgba(255, 250, 244, 0.18)",
-                color: "#f7f1e8",
-                fontSize: 12,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase"
-              }}
-            >
-              {dictionary.booking.eyebrow}
-            </div>
-
-            <h1
-              className="hero-title"
-              style={{
-                margin: "18px 0 14px",
-                color: "#fffaf4"
-              }}
-            >
-              {dictionary.booking.title}
-            </h1>
-
-            <p style={{ margin: 0, color: "rgba(255, 250, 244, 0.82)", fontSize: 18, lineHeight: 1.7 }}>
-              {dictionary.booking.subtitle}
-            </p>
-          </div>
-        </section>
-
-        <section
-          className="content-grid-2 mobile-stack"
-          style={{
-            marginTop: 24,
             display: "grid",
+            gridTemplateColumns: "minmax(0, 1.7fr) minmax(280px, 0.9fr)",
             gap: 18
           }}
         >
           <div style={{ display: "grid", gap: 18 }}>
             <form
+              action={`/${locale}/booking#booking-flow`}
               method="get"
-              className="surface-panel surface-panel-grid"
               style={{
+                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
+                padding: 24,
                 display: "grid",
                 gap: 24
               }}
@@ -533,9 +487,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                         </strong>
 
                         <div
-                          className="auto-grid-220 mobile-stack"
                           style={{
                             display: "grid",
+                            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
                             gap: 12
                           }}
                         >
@@ -606,11 +560,12 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
             </form>
 
             <section
-              className="surface-panel surface-panel-grid"
               style={{
+                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
+                padding: 24,
                 display: "grid",
                 gap: 18
               }}
@@ -649,9 +604,69 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
 
               {selectedService && visibleSlots.length > 0 ? (
                 <div style={{ display: "grid", gap: 12 }}>
-                  {slotsByDate.slice(0, bookingConfig.maxDaysWithSlots).map((group) => (
+                  <section
+                    style={{
+                      display: "grid",
+                      gap: 10,
+                      padding: 14,
+                      borderRadius: 16,
+                      background: "var(--surface)",
+                      border: "1px solid var(--border)"
+                    }}
+                  >
+                    <strong>{dictionary.booking.selectedDateLabel}</strong>
+                    <form
+                      method="get"
+                      action={`/${locale}/booking#booking-flow`}
+                      style={{ display: "grid", gap: 10 }}
+                    >
+                      <input type="hidden" name="service" value={selectedService.slug} />
+                      <input type="hidden" name="employee" value={selectedEmployeeValue} />
+                      <input type="hidden" name="name" value={name ?? ""} />
+                      <input type="hidden" name="email" value={email ?? ""} />
+                      <input type="hidden" name="notes" value={notes ?? ""} />
+
+                      <label style={{ display: "grid", gap: 8 }}>
+                        <span style={{ color: "var(--muted)", fontSize: 14 }}>
+                          {dictionary.booking.selectedDateLabel}
+                        </span>
+                        <input
+                          type="date"
+                          name="date"
+                          defaultValue={date ?? ""}
+                          min={calendarMinDate}
+                          max={calendarMaxDate}
+                          required
+                          style={{
+                            padding: "12px 14px",
+                            borderRadius: 12,
+                            border: "1px solid var(--border)",
+                            background: "var(--surface-strong)"
+                          }}
+                        />
+                      </label>
+
+                      <button
+                        type="submit"
+                        style={{
+                          width: "fit-content",
+                          borderRadius: 999,
+                          border: "none",
+                          padding: "10px 16px",
+                          fontWeight: 700,
+                          background:
+                            "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
+                          color: "#fffaf4",
+                          cursor: "pointer"
+                        }}
+                      >
+                        {dictionary.booking.timeStepTitle}
+                      </button>
+                    </form>
+                  </section>
+
+                  {date && slotsForSelectedDate.length > 0 ? (
                     <section
-                      key={group.dateKey}
                       style={{
                         display: "grid",
                         gap: 10,
@@ -661,15 +676,15 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                         border: "1px solid var(--border)"
                       }}
                     >
-                      <strong>{group.label}</strong>
+                      <strong>{selectedDateLabel ?? date}</strong>
                       <div
-                        className="slot-grid mobile-stack"
                         style={{
                           display: "grid",
+                          gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
                           gap: 10
                         }}
                       >
-                        {group.slots.map((slot) => {
+                        {slotsForSelectedDate.map((slot) => {
                           const isActive =
                             selectedSlot?.dateKey === slot.dateKey &&
                             selectedSlot.start === slot.start &&
@@ -687,7 +702,10 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                                 name,
                                 email,
                                 notes
-                              })}
+                              },
+                              "booking-flow"
+                            )}
+                              scroll={false}
                               style={{
                                 borderRadius: 14,
                                 padding: 12,
@@ -722,7 +740,32 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                         })}
                       </div>
                     </section>
-                  ))}
+                  ) : date ? (
+                    <div
+                      style={{
+                        borderRadius: 16,
+                        padding: 16,
+                        background: "rgba(214, 176, 125, 0.12)",
+                        color: "var(--brand-accent)",
+                        display: "grid",
+                        gap: 8
+                      }}
+                    >
+                      <strong>{dictionary.booking.slotEmptyTitle}</strong>
+                      <span style={{ lineHeight: 1.6 }}>{dictionary.booking.slotEmptyDescription}</span>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        borderRadius: 16,
+                        border: "1px dashed var(--border)",
+                        padding: 16,
+                        background: "var(--surface)"
+                      }}
+                    >
+                      {dictionary.booking.selectedDateLabel}
+                    </div>
+                  )}
                 </div>
               ) : selectedService && (selectedEmployeeValue === "any" || selectedEmployee) ? (
                 <div
@@ -754,11 +797,12 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
 
             <form
               action={submitBooking}
-              className="surface-panel surface-panel-grid"
               style={{
+                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
+                padding: 24,
                 display: "grid",
                 gap: 18
               }}
@@ -813,9 +857,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                 >
                   <strong style={{ fontSize: 18 }}>{dictionary.booking.selectedSlotTitle}</strong>
                   <div
-                    className="details-grid mobile-stack"
                     style={{
                       display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
                       gap: 12
                     }}
                   >
@@ -937,11 +981,12 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
           </div>
 
           <aside
-            className="surface-panel surface-panel-grid"
             style={{
+              borderRadius: 28,
               border: "1px solid var(--border)",
               background: "var(--surface-strong)",
               boxShadow: "var(--shadow)",
+              padding: 24,
               display: "grid",
               gap: 18,
               alignContent: "start"

@@ -111,9 +111,9 @@ export function ContactForm({ locale, labels }: ContactFormProps) {
       ) : null}
 
       <div
-        className="auto-grid-220 mobile-stack"
         style={{
           display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
           gap: 14
         }}
       >

@@ -1,13 +1,16 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cancelBooking } from "../actions";
 import { getBookingById } from "@/lib/booking";
+import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { getContactContent } from "@/lib/site-config";
+import { getContactContent, getHeroImage, siteConfig } from "@/lib/site-config";
+import { FullscreenHero } from "@/components/fullscreen-hero";
 
 type BookingSuccessPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; cancelled?: string }>;
 };
 
 function navHref(locale: Locale, path: string): Route {
@@ -18,7 +21,7 @@ export default async function BookingSuccessPage({
   params,
   searchParams
 }: BookingSuccessPageProps) {
-  const [{ locale }, { id }] = await Promise.all([params, searchParams]);
+  const [{ locale }, { id, cancelled }] = await Promise.all([params, searchParams]);
 
   if (!isLocale(locale)) {
     notFound();
@@ -26,73 +29,65 @@ export default async function BookingSuccessPage({
 
   const dictionary = getDictionary(locale);
   const booking = id ? getBookingById(id) : undefined;
+  const wasCancelled = cancelled === "1";
   const contact = getContactContent(locale).items;
+  const contactNav = dictionary.navigation.find((item) => item.href === "/contact");
 
   return (
-    <main
-      className="page-main"
-      lang={locale}
-      dir={dictionary.direction}
-      style={{ minHeight: "100vh" }}
-    >
-      <div className="page-container page-container--narrow mobile-stack" style={{ display: "grid", gap: 24 }}>
-        <section
-          className="hero-panel"
-          style={{
-            marginTop: 0,
-            background:
-              "linear-gradient(140deg, rgba(34, 51, 59, 0.95), rgba(61, 38, 21, 0.88) 56%, rgba(139, 94, 60, 0.82))",
-            color: "#fffaf4",
-            boxShadow: "var(--shadow)"
-          }}
-        >
-          <div
-            style={{
-              display: "inline-flex",
-              padding: "8px 14px",
-              borderRadius: 999,
-              background: "rgba(255, 250, 244, 0.14)",
-              border: "1px solid rgba(255, 250, 244, 0.18)",
-              fontSize: 12,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase"
-            }}
-          >
-            {booking ? dictionary.booking.successEyebrow : dictionary.booking.successMissingTitle}
-          </div>
+    <main lang={locale} dir={dictionary.direction}>
+      <FullscreenHero
+        locale={locale}
+        direction={dictionary.direction}
+        brandName={siteConfig.brand.shopName}
+        sinceLabel={dictionary.labels.since}
+        logoText={siteConfig.brand.logoText}
+        title={booking ? dictionary.booking.successTitle : dictionary.booking.successMissingTitle}
+        kicker={booking ? dictionary.booking.successEyebrow : dictionary.booking.successMissingTitle}
+        description={
+          booking ? dictionary.booking.successDescription : dictionary.booking.successMissingDescription
+        }
+        backgroundImageSrc={getHeroImage("bookingSuccess")}
+        navigation={dictionary.navigation.map((item) => ({
+          label: item.label,
+          href: navHref(locale, item.href)
+        }))}
+        primaryAction={{
+          href: navHref(locale, "/booking"),
+          label: dictionary.booking.backToBookingLabel
+        }}
+        heroImageUrl={getHeroImageUrl("home")}
+        secondaryAction={
+          contactNav
+            ? { label: contactNav.label, href: navHref(locale, contactNav.href) }
+            : { label: dictionary.booking.backToHomeLabel, href: navHref(locale, "/") }
+        }
+      />
 
-          <h1 className="hero-title" style={{ margin: "18px 0 12px" }}>
-            {booking ? dictionary.booking.successTitle : dictionary.booking.successMissingTitle}
-          </h1>
-          <p style={{ margin: 0, color: "rgba(255, 250, 244, 0.82)", lineHeight: 1.7 }}>
-            {booking
-              ? dictionary.booking.successDescription
-              : dictionary.booking.successMissingDescription}
-          </p>
-        </section>
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 20px 56px", display: "grid", gap: 24 }}>
 
         {booking ? (
           <section
-            className="content-grid-success mobile-stack"
             style={{
               display: "grid",
+              gridTemplateColumns: "minmax(0, 1.2fr) minmax(280px, 0.8fr)",
               gap: 18
             }}
           >
             <div
-              className="surface-panel surface-panel-grid"
               style={{
+                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
+                padding: 24,
                 display: "grid",
                 gap: 16
               }}
             >
               <div
-                className="auto-grid-220 mobile-stack"
                 style={{
                   display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
                   gap: 14
                 }}
               >
@@ -106,7 +101,11 @@ export default async function BookingSuccessPage({
                   <div style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--muted)" }}>
                     {dictionary.booking.selectedStatusLabel}
                   </div>
-                  <strong>{dictionary.booking.confirmedStatus}</strong>
+                  <strong>
+                    {booking.status === "cancelled"
+                      ? dictionary.booking.cancelledStatus
+                      : dictionary.booking.confirmedStatus}
+                  </strong>
                 </div>
                 <div>
                   <div style={{ fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--muted)" }}>
@@ -150,11 +149,12 @@ export default async function BookingSuccessPage({
             </div>
 
             <aside
-              className="surface-panel surface-panel-grid"
               style={{
+                borderRadius: 28,
                 border: "1px solid var(--border)",
                 background: "var(--surface-strong)",
                 boxShadow: "var(--shadow)",
+                padding: 24,
                 display: "grid",
                 gap: 16,
                 alignContent: "start"
@@ -187,7 +187,42 @@ export default async function BookingSuccessPage({
           </section>
         ) : null}
 
+        {booking && booking.status === "cancelled" && wasCancelled ? (
+          <p
+            style={{
+              margin: 0,
+              padding: "12px 14px",
+              borderRadius: 14,
+              border: "1px solid rgba(89, 35, 22, 0.28)",
+              background: "rgba(166, 90, 70, 0.1)",
+              color: "#592316"
+            }}
+          >
+            {dictionary.booking.cancellationSuccessMessage}
+          </p>
+        ) : null}
+
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          {booking && booking.status !== "cancelled" ? (
+            <form action={cancelBooking}>
+              <input type="hidden" name="locale" value={locale} />
+              <input type="hidden" name="id" value={booking.id} />
+              <button
+                type="submit"
+                style={{
+                  padding: "13px 18px",
+                  borderRadius: 999,
+                  border: "1px solid rgba(89, 35, 22, 0.35)",
+                  background: "#fff1ec",
+                  color: "#592316",
+                  cursor: "pointer",
+                  font: "inherit"
+                }}
+              >
+                {dictionary.booking.cancelBookingLabel}
+              </button>
+            </form>
+          ) : null}
           <Link
             href={navHref(locale, "/booking")}
             style={{

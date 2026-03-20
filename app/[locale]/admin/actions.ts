@@ -7,9 +7,6 @@ import { requireRole } from "@/lib/auth";
 import { isHeroImageKey } from "@/lib/hero-image";
 import {
   addBlockedTime,
-  cleanupGalleryUpload,
-  deleteAssignment,
-  deleteBlockedTime,
   ensureLocale,
   isValidTimeRange,
   saveAssignment,
@@ -24,11 +21,7 @@ import {
   saveWorkingHours,
   setBookingStatus,
   deleteGalleryImage,
-  updateBlockedTime,
-  uploadGalleryImage,
-  deleteEmployee,
-  deleteOffer,
-  deleteService
+  deleteOffer
 } from "@/lib/admin-data";
 import { locales, type Locale } from "@/lib/i18n";
 
@@ -47,19 +40,7 @@ async function authorize(localeValue: string) {
 }
 
 function redirectToAdmin(locale: Locale, section?: string) {
-  const adminPathBySection: Record<string, string> = {
-    services: "/admin/services",
-    employees: "/admin/employees",
-    availability: "/admin/schedule",
-    bookings: "/admin/bookings",
-    gallery: "/admin/gallery",
-    offers: "/admin/offers",
-    settings: "/admin/settings",
-    email: "/admin/email",
-    contact: "/admin/contact"
-  };
-
-  redirect(`/${locale}${section ? adminPathBySection[section] ?? "/admin" : "/admin"}`);
+  redirect(`/${locale}/admin${section ? `#${section}` : ""}`);
 }
 
 export async function upsertServiceAction(formData: FormData) {
@@ -91,12 +72,6 @@ export async function upsertServiceAction(formData: FormData) {
     }
   });
 
-  redirectToAdmin(locale, "services");
-}
-
-export async function deleteServiceAction(formData: FormData) {
-  const locale = await authorize(normalize(formData.get("locale")));
-  deleteService(normalize(formData.get("serviceSlug")));
   redirectToAdmin(locale, "services");
 }
 
@@ -143,12 +118,6 @@ export async function upsertEmployeeAction(formData: FormData) {
   redirectToAdmin(locale, "employees");
 }
 
-export async function deleteEmployeeAction(formData: FormData) {
-  const locale = await authorize(normalize(formData.get("locale")));
-  deleteEmployee(normalize(formData.get("employeeSlug")));
-  redirectToAdmin(locale, "employees");
-}
-
 export async function upsertAssignmentAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
 
@@ -160,12 +129,6 @@ export async function upsertAssignmentAction(formData: FormData) {
     isActive: checked(formData, "isActive")
   });
 
-  redirectToAdmin(locale, "availability");
-}
-
-export async function deleteAssignmentAction(formData: FormData) {
-  const locale = await authorize(normalize(formData.get("locale")));
-  deleteAssignment(normalize(formData.get("employeeSlug")), normalize(formData.get("serviceSlug")));
   redirectToAdmin(locale, "availability");
 }
 
@@ -210,55 +173,6 @@ export async function addBlockedTimeAction(formData: FormData) {
   redirectToAdmin(locale, "availability");
 }
 
-export async function upsertBlockedTimeAction(formData: FormData) {
-  const locale = await authorize(normalize(formData.get("locale")));
-  const date = normalize(formData.get("date"));
-  const start = normalize(formData.get("start"));
-  const end = normalize(formData.get("end"));
-
-  if (!date || !start || !end || !isValidTimeRange(start, end)) {
-    redirectToAdmin(locale, "availability");
-  }
-
-  const originalDate = normalize(formData.get("originalDate"));
-  const originalStart = normalize(formData.get("originalStart"));
-  const originalEnd = normalize(formData.get("originalEnd"));
-
-  if (originalDate && originalStart && originalEnd) {
-    updateBlockedTime({
-      employeeSlug: normalize(formData.get("employeeSlug")),
-      originalDate,
-      originalStart,
-      originalEnd,
-      date,
-      start,
-      end,
-      reason: normalize(formData.get("reason")) || undefined
-    });
-  } else {
-    addBlockedTime({
-      employeeSlug: normalize(formData.get("employeeSlug")),
-      date,
-      start,
-      end,
-      reason: normalize(formData.get("reason")) || undefined
-    });
-  }
-
-  redirectToAdmin(locale, "availability");
-}
-
-export async function deleteBlockedTimeAction(formData: FormData) {
-  const locale = await authorize(normalize(formData.get("locale")));
-  deleteBlockedTime({
-    employeeSlug: normalize(formData.get("employeeSlug")),
-    date: normalize(formData.get("date")),
-    start: normalize(formData.get("start")),
-    end: normalize(formData.get("end"))
-  });
-  redirectToAdmin(locale, "availability");
-}
-
 export async function updateBookingStatusAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
   setBookingStatus(
@@ -270,33 +184,15 @@ export async function updateBookingStatusAction(formData: FormData) {
 
 export async function upsertGalleryAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
-  const currentImageSrc = normalize(formData.get("currentImageSrc"));
-  const fileEntry = formData.get("imageFile");
-  const imageFile = fileEntry instanceof File && fileEntry.size > 0 ? fileEntry : null;
-  const imageSrc = imageFile
-    ? await uploadGalleryImage({
-        file: imageFile,
-        slug: normalize(formData.get("slug")) || undefined,
-        caption: normalize(formData.get("caption")) || undefined
-      })
-    : currentImageSrc;
-
-  if (!imageSrc) {
-    redirectToAdmin(locale, "gallery");
-  }
 
   saveGalleryImage({
     slug: normalize(formData.get("slug")) || undefined,
-    imageSrc,
+    imageSrc: normalize(formData.get("imageSrc")),
     alt: normalize(formData.get("alt")),
     caption: normalize(formData.get("caption")),
     isVisible: checked(formData, "isVisible"),
     sortOrder: Number(normalize(formData.get("sortOrder")) || 0)
   });
-
-  if (imageFile && currentImageSrc && currentImageSrc !== imageSrc) {
-    cleanupGalleryUpload(currentImageSrc);
-  }
 
   redirectToAdmin(locale, "gallery");
 }
