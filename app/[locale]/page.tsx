@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig, getHomepageContent } from "@/lib/site-config";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;
@@ -82,6 +83,13 @@ export default async function HomePage({ params }: HomePageProps) {
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <LanguageSwitcher
+              items={siteConfig.locales.map((item) => ({
+                label: item,
+                href: `/${item}` as Route,
+                isActive: item === locale
+              }))}
+            />
             <Link
               href={navHref(locale, "/contact")}
               style={{
