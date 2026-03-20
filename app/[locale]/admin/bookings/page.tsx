@@ -1,10 +1,121 @@
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
+import {
+  getBookingOptions,
+  listFilteredBookings
+} from "@/lib/admin-data";
+import { isLocale } from "@/lib/i18n";
+import { updateBookingStatusAction } from "../actions";
+import {
+  AdminShell,
+  SectionTitle,
+  gridTwo,
+  inputStyle,
+  sectionStyle,
+  surfaceCardStyle
+} from "../_components";
 
 type AdminBookingsPageProps = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{
+    bookingDate?: string;
+    bookingEmployee?: string;
+    bookingService?: string;
+    bookingStatus?: "confirmed" | "cancelled" | "completed" | "no_show";
+  }>;
 };
 
-export default async function AdminBookingsPage({ params }: AdminBookingsPageProps) {
-  const { locale } = await params;
-  redirect(`/${locale}/admin#bookings`);
+export default async function AdminBookingsPage({ params, searchParams }: AdminBookingsPageProps) {
+  const [{ locale }, filters] = await Promise.all([params, searchParams]);
+
+  if (!isLocale(locale)) {
+    notFound();
+  }
+
+  const options = getBookingOptions(locale);
+  const bookings = listFilteredBookings({
+    date: filters.bookingDate,
+    employeeSlug: filters.bookingEmployee,
+    serviceSlug: filters.bookingService,
+    status: filters.bookingStatus
+  });
+
+  return (
+    <AdminShell locale={locale}>
+      <section style={sectionStyle}>
+        <SectionTitle story="ADMIN-007" title="Manage bookings" />
+        <form method="get" style={gridTwo}>
+          <input type="date" name="bookingDate" defaultValue={filters.bookingDate} style={inputStyle} />
+          <select
+            name="bookingEmployee"
+            defaultValue={filters.bookingEmployee ?? ""}
+            style={inputStyle}
+          >
+            <option value="">All employees</option>
+            {options.employees.map((member) => (
+              <option key={member.slug} value={member.slug}>
+                {member.name}
+              </option>
+            ))}
+          </select>
+          <select name="bookingService" defaultValue={filters.bookingService ?? ""} style={inputStyle}>
+            <option value="">All services</option>
+            {options.services.map((service) => (
+              <option key={service.slug} value={service.slug}>
+                {service.name}
+              </option>
+            ))}
+          </select>
+          <select name="bookingStatus" defaultValue={filters.bookingStatus ?? ""} style={inputStyle}>
+            <option value="">All statuses</option>
+            <option value="confirmed">confirmed</option>
+            <option value="cancelled">cancelled</option>
+            <option value="completed">completed</option>
+            <option value="no_show">no_show</option>
+          </select>
+          <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+            Apply filters
+          </button>
+        </form>
+        <div style={{ display: "grid", gap: 12 }}>
+          {bookings.map((booking) => (
+            <article key={booking.id} style={{ ...surfaceCardStyle, display: "grid", gap: 10 }}>
+              <div
+                style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}
+              >
+                <strong>
+                  {booking.date} {booking.start}-{booking.end}
+                </strong>
+                <span>{booking.status}</span>
+              </div>
+              <div>
+                {booking.customerName} · {booking.serviceName} · {booking.employeeName}
+              </div>
+              <div style={{ color: "var(--muted)" }}>
+                Snapshot: {booking.priceSnapshot} · Ref: {booking.id}
+              </div>
+              <div style={{ color: "var(--muted)" }}>
+                Email: {booking.email || "n/a"} · Notes: {booking.notes || "n/a"}
+              </div>
+              <form action={updateBookingStatusAction} style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <input type="hidden" name="locale" value={locale} />
+                <input type="hidden" name="bookingId" value={booking.id} />
+                <select name="status" defaultValue={booking.status} style={{ ...inputStyle, maxWidth: 220 }}>
+                  <option value="confirmed">confirmed</option>
+                  <option value="cancelled">cancelled</option>
+                  <option value="completed">completed</option>
+                  <option value="no_show">no_show</option>
+                </select>
+                <button
+                  type="submit"
+                  style={{ ...inputStyle, maxWidth: 180, cursor: "pointer", fontWeight: 700 }}
+                >
+                  Update status
+                </button>
+              </form>
+            </article>
+          ))}
+        </div>
+      </section>
+    </AdminShell>
+  );
 }

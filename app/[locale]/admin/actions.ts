@@ -1,6 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { writeFile, mkdir } from "fs/promises";
+import { join } from "path";
 import { requireRole } from "@/lib/auth";
 import {
   addBlockedTime,
@@ -320,4 +322,53 @@ export async function updateContactContentAction(formData: FormData) {
   });
 
   redirectToAdmin(locale, "contact");
+}
+
+export async function uploadHeroImageAction(formData: FormData) {
+  try {
+    const locale = normalize(formData.get("locale"));
+    await authorize(locale);
+
+    const file = formData.get("file") as File;
+    const format = normalize(formData.get("format")) as "avif" | "webp" | "jpg";
+    const alt = normalize(formData.get("alt"));
+
+    if (!file) {
+      return { success: false, error: "No file provided" };
+    }
+
+    // Convert buffer to base64 data URI
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    let binary = "";
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64 = btoa(binary);
+    const mimeType = file.type || "image/jpeg";
+    const dataUri = `data:${mimeType};base64,${base64}`;
+
+    // Create directory if it doesn't exist
+    const uploadDir = join(process.cwd(), "public", "uploads", "hero");
+    await mkdir(uploadDir, { recursive: true });
+
+    // Generate filename with timestamp
+    const timestamp = Date.now();
+    const filename = `hero-${timestamp}.${format}`;
+    const filepath = join(uploadDir, filename);
+
+    // Save file
+    await writeFile(filepath, buffer);
+
+    return {
+      success: true,
+      imageUrl: `/uploads/hero/${filename}`,
+      alt
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Upload failed"
+    };
+  }
 }
