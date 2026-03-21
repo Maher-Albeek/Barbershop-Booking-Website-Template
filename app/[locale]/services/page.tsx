@@ -63,6 +63,13 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
         }))}
       />
 
+      <section style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 20px " }}>
+        
+        <h2 style={{ margin: " 0 0", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05, textAlign: "center" }}>
+          {servicesContent.eyebrow}
+        </h2>
+      </section>
+
       <div style={getContentSectionContainerStyle("services")}>
 
         <section

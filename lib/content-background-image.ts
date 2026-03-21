@@ -34,15 +34,28 @@ export function getContentBackgroundImageUrl(page: HeroImageKey) {
 export function getContentSectionContainerStyle(page: HeroImageKey): CSSProperties {
   const imageUrl = getContentBackgroundImageUrl(page);
 
+  if (!imageUrl) {
+    return {
+      maxWidth: 1200,
+      margin: "0 auto",
+      minHeight: "100svh",
+      padding: "24px 20px 56px",
+      display: "grid",
+      alignContent: "start"
+    };
+  }
+
   return {
-    maxWidth: 1200,
-    margin: "0 auto",
-    padding: "24px 20px 56px",
-    borderRadius: imageUrl ? 30 : undefined,
-    border: imageUrl ? "1px solid rgba(79, 44, 23, 0.16)" : undefined,
-    background: imageUrl
-      ? `linear-gradient(140deg, rgba(255, 250, 244, 0.9), rgba(247, 241, 232, 0.84)), url('${imageUrl}') center/cover no-repeat`
-      : undefined,
-    boxShadow: imageUrl ? "0 20px 45px rgba(34, 22, 14, 0.1)" : undefined
+    width: "100vw",
+    marginLeft: "calc(50% - 50vw)",
+    marginRight: "calc(50% - 50vw)",
+    minHeight: "100svh",
+    display: "grid",
+    alignContent: "start",
+    padding: "64px clamp(20px, calc((100vw - 1200px) / 2 + 20px), 240px) 56px",
+    background:
+      `linear-gradient(146deg, rgba(10, 7, 5, 0.72), rgba(10, 7, 5, 0.9)), url('${imageUrl}') center/cover no-repeat`,
+    backdropFilter: "blur(140px)",
+    WebkitBackdropFilter: "blur(140px)"
   };
 }
