@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getHeroImageUrl } from "@/lib/hero-image";
+import { getContentSectionContainerStyle } from "@/lib/content-background-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig, getOffersContent } from "@/lib/site-config";
 import { FullscreenHero } from "@/components/fullscreen-hero";
@@ -69,7 +70,7 @@ export default async function OffersPage({ params }: OffersPageProps) {
         }))}
       />
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px 56px" }}>
+      <div style={getContentSectionContainerStyle("offers")}>
 
         <section
           style={{

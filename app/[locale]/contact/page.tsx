@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getHeroImageUrl } from "@/lib/hero-image";
+import { getContentSectionContainerStyle } from "@/lib/content-background-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig, getContactContent } from "@/lib/site-config";
 import { ContactForm } from "./contact-form";
@@ -65,7 +66,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
         }))}
       />
 
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 20px 56px" }}>
+      <div style={getContentSectionContainerStyle("contact")}>
 
         <section
           style={{

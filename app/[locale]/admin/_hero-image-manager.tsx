@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { HeroImageKey } from "@/lib/hero-image";
-import { uploadHeroImageAction } from "./actions";
+import { uploadContentBackgroundImageAction, uploadHeroImageAction } from "./actions";
 
 const inputStyle = {
   width: "100%",
@@ -16,9 +16,15 @@ type HeroImageManagerProps = {
   locale: string;
   page: HeroImageKey;
   initialImageUrl?: string;
+  kind?: "hero" | "content";
 };
 
-export function HeroImageManager({ locale, page, initialImageUrl = "" }: HeroImageManagerProps) {
+export function HeroImageManager({
+  locale,
+  page,
+  initialImageUrl = "",
+  kind = "hero"
+}: HeroImageManagerProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState(initialImageUrl);
@@ -26,6 +32,8 @@ export function HeroImageManager({ locale, page, initialImageUrl = "" }: HeroIma
   const [imageFormat, setImageFormat] = useState<"avif" | "webp" | "jpg">("avif");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const imageLabel = kind === "hero" ? "hero image" : "content background image";
+  const inputId = `${kind}-image-input-${page}`;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -71,7 +79,10 @@ export function HeroImageManager({ locale, page, initialImageUrl = "" }: HeroIma
       formData.append("alt", altText);
       formData.append("page", page);
 
-      const result = await uploadHeroImageAction(formData);
+      const result =
+        kind === "hero"
+          ? await uploadHeroImageAction(formData)
+          : await uploadContentBackgroundImageAction(formData);
 
       if (result.success && result.imageUrl) {
         setImageUrl(result.imageUrl);
@@ -91,7 +102,7 @@ export function HeroImageManager({ locale, page, initialImageUrl = "" }: HeroIma
       {imageUrl ? (
         <img
           src={imageUrl}
-          alt={altText || `${page} hero image`}
+          alt={altText || `${page} ${imageLabel}`}
           style={{ width: "100%", maxHeight: 240, objectFit: "cover", borderRadius: 18 }}
         />
       ) : null}
@@ -117,9 +128,9 @@ export function HeroImageManager({ locale, page, initialImageUrl = "" }: HeroIma
           onChange={handleFileInput}
           disabled={isUploading}
           style={{ display: "none" }}
-          id={`hero-image-input-${page}`}
+          id={inputId}
         />
-        <label htmlFor={`hero-image-input-${page}`} style={{ cursor: "pointer", display: "block" }}>
+        <label htmlFor={inputId} style={{ cursor: "pointer", display: "block" }}>
           <p style={{ margin: "0 0 8px", fontWeight: 700 }}>
             Drag & drop image or click to select
           </p>
