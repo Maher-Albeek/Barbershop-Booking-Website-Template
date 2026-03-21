@@ -6,82 +6,194 @@
   position: relative;
   width: 100%;
   overflow: hidden;
-  border: 1px solid rgba(255, 250, 244, 0.2);
-  background:
-    linear-gradient(120deg, rgba(4, 9, 14, 0.78), rgba(8, 12, 19, 0.56) 50%, rgba(20, 11, 6, 0.74)),
-    radial-gradient(circle at 80% 18%, rgba(232, 183, 122, 0.22), transparent 36%);
-  box-shadow:
-    0 20px 54px rgba(18, 11, 6, 0.34),
-    inset 0 1px 0 rgba(255, 250, 244, 0.12);
+  border: 0;
+  background: #1e1a1b;
+  box-shadow: none;
 }
 
 .footerGlow {
-  position: absolute;
-  inset: auto -12% -58%;
-  height: 220px;
-  background: radial-gradient(circle, rgba(214, 176, 125, 0.42), transparent 62%);
+  display: none;
   pointer-events: none;
 }
 
 .footerBody {
   position: relative;
   z-index: 1;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   max-width: 1200px;
   margin: 0 auto;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 28px 22px;
-  color: #fffaf4;
+  gap: 40px;
+  padding: 48px 32px;
+  color: #d6b07d;
 }
 
-.brandBlock {
-  display: grid;
-  gap: 5px;
-}
+/* ── column layout ── */
 
-.legalLabel {
-  color: rgba(255, 250, 244, 0.72);
-  font-size: 13px;
-  letter-spacing: 0.02em;
-}
-
-.nav {
+.column {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.linkPill {
+.legalColumn {
+  color: #d6b07d;
+}
+
+.columnHeading {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #d6b07d;
+  margin: 0;
+}
+
+.columnRule {
+  border: none;
+  border-top: 1px solid rgba(214, 176, 125, 0.35);
+  margin: 0;
+}
+
+.legalColumn .columnHeading {
+  color: #d6b07d;
+}
+
+.legalColumn .columnRule {
+  border-top-color: rgba(214, 176, 125, 0.35);
+}
+
+/* ── brand column ── */
+
+.tagline {
+  font-size: 13px;
+  color: rgba(214, 176, 125, 0.82);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.socialLinks {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.socialIcon {
+  color: rgba(214, 176, 125, 0.82);
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 250, 244, 0.28);
-  background: rgba(255, 250, 244, 0.08);
-  color: #fffaf4;
-  padding: 7px 14px;
-  line-height: 1.2;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
-.linkPill:hover {
-  background: rgba(255, 250, 244, 0.16);
-  border-color: rgba(255, 250, 244, 0.42);
+.socialIcon:hover {
+  color: #e8c98d;
 }
 
-@media (max-width: 680px) {
+/* ── contact / location column ── */
+
+.contactList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(214, 176, 125, 0.82);
+  line-height: 1.5;
+}
+
+.contactItem svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+.contactLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.contactLink:hover {
+  color: #e8c98d;
+}
+
+/* ── hours column ── */
+
+.hoursList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hoursItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hoursDay {
+  font-size: 13px;
+  font-weight: 600;
+  color: #d6b07d;
+}
+
+.hoursTime {
+  font-size: 13px;
+  color: rgba(214, 176, 125, 0.82);
+}
+
+/* ── legal column ── */
+
+.legalNav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legalLink {
+  font-size: 13px;
+  color: #d6b07d;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  display: inline;
+}
+
+.legalLink:hover {
+  color: #e8c98d;
+}
+
+/* ── responsive ── */
+
+@media (max-width: 900px) {
   .footerBody {
-    display: grid;
-    justify-items: center;
-    text-align: center;
-    padding: 18px 14px;
-  }
-
-  .brandBlock {
-    justify-items: center;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    padding: 36px 24px;
   }
 }
+
+@media (max-width: 540px) {
+  .footerBody {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 28px 18px;
+  }
+}
+

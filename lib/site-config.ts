@@ -205,6 +205,10 @@ export const siteConfig: {
     primaryColor: string;
     secondaryColor: string;
     accentColor: string;
+    socials?: {
+      instagram?: string;
+      tiktok?: string;
+    };
   };
   content: Record<Locale, LocalizedHomepageContent>;
   services: Record<Locale, LocalizedServicesContent>;
@@ -238,7 +242,11 @@ export const siteConfig: {
     logoText: "CB",
     primaryColor: "#8b5e3c",
     secondaryColor: "#d6b07d",
-    accentColor: "#22333b"
+    accentColor: "#22333b",
+    socials: {
+      instagram: "https://www.instagram.com/",
+      tiktok: "https://www.tiktok.com/"
+    }
   },
   content: {
     en: {

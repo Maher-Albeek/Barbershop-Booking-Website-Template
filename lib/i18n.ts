@@ -146,7 +146,10 @@ const dictionaries = {
       legalLabel: "Legal",
       impressum: "Imprint",
       datenschutz: "Privacy policy",
-      cookieSettings: "Cookie settings"
+      cookieSettings: "Cookie settings",
+      tagline: "We look forward to your visit.",
+      locationTitle: "Our location",
+      legalLinksTitle: "Legal information"
     },
     cookies: {
       title: "Your cookie settings",
@@ -305,8 +308,11 @@ const dictionaries = {
     footer: {
       legalLabel: "Rechtliches",
       impressum: "Impressum",
-      datenschutz: "Datenschutz",
-      cookieSettings: "Cookie-Einstellungen"
+      datenschutz: "Datenschutzerklärung",
+      cookieSettings: "Cookie-Einstellungen",
+      tagline: "Wir freuen uns auf Ihren Besuch.",
+      locationTitle: "Unser Standort",
+      legalLinksTitle: "Nutzungsbedingungen"
     },
     cookies: {
       title: "Deine Cookie-Einstellungen",
@@ -470,7 +476,10 @@ const dictionaries = {
       legalLabel: "\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0642\u0627\u0646\u0648\u0646\u064a\u0629",
       impressum: "\u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0642\u0627\u0646\u0648\u0646\u064a\u0629",
       datenschutz: "\u0633\u064a\u0627\u0633\u0629 \u0627\u0644\u062e\u0635\u0648\u0635\u064a\u0629",
-      cookieSettings: "\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0645\u0644\u0641\u0627\u062a \u0627\u0644\u0627\u0631\u062a\u0628\u0627\u0637"
+      cookieSettings: "\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0645\u0644\u0641\u0627\u062a \u0627\u0644\u0627\u0631\u062a\u0628\u0627\u0637",
+      tagline: "\u064a\u0633\u0639\u062f\u0646\u0627 \u0627\u0633\u062a\u0642\u0628\u0627\u0644\u0643\u0645.",
+      locationTitle: "\u0645\u0648\u0642\u0639\u0646\u0627",
+      legalLinksTitle: "\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0642\u0627\u0646\u0648\u0646\u064a\u0629"
     },
     cookies: {
       title: "\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0645\u0644\u0641\u0627\u062a \u0627\u0644\u0627\u0631\u062a\u0628\u0627\u0637",
@@ -611,6 +620,9 @@ const dictionaries = {
       impressum: string;
       datenschutz: string;
       cookieSettings: string;
+      tagline: string;
+      locationTitle: string;
+      legalLinksTitle: string;
     };
     cookies: {
       title: string;
