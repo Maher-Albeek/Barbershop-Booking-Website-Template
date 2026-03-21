@@ -16,6 +16,7 @@ const dictionaries = {
       primaryNavigation: "Primary navigation"
     },
     navigation: [
+      { href: "/", label: "Home" },
       { href: "/services", label: "Services" },
       { href: "/team", label: "Team" },
       { href: "/gallery", label: "Gallery" },
@@ -174,6 +175,7 @@ const dictionaries = {
       primaryNavigation: "Hauptnavigation"
     },
     navigation: [
+      { href: "/", label: "Startseite" },
       { href: "/services", label: "Leistungen" },
       { href: "/team", label: "Team" },
       { href: "/gallery", label: "Galerie" },
@@ -335,6 +337,7 @@ const dictionaries = {
       primaryNavigation: "\u0627\u0644\u062a\u0646\u0642\u0644 \u0627\u0644\u0631\u0626\u064a\u0633\u064a"
     },
     navigation: [
+      { href: "/", label: "\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629" },
       { href: "/services", label: "\u0627\u0644\u062e\u062f\u0645\u0627\u062a" },
       { href: "/team", label: "\u0627\u0644\u0641\u0631\u064a\u0642" },
       { href: "/gallery", label: "\u0627\u0644\u0645\u0639\u0631\u0636" },

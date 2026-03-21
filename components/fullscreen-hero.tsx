@@ -214,7 +214,7 @@ export function FullscreenHero({
           width: 132px;
           height: 132px;
           border-radius: 50%;
-          border: 1px solid rgba(255, 250, 244, 0.78);
+          border: 2px solid rgba(255, 250, 244, 0.78);
           background: transparent;
           display: grid;
           place-items: center;
@@ -231,26 +231,7 @@ export function FullscreenHero({
           border-color: rgba(61, 167, 255, 0.9);
         }
 
-        /* ── fill circle: starts tiny at dot position, set by JS via --fill-x/y ── */
-        .hero-cta-fill {
-          position: absolute;
-          top: var(--fill-y, 50%);
-          left: var(--fill-x, 50%);
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #3da7ff;
-          transform: translate(-50%, -50%) scale(0);
-          transition: transform 0.44s cubic-bezier(0.22, 1, 0.36, 1);
-          pointer-events: none;
-        }
-
-        /* scale(35) → 8×35 = 280px diameter, fully covers 132px button */
-        .hero-cta-wrap--active .hero-cta-fill {
-          transform: translate(-50%, -50%) scale(35);
-        }
-
-        /* text stays above the expanding fill */
+        /* Keep label above any decorative layers */
         .hero-cta-text {
           position: relative;
           z-index: 1;
