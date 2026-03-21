@@ -50,6 +50,7 @@ export function FullscreenHeroHeader({
 }: FullscreenHeroHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const openMenu = useCallback(() => {
@@ -71,18 +72,27 @@ export function FullscreenHeroHeader({
     else openMenu();
   }, [menuOpen, closing, openMenu, closeMenu]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 24);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
 
   return (
     <>
       <header
-        className={styles.heroHeader}
+        className={`${styles.heroHeader}${isScrolled ? ` ${styles.heroHeaderScrolled}` : ""}`}
         style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
           zIndex: menuOpen ? 201 : 3
         }}
       >
