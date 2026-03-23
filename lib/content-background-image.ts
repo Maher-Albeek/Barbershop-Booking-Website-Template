@@ -45,6 +45,7 @@ export function getContentSectionContainerStyle(page: HeroImageKey): CSSProperti
     };
   }
 
+  
   return {
     width: "100vw",
     marginLeft: "calc(50% - 50vw)",
