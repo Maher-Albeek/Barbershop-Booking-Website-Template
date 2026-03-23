@@ -93,6 +93,12 @@ export function saveService(input: {
 }) {
   const slug = slugify(input.slug || input.translations.de.name || input.translations.en.name);
   const existingSlug = input.serviceSlug;
+  const explicitPriceLabel =
+    firstNonEmptyString(
+      input.translations.en.priceLabel,
+      input.translations.de.priceLabel,
+      input.translations.ar.priceLabel
+    ) || undefined;
   const fallbackLocale = siteConfig.defaultLocale;
   const fallbackTranslation = input.translations[fallbackLocale];
   const fallbackExisting = siteConfig.services[fallbackLocale].services.find(
@@ -104,17 +110,23 @@ export function saveService(input: {
     const index = services.findIndex((service) => service.slug === existingSlug);
     const payload = input.translations[locale];
     const existing = index >= 0 ? services[index] : undefined;
+    const hasExplicitPriceInput = Boolean(payload.priceLabel.trim());
+    const resolvedPriceLabel =
+      firstNonEmptyString(
+        payload.priceLabel,
+        existing?.priceLabel,
+        fallbackTranslation.priceLabel,
+        fallbackExisting?.priceLabel
+      ) || undefined;
     const nextService = {
       slug,
       isActive: input.isActive,
-      pricing: "variable" as const,
-      priceLabel:
-        firstNonEmptyString(
-          payload.priceLabel,
-          existing?.priceLabel,
-          fallbackTranslation.priceLabel,
-          fallbackExisting?.priceLabel
-        ) || undefined,
+      pricing:
+        (hasExplicitPriceInput ? ("fixed" as const) : undefined) ||
+        existing?.pricing ||
+        fallbackExisting?.pricing ||
+        (resolvedPriceLabel ? ("fixed" as const) : ("variable" as const)),
+      priceLabel: resolvedPriceLabel,
       durationLabel:
         firstNonEmptyString(
           payload.durationLabel,
@@ -162,6 +174,14 @@ export function saveService(input: {
     }
 
     persistTeamConfig();
+  }
+
+  if (explicitPriceLabel) {
+    for (const assignment of siteConfig.booking.employeeServices) {
+      if (assignment.serviceSlug === slug) {
+        assignment.priceLabel = explicitPriceLabel;
+      }
+    }
   }
 }
 
