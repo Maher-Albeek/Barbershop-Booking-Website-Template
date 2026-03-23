@@ -79,11 +79,15 @@ function SectionTitle({
       style={{
         display: "grid",
         gap: 10,
-        borderRadius: 24,
+        width: "100vw",
+        marginLeft: "calc(50% - 50vw)",
+        marginRight: "calc(50% - 50vw)",
+        alignContent: "start",
+        borderRadius: 0,
         border: "1px solid var(--border)",
         background: "rgba(255, 250, 244, 0.78)",
         boxShadow: "var(--shadow)",
-        padding: "20px clamp(16px, 3vw, 26px)"
+        padding: "20px clamp(20px, calc((100vw - 1200px) / 2 + 20px), 240px)"
       }}
     >
       <div
@@ -101,6 +105,14 @@ function SectionTitle({
     </header>
   );
 }
+
+const fullScreenSectionStyle = {
+  display: "grid",
+  gap: 18,
+  scrollMarginTop: 120,
+  minHeight: "100svh",
+  alignContent: "start"
+} as const;
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
@@ -167,7 +179,7 @@ export default async function HomePage({ params }: HomePageProps) {
       />
 
       <div style={getContentSectionContainerStyle("services")}>
-        <section id="services" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
+        <section id="services" style={fullScreenSectionStyle}>
           <SectionTitle
             eyebrow={servicesContent.eyebrow}
             title={servicesContent.title}
@@ -277,7 +289,7 @@ export default async function HomePage({ params }: HomePageProps) {
       </div>
 
       <div style={getContentSectionContainerStyle("team")}>
-        <section id="team" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
+        <section id="team" style={fullScreenSectionStyle}>
           <SectionTitle
             eyebrow={dictionary.team.eyebrow}
             title={dictionary.team.title}
@@ -366,7 +378,7 @@ export default async function HomePage({ params }: HomePageProps) {
       </div>
 
       <div style={getContentSectionContainerStyle("gallery")}>
-        <section id="gallery" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
+        <section id="gallery" style={fullScreenSectionStyle}>
           <SectionTitle
             eyebrow={galleryContent.eyebrow}
             title={galleryContent.title}
@@ -441,7 +453,7 @@ export default async function HomePage({ params }: HomePageProps) {
       </div>
 
       <div style={getContentSectionContainerStyle("offers")}>
-        <section id="offers" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
+        <section id="offers" style={fullScreenSectionStyle}>
           <SectionTitle
             eyebrow={offersContent.eyebrow}
             title={offersContent.title}
@@ -530,7 +542,10 @@ export default async function HomePage({ params }: HomePageProps) {
       </div>
 
       <div style={getContentSectionContainerStyle("contact")}>
-        <section id="contact" style={{ display: "grid", gap: 24, scrollMarginTop: 120 }}>
+        <section
+          id="contact"
+          style={{ ...fullScreenSectionStyle, gap: 24 }}
+        >
           <SectionTitle
             eyebrow={contactContent.eyebrow}
             title={contactContent.title}
@@ -758,7 +773,7 @@ export default async function HomePage({ params }: HomePageProps) {
       </div>
 
       <div style={getContentSectionContainerStyle("booking")}>
-        <section id="booking" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
+        <section id="booking" style={fullScreenSectionStyle}>
           <SectionTitle
             eyebrow={dictionary.booking.eyebrow}
             title={dictionary.booking.title}
