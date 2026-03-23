@@ -38,6 +38,7 @@ export function FormModal({ buttonLabel, title, description, children }: FormMod
       <dialog
         ref={dialogRef}
         aria-labelledby={titleId}
+        className="admin-form-modal"
         style={{
           width: "min(760px, calc(100vw - 32px))",
           margin: "auto",
