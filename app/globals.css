@@ -41,3 +41,12 @@ textarea,
 select {
   font: inherit;
 }
+
+.hide-horizontal-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-horizontal-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -16,6 +16,7 @@ import {
 import { ContactForm } from "./contact/contact-form";
 import { ContactMap } from "./contact/contact-map";
 import { FullscreenHero } from "@/components/fullscreen-hero";
+import { HorizontalScrollControls } from "@/components/horizontal-scroll-controls";
 
 type HomePageProps = {
   params: Promise<{ locale: string }>;
@@ -298,7 +299,17 @@ export default async function HomePage({ params }: HomePageProps) {
             subtitle={dictionary.team.subtitle}
           />
 
+          {teamUsesSlider ? (
+            <HorizontalScrollControls
+              targetId="team-slider-track"
+              prevLabel="Show previous team members"
+              nextLabel="Show next team members"
+            />
+          ) : null}
+
           <section
+            id="team-slider-track"
+            className={teamUsesSlider ? "hide-horizontal-scrollbar" : undefined}
             style={{
               display: teamUsesSlider ? "flex" : "grid",
               gridTemplateColumns: teamUsesSlider ? undefined : "repeat(auto-fit, minmax(280px, 1fr))",
