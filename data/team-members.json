@@ -47,7 +47,7 @@
       },
       {
         "slug": "oliver-stone",
-        "isActive": true,
+        "isActive": false,
         "imageSrc": "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
         "bookingServiceSlugs": [
           "signature-cut"
@@ -106,7 +106,7 @@
       },
       {
         "slug": "oliver-stone",
-        "isActive": true,
+        "isActive": false,
         "imageSrc": "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
         "bookingServiceSlugs": [
           "signature-cut"
@@ -165,7 +165,7 @@
       },
       {
         "slug": "oliver-stone",
-        "isActive": true,
+        "isActive": false,
         "imageSrc": "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
         "bookingServiceSlugs": [
           "signature-cut"

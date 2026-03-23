@@ -181,7 +181,7 @@ export default async function HomePage({ params }: HomePageProps) {
       />
 
       <div style={getContentSectionContainerStyle("services")}>
-        <section id="services" style={fullScreenSectionStyle}>
+        <section id="services" style={{ ...fullScreenSectionStyle, display: "flex", flexDirection: "column" }}>
           <SectionTitle
             eyebrow={servicesContent.eyebrow}
             title={servicesContent.title}
@@ -193,6 +193,9 @@ export default async function HomePage({ params }: HomePageProps) {
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
               gap: 18,
+              marginTop: "auto",
+              marginBottom: "auto",
+              paddingTop: 30,
               paddingBottom: 30
             }}
           >
