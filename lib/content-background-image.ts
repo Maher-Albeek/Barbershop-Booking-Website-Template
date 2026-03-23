@@ -53,7 +53,7 @@ export function getContentSectionContainerStyle(page: HeroImageKey): CSSProperti
     minHeight: "100svh",
     display: "grid",
     alignContent: "start",
-    padding: "64px clamp(20px, calc((100vw - 1200px) / 2 + 20px), 240px) 56px",
+    padding: "0 clamp(20px, calc((100vw - 1200px) / 2 + 20px), 240px) 56px",
     background:
       `linear-gradient(146deg, rgba(10, 7, 5, 0.72), rgba(10, 7, 5, 0.9)), url('${imageUrl}') center/cover no-repeat`,
     backdropFilter: "blur(140px)",

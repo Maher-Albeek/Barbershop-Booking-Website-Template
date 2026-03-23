@@ -190,7 +190,8 @@ export default async function HomePage({ params }: HomePageProps) {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: 18
+              gap: 18,
+              paddingBottom: 30
             }}
           >
             {activeServices.map((service) => {
