@@ -8,6 +8,11 @@ import {
 } from "@/lib/booking";
 import { locales, type Locale } from "@/lib/i18n";
 import { siteConfig, getContactContent, getHomepageContent } from "@/lib/site-config";
+import { savePersistedTeamMembers } from "@/lib/team-config-storage";
+
+function persistTeamConfig() {
+  savePersistedTeamMembers(siteConfig.team);
+}
 
 export function slugify(value: string) {
   return value
@@ -155,6 +160,8 @@ export function saveService(input: {
         assignment.serviceSlug = slug;
       }
     }
+
+    persistTeamConfig();
   }
 }
 
@@ -261,6 +268,20 @@ export function saveEmployee(input: {
       });
     }
   }
+
+  persistTeamConfig();
+}
+
+export function setEmployeeActive(input: { employeeSlug: string; isActive: boolean }) {
+  for (const locale of locales) {
+    const member = siteConfig.team[locale].members.find((item) => item.slug === input.employeeSlug);
+
+    if (member) {
+      member.isActive = input.isActive;
+    }
+  }
+
+  persistTeamConfig();
 }
 
 export function saveAssignment(input: {
@@ -289,6 +310,8 @@ export function saveAssignment(input: {
       member.bookingServiceSlugs.push(input.serviceSlug);
     }
   }
+
+  persistTeamConfig();
 }
 
 export function saveWorkingHours(input: {

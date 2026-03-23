@@ -1526,6 +1526,41 @@ export const siteConfig: {
   }
 };
 
+function loadPersistedTeamMembers(): Partial<Record<Locale, TeamMember[]>> {
+  if (typeof window !== "undefined") {
+    return {};
+  }
+
+  try {
+    const dynamicRequire = new Function("moduleName", "return require(moduleName)") as (
+      moduleName: string
+    ) => unknown;
+    const fsModule = dynamicRequire("fs") as { readFileSync: (path: string, encoding: string) => string };
+    const pathModule = dynamicRequire("path") as { join: (...parts: string[]) => string };
+    const filePath = pathModule.join(process.cwd(), "data", "team-members.json");
+    const raw = fsModule.readFileSync(filePath, "utf8");
+    const parsed = JSON.parse(raw) as { team?: Partial<Record<Locale, TeamMember[]>> };
+
+    if (!parsed || typeof parsed !== "object" || !parsed.team) {
+      return {};
+    }
+
+    return parsed.team;
+  } catch {
+    return {};
+  }
+}
+
+const persistedTeamMembers = loadPersistedTeamMembers();
+
+for (const locale of locales) {
+  const members = persistedTeamMembers[locale];
+
+  if (members) {
+    siteConfig.team[locale].members = members;
+  }
+}
+
 function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }

@@ -13,6 +13,7 @@ import {
   saveContactContent,
   saveEmailSettings,
   saveEmployee,
+  setEmployeeActive,
   saveGalleryImage,
   saveOffer,
   saveHomepageHeroContent,
@@ -114,6 +115,22 @@ export async function upsertEmployeeAction(formData: FormData) {
           .filter(Boolean)
       }
     }
+  });
+
+  redirectToAdmin(locale, "employees");
+}
+
+export async function setEmployeeActiveAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+  const employeeSlug = normalize(formData.get("employeeSlug"));
+
+  if (!employeeSlug) {
+    redirectToAdmin(locale, "employees");
+  }
+
+  setEmployeeActive({
+    employeeSlug,
+    isActive: checked(formData, "isActive")
   });
 
   redirectToAdmin(locale, "employees");

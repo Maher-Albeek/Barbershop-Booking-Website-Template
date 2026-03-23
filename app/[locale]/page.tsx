@@ -131,6 +131,7 @@ export default async function HomePage({ params }: HomePageProps) {
   const firstHighlight = content.highlights[0];
   const activeServices = servicesContent.services.filter((service) => service.isActive);
   const activeMembers = teamContent.members.filter((member) => member.isActive);
+  const teamUsesSlider = activeMembers.length > 3;
   const visibleImages = galleryContent.images
     .filter((image) => image.isVisible)
     .sort((left, right) => left.sortOrder - right.sortOrder);
@@ -299,15 +300,23 @@ export default async function HomePage({ params }: HomePageProps) {
 
           <section
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 18
+              display: teamUsesSlider ? "flex" : "grid",
+              gridTemplateColumns: teamUsesSlider ? undefined : "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: 18,
+              overflowX: teamUsesSlider ? "auto" : undefined,
+              scrollSnapType: teamUsesSlider ? "x mandatory" : undefined,
+              paddingBottom: teamUsesSlider ? 8 : undefined,
+              width: "100%",
+              maxWidth: "100%"
             }}
           >
             {activeMembers.map((member) => (
               <article
                 key={member.slug}
                 style={{
+                  scrollSnapAlign: teamUsesSlider ? "start" : undefined,
+                  flex: teamUsesSlider ? "0 0 calc((100% - 36px) / 3)" : undefined,
+                  minWidth: teamUsesSlider ? 280 : undefined,
                   borderRadius: 28,
                   border: "1px solid var(--border)",
                   background: "var(--surface-strong)",

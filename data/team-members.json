@@ -1,0 +1,181 @@
+{
+  "team": {
+    "en": [
+      {
+        "slug": "marcus-reed",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut",
+          "beard-ritual",
+          "full-grooming-session"
+        ],
+        "specialties": [
+          "Skin fades",
+          "Executive grooming"
+        ],
+        "name": "Marcus Reed",
+        "bio": "Known for calm consultations and sharp finishing work, Marcus handles precise cuts for clients who want a polished weekly look."
+      },
+      {
+        "slug": "samir-haddad",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "beard-ritual",
+          "full-grooming-session"
+        ],
+        "specialties": [
+          "Beard sculpting",
+          "Hot towel ritual"
+        ],
+        "name": "Samir Haddad",
+        "bio": "Samir focuses on beard architecture, detail lines, and a relaxed service flow that suits longer grooming appointments."
+      },
+      {
+        "slug": "jonah-brooks",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut"
+        ],
+        "specialties": [
+          "Texture",
+          "Modern crop cuts"
+        ],
+        "name": "Jonah Brooks"
+      },
+      {
+        "slug": "oliver-stone",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut"
+        ],
+        "specialties": [
+          "Classic scissor work"
+        ],
+        "name": "Oliver Stone",
+        "bio": "Shown in config but hidden from the public team page while inactive."
+      }
+    ],
+    "de": [
+      {
+        "slug": "marcus-reed",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut",
+          "beard-ritual",
+          "full-grooming-session"
+        ],
+        "specialties": [
+          "Skin Fades",
+          "Executive Grooming"
+        ],
+        "name": "Marcus Reed",
+        "bio": "Marcus ist für ruhige Beratung und saubere Finishing-Details bekannt und betreut präzise Schnitte für einen gepflegten Alltagslook."
+      },
+      {
+        "slug": "samir-haddad",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "beard-ritual",
+          "full-grooming-session"
+        ],
+        "specialties": [
+          "Bartkonturen",
+          "Hot-Towel-Ritual"
+        ],
+        "name": "Samir Haddad",
+        "bio": "Samir konzentriert sich auf Bartarchitektur, exakte Linien und einen entspannten Serviceablauf für längere Grooming-Termine."
+      },
+      {
+        "slug": "jonah-brooks",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut"
+        ],
+        "specialties": [
+          "Textur",
+          "Moderne Crop Cuts"
+        ],
+        "name": "Jonah Brooks"
+      },
+      {
+        "slug": "oliver-stone",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut"
+        ],
+        "specialties": [
+          "Klassische Scherenarbeit"
+        ],
+        "name": "Oliver Stone",
+        "bio": "Im Inhalt gepflegt, aber bei inaktivem Status nicht öffentlich sichtbar."
+      }
+    ],
+    "ar": [
+      {
+        "slug": "marcus-reed",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut",
+          "beard-ritual",
+          "full-grooming-session"
+        ],
+        "specialties": [
+          "تدرج السكن فيد",
+          "عناية احترافية"
+        ],
+        "name": "Marcus Reed",
+        "bio": "يشتهر ماركس بالاستشارة الهادئة واللمسات النهائية الدقيقة لقصات أنيقة ومنتظمة."
+      },
+      {
+        "slug": "samir-haddad",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "beard-ritual",
+          "full-grooming-session"
+        ],
+        "specialties": [
+          "نحت اللحية",
+          "طقس المنشفة الساخنة"
+        ],
+        "name": "Samir Haddad",
+        "bio": "يركز سمير على هندسة اللحية ورسم الحواف بدقة مع تجربة مريحة لجلسات العناية الطويلة."
+      },
+      {
+        "slug": "jonah-brooks",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut"
+        ],
+        "specialties": [
+          "تصفيف بالملمس",
+          "قصات كروب عصرية"
+        ],
+        "name": "Jonah Brooks"
+      },
+      {
+        "slug": "oliver-stone",
+        "isActive": true,
+        "imageSrc": "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?auto=format&fit=crop&w=900&q=80",
+        "bookingServiceSlugs": [
+          "signature-cut"
+        ],
+        "specialties": [
+          "القص بالمقص"
+        ],
+        "name": "Oliver Stone",
+        "bio": "موجود في الإعدادات ولكنه مخفي عن الواجهة العامة عند تعطيله."
+      }
+    ]
+  }
+}
