@@ -65,6 +65,43 @@ function isOfferCurrentlyVisible(validFrom: string, validUntil: string) {
   return today >= startsAt && today <= endsAt;
 }
 
+function SectionTitle({
+  eyebrow,
+  title,
+  subtitle
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <header
+      style={{
+        display: "grid",
+        gap: 10,
+        borderRadius: 24,
+        border: "1px solid var(--border)",
+        background: "rgba(255, 250, 244, 0.78)",
+        boxShadow: "var(--shadow)",
+        padding: "20px clamp(16px, 3vw, 26px)"
+      }}
+    >
+      <div
+        style={{
+          fontSize: 12,
+          textTransform: "uppercase",
+          letterSpacing: "0.14em",
+          color: "var(--muted)"
+        }}
+      >
+        {eyebrow}
+      </div>
+      <h2 style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05 }}>{title}</h2>
+      <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>{subtitle}</p>
+    </header>
+  );
+}
+
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
 
@@ -131,24 +168,11 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <div style={getContentSectionContainerStyle("services")}>
         <section id="services" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
-          <header style={{ display: "grid", gap: 10 }}>
-            <div
-              style={{
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                color: "var(--muted)"
-              }}
-            >
-              {servicesContent.eyebrow}
-            </div>
-            <h2 style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05 }}>
-              {servicesContent.title}
-            </h2>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-              {servicesContent.subtitle}
-            </p>
-          </header>
+          <SectionTitle
+            eyebrow={servicesContent.eyebrow}
+            title={servicesContent.title}
+            subtitle={servicesContent.subtitle}
+          />
 
           <section
             style={{
@@ -254,24 +278,11 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <div style={getContentSectionContainerStyle("team")}>
         <section id="team" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
-          <header style={{ display: "grid", gap: 10 }}>
-            <div
-              style={{
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                color: "var(--muted)"
-              }}
-            >
-              {dictionary.team.eyebrow}
-            </div>
-            <h2 style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05 }}>
-              {dictionary.team.title}
-            </h2>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-              {dictionary.team.subtitle}
-            </p>
-          </header>
+          <SectionTitle
+            eyebrow={dictionary.team.eyebrow}
+            title={dictionary.team.title}
+            subtitle={dictionary.team.subtitle}
+          />
 
           <section
             style={{
@@ -356,24 +367,11 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <div style={getContentSectionContainerStyle("gallery")}>
         <section id="gallery" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
-          <header style={{ display: "grid", gap: 10 }}>
-            <div
-              style={{
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                color: "var(--muted)"
-              }}
-            >
-              {galleryContent.eyebrow}
-            </div>
-            <h2 style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05 }}>
-              {galleryContent.title}
-            </h2>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-              {galleryContent.subtitle}
-            </p>
-          </header>
+          <SectionTitle
+            eyebrow={galleryContent.eyebrow}
+            title={galleryContent.title}
+            subtitle={galleryContent.subtitle}
+          />
 
           <section
             style={{
@@ -444,24 +442,11 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <div style={getContentSectionContainerStyle("offers")}>
         <section id="offers" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
-          <header style={{ display: "grid", gap: 10 }}>
-            <div
-              style={{
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                color: "var(--muted)"
-              }}
-            >
-              {offersContent.eyebrow}
-            </div>
-            <h2 style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05 }}>
-              {offersContent.title}
-            </h2>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-              {offersContent.subtitle}
-            </p>
-          </header>
+          <SectionTitle
+            eyebrow={offersContent.eyebrow}
+            title={offersContent.title}
+            subtitle={offersContent.subtitle}
+          />
 
           <section
             style={{
@@ -546,24 +531,11 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <div style={getContentSectionContainerStyle("contact")}>
         <section id="contact" style={{ display: "grid", gap: 24, scrollMarginTop: 120 }}>
-          <header style={{ display: "grid", gap: 10 }}>
-            <div
-              style={{
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                color: "var(--muted)"
-              }}
-            >
-              {contactContent.eyebrow}
-            </div>
-            <h2 style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05 }}>
-              {contactContent.title}
-            </h2>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-              {contactContent.subtitle}
-            </p>
-          </header>
+          <SectionTitle
+            eyebrow={contactContent.eyebrow}
+            title={contactContent.title}
+            subtitle={contactContent.subtitle}
+          />
 
           <section
             style={{
@@ -787,24 +759,11 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <div style={getContentSectionContainerStyle("booking")}>
         <section id="booking" style={{ display: "grid", gap: 18, scrollMarginTop: 120 }}>
-          <header style={{ display: "grid", gap: 10 }}>
-            <div
-              style={{
-                fontSize: 12,
-                textTransform: "uppercase",
-                letterSpacing: "0.14em",
-                color: "var(--muted)"
-              }}
-            >
-              {dictionary.booking.eyebrow}
-            </div>
-            <h2 style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.05 }}>
-              {dictionary.booking.title}
-            </h2>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-              {dictionary.booking.subtitle}
-            </p>
-          </header>
+          <SectionTitle
+            eyebrow={dictionary.booking.eyebrow}
+            title={dictionary.booking.title}
+            subtitle={dictionary.booking.subtitle}
+          />
 
           <article
             style={{
