@@ -1,53 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-const navGroups = [
-  {
-    label: "CORE",
-    items: [
-      { label: "Dashboard", path: "" }
-    ]
-  },
-  {
-    label: "PAGES MANAGEMENT",
-    items: [
-      { label: "Home Page", path: "pages/hero" },
-      { label: "Services Page", path: "pages/services" },
-      { label: "Team Page", path: "pages/team" },
-      { label: "Gallery Page", path: "pages/gallery" },
-      { label: "Offers Page", path: "pages/offers" },
-      { label: "Booking Page", path: "pages/booking" },
-      { label: "Contact Page", path: "pages/contact-form" }
-    ]
-  },
-  {
-    label: "DATA MANAGEMENT",
-    items: [
-      { label: "Services", path: "entities/services" },
-      { label: "Employees", path: "entities/employees" },
-      { label: "Schedule", path: "entities/schedule" },
-      { label: "Bookings", path: "entities/bookings" },
-      { label: "Offers", path: "entities/offers" }
-    ]
-  },
-  {
-    label: "SETTINGS",
-    items: [
-      { label: "Shop Settings", path: "settings" },
-      { label: "Email Templates", path: "email" }
-    ]
-  }
-];
+import { usePathname } from "next/navigation";
+import { adminNavGroups, getAdminPageHref } from "./_navigation";
 
 export function AdminSidebar({ locale }: { locale: string }) {
-  const [activePath, setActivePath] = useState("");
-
-  useEffect(() => {
-    const path = window.location.pathname.split("/admin/")[1] || "";
-    setActivePath(path);
-  }, []);
+  const pathname = usePathname();
+  const activePath = pathname.split("/admin/")[1] || "dashboard";
 
   return (
     <nav
@@ -66,7 +25,7 @@ export function AdminSidebar({ locale }: { locale: string }) {
         gap: 12,
       }}
     >
-      {navGroups.map((group) => (
+      {adminNavGroups.map((group) => (
         <div key={group.label} style={{ display: "grid", gap: 4 }}>
           <p
             style={{
@@ -82,14 +41,11 @@ export function AdminSidebar({ locale }: { locale: string }) {
             {group.label}
           </p>
           {group.items.map((item) => {
-            const href = {
-              pathname: `/${locale}/admin${item.path ? `/${item.path}` : ""}` as `/${string}/admin${string}`,
-            };
-            const isActive = activePath === item.path;
+            const isActive = activePath === item.path || activePath.startsWith(`${item.path}/`);
             return (
               <Link
                 key={item.path}
-                href={href}
+                href={getAdminPageHref(locale, item.key)}
                 style={{
                   display: "block",
                   padding: "10px 14px",

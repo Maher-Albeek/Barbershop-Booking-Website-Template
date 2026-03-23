@@ -24,6 +24,7 @@ import {
   deleteOffer
 } from "@/lib/admin-data";
 import { locales, type Locale } from "@/lib/i18n";
+import { getAdminPageHref, type AdminPageKey } from "./_navigation";
 
 function normalize(value: FormDataEntryValue | null) {
   return typeof value === "string" ? value.trim() : "";
@@ -39,8 +40,8 @@ async function authorize(localeValue: string) {
   return locale;
 }
 
-function redirectToAdmin(locale: Locale, section?: string) {
-  redirect(`/${locale}/admin${section ? `#${section}` : ""}`);
+function redirectToAdmin(locale: Locale, pageKey: AdminPageKey) {
+  redirect(getAdminPageHref(locale, pageKey));
 }
 
 export async function upsertServiceAction(formData: FormData) {
@@ -129,7 +130,7 @@ export async function upsertAssignmentAction(formData: FormData) {
     isActive: checked(formData, "isActive")
   });
 
-  redirectToAdmin(locale, "availability");
+  redirectToAdmin(locale, "schedule");
 }
 
 export async function upsertWorkingHoursAction(formData: FormData) {
@@ -139,7 +140,7 @@ export async function upsertWorkingHoursAction(formData: FormData) {
   const isOff = checked(formData, "isOff");
 
   if (!isOff && (!start || !end || !isValidTimeRange(start, end))) {
-    redirectToAdmin(locale, "availability");
+    redirectToAdmin(locale, "schedule");
   }
 
   saveWorkingHours({
@@ -150,7 +151,7 @@ export async function upsertWorkingHoursAction(formData: FormData) {
     isOff
   });
 
-  redirectToAdmin(locale, "availability");
+  redirectToAdmin(locale, "schedule");
 }
 
 export async function addBlockedTimeAction(formData: FormData) {
@@ -159,7 +160,7 @@ export async function addBlockedTimeAction(formData: FormData) {
   const end = normalize(formData.get("end"));
 
   if (!start || !end || !isValidTimeRange(start, end)) {
-    redirectToAdmin(locale, "availability");
+    redirectToAdmin(locale, "schedule");
   }
 
   addBlockedTime({
@@ -170,7 +171,7 @@ export async function addBlockedTimeAction(formData: FormData) {
     reason: normalize(formData.get("reason")) || undefined
   });
 
-  redirectToAdmin(locale, "availability");
+  redirectToAdmin(locale, "schedule");
 }
 
 export async function updateBookingStatusAction(formData: FormData) {
@@ -194,13 +195,13 @@ export async function upsertGalleryAction(formData: FormData) {
     sortOrder: Number(normalize(formData.get("sortOrder")) || 0)
   });
 
-  redirectToAdmin(locale, "gallery");
+  redirectToAdmin(locale, "galleryPage");
 }
 
 export async function deleteGalleryAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
   deleteGalleryImage(normalize(formData.get("slug")));
-  redirectToAdmin(locale, "gallery");
+  redirectToAdmin(locale, "galleryPage");
 }
 
 export async function upsertOfferAction(formData: FormData) {
@@ -323,7 +324,7 @@ export async function updateContactContentAction(formData: FormData) {
     }
   });
 
-  redirectToAdmin(locale, "contact");
+  redirectToAdmin(locale, "contactPage");
 }
 
 export async function updateHomepageHeroContentAction(formData: FormData) {
@@ -336,7 +337,7 @@ export async function updateHomepageHeroContentAction(formData: FormData) {
     title: normalize(formData.get("heroTitle"))
   });
 
-  redirect(`/${locale}/admin/pages/hero`);
+  redirectToAdmin(locale, "homePage");
 }
 
 export async function uploadHeroImageAction(formData: FormData) {

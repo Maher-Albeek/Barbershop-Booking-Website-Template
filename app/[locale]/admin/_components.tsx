@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { getSession } from "@/lib/auth";
 import { logoutUser } from "../login/actions";
 import { AdminSidebar } from "./_sidebar";
 
 type AdminShellProps = {
   locale: string;
-  displayName?: string;
   children: ReactNode;
 };
 
@@ -52,7 +52,9 @@ export const weekdayLabels = [
   { value: 0, label: "Sun" }
 ] as const;
 
-export function AdminShell({ locale, displayName, children }: AdminShellProps) {
+export async function AdminShell({ locale, children }: AdminShellProps) {
+  const session = await getSession();
+
   return (
     <main style={{ minHeight: "100vh", padding: "clamp(20px, 4vw, 32px) 20px 56px" }}>
       <div style={{ maxWidth: 1320, margin: "0 auto", display: "grid", gap: 20 }}>
@@ -75,7 +77,7 @@ export function AdminShell({ locale, displayName, children }: AdminShellProps) {
                   color: "rgba(255, 250, 244, 0.72)"
                 }}
               >
-                ADMIN-001 to ADMIN-012
+                ADMIN-001 to ADMIN-017
               </p>
               <h1 style={{ margin: 0, fontSize: "clamp(2rem, 5vw, 2.5rem)" }}>
                 Business control center
@@ -88,8 +90,8 @@ export function AdminShell({ locale, displayName, children }: AdminShellProps) {
                   color: "rgba(255, 250, 244, 0.82)"
                 }}
               >
-                Signed in as {displayName ?? "staff user"}. This route manages the reusable admin
-                feature set for the template.
+                Signed in as {session?.displayName ?? "staff user"}. This route manages the reusable
+                admin feature set for the template.
               </p>
             </div>
             <div style={{ display: "flex", gap: 10, alignItems: "start", flexWrap: "wrap" }}>

@@ -11,21 +11,27 @@ type PageHeroEditorProps = {
 };
 
 export function PageHeroEditor({ locale, page, label, description }: PageHeroEditorProps) {
+  const hasHeroSection = page === "home";
+
   return (
     <div style={{ display: "grid", gap: 14 }}>
-      <article style={{ ...surfaceCardStyle, display: "grid", gap: 14 }}>
-        <div style={{ display: "grid", gap: 6 }}>
-          <strong>{label}</strong>
-          <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>{description}</p>
-        </div>
-        <HeroImageManager locale={locale} page={page} initialImageUrl={getHeroImageUrl(page)} kind="hero" />
-      </article>
+      {hasHeroSection ? (
+        <article style={{ ...surfaceCardStyle, display: "grid", gap: 14 }}>
+          <div style={{ display: "grid", gap: 6 }}>
+            <strong>{label}</strong>
+            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>{description}</p>
+          </div>
+          <HeroImageManager locale={locale} page={page} initialImageUrl={getHeroImageUrl(page)} kind="hero" />
+        </article>
+      ) : null}
 
       <article style={{ ...surfaceCardStyle, display: "grid", gap: 14 }}>
         <div style={{ display: "grid", gap: 6 }}>
-          <strong>Content section background image</strong>
+          <strong>{hasHeroSection ? "Content section background image" : "Page background image"}</strong>
           <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
-            Upload a per-page background image used behind the content section below the hero.
+            {hasHeroSection
+              ? "Upload a per-page background image used behind the content section below the hero."
+              : "Upload the background image used for this page content area."}
           </p>
         </div>
         <HeroImageManager

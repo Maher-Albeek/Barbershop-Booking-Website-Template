@@ -98,7 +98,7 @@ export default async function AdminBookingsPage({ params, searchParams }: AdminB
               </div>
               <form action={updateBookingStatusAction} style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 <input type="hidden" name="locale" value={locale} />
-                <input type="hidden" name="id" value={booking.id} />
+                <input type="hidden" name="bookingId" value={booking.id} />
                 <select name="status" style={inputStyle}>
                   <option value={booking.status}>{booking.status}</option>
                   <option value="confirmed">confirmed</option>

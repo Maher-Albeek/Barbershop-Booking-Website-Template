@@ -1,0 +1,167 @@
+export type AdminPageKey =
+  | "dashboard"
+  | "homePage"
+  | "servicesPage"
+  | "teamPage"
+  | "galleryPage"
+  | "offersPage"
+  | "bookingPage"
+  | "contactPage"
+  | "services"
+  | "employees"
+  | "schedule"
+  | "bookings"
+  | "offers"
+  | "settings"
+  | "email";
+
+export type AdminNavItem = {
+  key: AdminPageKey;
+  label: string;
+  story: string;
+  path: string;
+  description: string;
+};
+
+export type AdminNavGroup = {
+  label: string;
+  items: AdminNavItem[];
+};
+
+export const adminNavGroups: AdminNavGroup[] = [
+  {
+    label: "CORE",
+    items: [
+      {
+        key: "dashboard",
+        label: "Dashboard",
+        story: "ADMIN-001",
+        path: "dashboard",
+        description: "Review business metrics and recent bookings."
+      }
+    ]
+  },
+  {
+    label: "PAGES MANAGEMENT",
+    items: [
+      {
+        key: "homePage",
+        label: "Home Page",
+        story: "ADMIN-013",
+        path: "pages/hero",
+        description: "Edit homepage hero content and imagery."
+      },
+      {
+        key: "servicesPage",
+        label: "Services Page",
+        story: "ADMIN-014",
+        path: "pages/services",
+        description: "Manage the public services page hero and background."
+      },
+      {
+        key: "teamPage",
+        label: "Team Page",
+        story: "ADMIN-015",
+        path: "pages/team",
+        description: "Manage the team page hero and background assets."
+      },
+      {
+        key: "galleryPage",
+        label: "Gallery Page",
+        story: "ADMIN-008",
+        path: "pages/gallery",
+        description: "Maintain the gallery page media and hero presentation."
+      },
+      {
+        key: "offersPage",
+        label: "Offers Page",
+        story: "ADMIN-016",
+        path: "pages/offers",
+        description: "Manage the public offers page hero and background imagery."
+      },
+      {
+        key: "bookingPage",
+        label: "Booking Page",
+        story: "ADMIN-017",
+        path: "pages/booking",
+        description: "Manage the booking page hero and supporting background image."
+      },
+      {
+        key: "contactPage",
+        label: "Contact Page",
+        story: "ADMIN-012",
+        path: "pages/contact-form",
+        description: "Update contact page content, map settings, and page imagery."
+      }
+    ]
+  },
+  {
+    label: "DATA MANAGEMENT",
+    items: [
+      {
+        key: "services",
+        label: "Services",
+        story: "ADMIN-002",
+        path: "entities/services",
+        description: "Create and update service records shown in booking and public pages."
+      },
+      {
+        key: "employees",
+        label: "Employees",
+        story: "ADMIN-003",
+        path: "entities/employees",
+        description: "Manage employee profiles, bios, and login linkage."
+      },
+      {
+        key: "schedule",
+        label: "Schedule",
+        story: "ADMIN-004 / ADMIN-005 / ADMIN-006",
+        path: "entities/schedule",
+        description: "Configure assignments, working hours, and blocked time."
+      },
+      {
+        key: "bookings",
+        label: "Bookings",
+        story: "ADMIN-007",
+        path: "entities/bookings",
+        description: "Filter bookings and manage appointment statuses."
+      },
+      {
+        key: "offers",
+        label: "Offers",
+        story: "ADMIN-009",
+        path: "entities/offers",
+        description: "Maintain promotional offer records and validity windows."
+      }
+    ]
+  },
+  {
+    label: "SETTINGS",
+    items: [
+      {
+        key: "settings",
+        label: "Shop Settings",
+        story: "ADMIN-010",
+        path: "settings",
+        description: "Manage branding, locales, and global shop settings."
+      },
+      {
+        key: "email",
+        label: "Email Templates",
+        story: "ADMIN-011",
+        path: "email",
+        description: "Configure booking-related email delivery settings."
+      }
+    ]
+  }
+];
+
+export const adminNavItems = adminNavGroups.flatMap((group) => group.items);
+
+export function getAdminPagePath(pageKey: AdminPageKey) {
+  return adminNavItems.find((item) => item.key === pageKey)?.path ?? "dashboard";
+}
+
+export function getAdminPageHref(locale: string, pageKey: AdminPageKey) {
+  return `/${locale}/admin/${getAdminPagePath(pageKey)}`;
+}

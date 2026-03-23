@@ -121,8 +121,8 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
             <input name="start" type="time" placeholder="Start time" style={inputStyle} />
             <input name="end" type="time" placeholder="End time" style={inputStyle} />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isActive" defaultChecked />
-              Active
+              <input type="checkbox" name="isOff" />
+              Mark as day off
             </label>
             <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
               Save hours
