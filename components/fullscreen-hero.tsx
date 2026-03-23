@@ -15,7 +15,7 @@ type HeroHref =
     };
 
 type HeroNavigationItem = {
-  href: Route;
+  href: HeroHref;
   label: string;
 };
 

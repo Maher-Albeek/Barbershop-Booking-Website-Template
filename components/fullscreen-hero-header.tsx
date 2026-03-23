@@ -14,7 +14,7 @@ type HeaderHref =
     };
 
 type HeaderNavigationItem = {
-  href: Route;
+  href: HeaderHref;
   label: string;
 };
 
@@ -212,7 +212,7 @@ export function FullscreenHeroHeader({
         <div className={`${styles.menuOverlay}${closing ? ` ${styles.menuOverlayClosing}` : ""}`}>
           {navigation.map((item, i) => (
             <Link
-              key={item.href}
+              key={`${item.label}-${i}`}
               href={item.href}
               onClick={closeMenu}
               className={`${styles.menuLink}${closing ? ` ${styles.menuLinkClosing}` : ""}`}
