@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
+import { FormModal } from "../../_form-modal";
 import { upsertServiceAction } from "../../actions";
 import {
   AdminShell,
@@ -77,69 +78,93 @@ export default async function AdminServicesPage({
             ? `Editing: ${editingService.name} (${editingService.slug})`
             : "Create a new service or click Edit service on an existing card."}
         </div>
-        <form action={upsertServiceAction} style={{ display: "grid", gap: 14 }}>
-          <input type="hidden" name="locale" value={locale} />
-          {editingService ? (
+        <FormModal
+          buttonLabel="Add new service"
+          title="Create service"
+          description="Add a new service entry to the selected locale."
+        >
+          <form action={upsertServiceAction} style={{ display: "grid", gap: 14 }}>
+            <input type="hidden" name="locale" value={locale} />
+            <div style={gridTwo}>
+              <input name="slug" placeholder="Service slug" style={inputStyle} />
+              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input type="checkbox" name="isActive" defaultChecked />
+                Active service
+              </label>
+            </div>
+
+            <div style={gridTwo}>
+              <input name={`name_${locale}`} placeholder="Service name" style={inputStyle} />
+              <input name={`description_${locale}`} placeholder="Description" style={inputStyle} />
+              <input
+                name={`duration_${locale}`}
+                placeholder="Duration label (e.g. 30 Min.)"
+                style={inputStyle}
+              />
+              <input name={`price_${locale}`} placeholder="Price label" style={inputStyle} />
+            </div>
+            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+              Save service
+            </button>
+          </form>
+        </FormModal>
+
+        {editingService ? (
+          <form action={upsertServiceAction} style={{ display: "grid", gap: 14 }}>
+            <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="serviceSlug" value={editingService.slug} />
-          ) : null}
-          <div style={gridTwo}>
-            {editingService ? (
+            <div style={gridTwo}>
               <div style={{ ...inputStyle, background: "rgba(214, 176, 125, 0.12)" }}>
                 Editing slug: {editingService.slug}
               </div>
-            ) : (
-              <input name="serviceSlug" placeholder="Existing slug" style={inputStyle} />
-            )}
-            <input
-              name="slug"
-              placeholder="New slug override"
-              defaultValue={editingService?.slug ?? ""}
-              style={inputStyle}
-            />
-            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isActive" defaultChecked={editingService?.isActive ?? true} />
-              Active service
-            </label>
-          </div>
-
-          <div style={gridTwo}>
-            <input
-              name={`name_${locale}`}
-              placeholder="Service name"
-              defaultValue={editingService?.name ?? ""}
-              style={inputStyle}
-            />
-            <input
-              name={`description_${locale}`}
-              placeholder="Description"
-              defaultValue={editingService?.description ?? ""}
-              style={inputStyle}
-            />
-            <input
-              name={`duration_${locale}`}
-              placeholder="Duration label (e.g. 30 Min.)"
-              defaultValue={editingService?.durationLabel ?? ""}
-              style={inputStyle}
-            />
-            <input
-              name={`price_${locale}`}
-              placeholder="Price label"
-              defaultValue={editingService?.priceLabel ?? ""}
-              style={inputStyle}
-            />
-          </div>
-          <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            {editingService ? "Update service" : "Save service"}
-          </button>
-          {editingService ? (
+              <input
+                name="slug"
+                placeholder="New slug override"
+                defaultValue={editingService.slug}
+                style={inputStyle}
+              />
+              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input type="checkbox" name="isActive" defaultChecked={editingService.isActive} />
+                Active service
+              </label>
+            </div>
+            <div style={gridTwo}>
+              <input
+                name={`name_${locale}`}
+                placeholder="Service name"
+                defaultValue={editingService.name}
+                style={inputStyle}
+              />
+              <input
+                name={`description_${locale}`}
+                placeholder="Description"
+                defaultValue={editingService.description}
+                style={inputStyle}
+              />
+              <input
+                name={`duration_${locale}`}
+                placeholder="Duration label (e.g. 30 Min.)"
+                defaultValue={editingService.durationLabel}
+                style={inputStyle}
+              />
+              <input
+                name={`price_${locale}`}
+                placeholder="Price label"
+                defaultValue={editingService.priceLabel}
+                style={inputStyle}
+              />
+            </div>
+            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+              Update service
+            </button>
             <Link
               href={`/${locale}/admin/entities/services`}
               style={{ color: "var(--muted)", textDecoration: "underline", width: "fit-content" }}
             >
               Clear edit mode
             </Link>
-          ) : null}
-        </form>
+          </form>
+        ) : null}
       </section>
     </AdminShell>
   );

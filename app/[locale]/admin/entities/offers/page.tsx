@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
+import { FormModal } from "../../_form-modal";
 import { deleteOfferAction, upsertOfferAction } from "../../actions";
 import {
   AdminShell,
@@ -75,73 +76,96 @@ export default async function AdminOffersPage({ params, searchParams }: AdminOff
             ? `Editing: ${editingOffer.title} (${editingOffer.slug})`
             : "Create a new offer or click Edit offer on an existing card."}
         </div>
-        <form action={upsertOfferAction} style={{ display: "grid", gap: 14 }}>
-          <input type="hidden" name="locale" value={locale} />
-          {editingOffer ? <input type="hidden" name="offerSlug" value={editingOffer.slug} /> : null}
-          <div style={gridTwo}>
-            {editingOffer ? (
+        <FormModal
+          buttonLabel="Add new offer"
+          title="Create offer"
+          description="Create a new offer card for this locale."
+        >
+          <form action={upsertOfferAction} style={{ display: "grid", gap: 14 }}>
+            <input type="hidden" name="locale" value={locale} />
+            <div style={gridTwo}>
+              <input name="slug" placeholder="Offer slug" style={inputStyle} />
+              <input name="validFrom" type="date" style={inputStyle} />
+              <input name="validUntil" type="date" style={inputStyle} />
+              <input name="imageSrc" placeholder="Image URL" style={inputStyle} />
+              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input type="checkbox" name="isActive" defaultChecked />
+                Offer active
+              </label>
+            </div>
+            <div style={gridTwo}>
+              <input name={`title_${locale}`} placeholder="Offer title" style={inputStyle} />
+              <textarea name={`description_${locale}`} rows={4} placeholder="Description" style={inputStyle} />
+            </div>
+            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+              Save offer
+            </button>
+          </form>
+        </FormModal>
+
+        {editingOffer ? (
+          <form action={upsertOfferAction} style={{ display: "grid", gap: 14 }}>
+            <input type="hidden" name="locale" value={locale} />
+            <input type="hidden" name="offerSlug" value={editingOffer.slug} />
+            <div style={gridTwo}>
               <div style={{ ...inputStyle, background: "rgba(214, 176, 125, 0.12)" }}>
                 Editing slug: {editingOffer.slug}
               </div>
-            ) : (
-              <input name="offerSlug" placeholder="Existing slug" style={inputStyle} />
-            )}
-            <input
-              name="slug"
-              placeholder="New slug override"
-              defaultValue={editingOffer?.slug ?? ""}
-              style={inputStyle}
-            />
-            <input
-              name="validFrom"
-              type="date"
-              defaultValue={editingOffer?.validFrom ?? ""}
-              style={inputStyle}
-            />
-            <input
-              name="validUntil"
-              type="date"
-              defaultValue={editingOffer?.validUntil ?? ""}
-              style={inputStyle}
-            />
-            <input
-              name="imageSrc"
-              placeholder="Image URL"
-              defaultValue={editingOffer?.imageSrc ?? ""}
-              style={inputStyle}
-            />
-            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isActive" defaultChecked={editingOffer?.isActive ?? true} />
-              Offer active
-            </label>
-          </div>
-          <div style={gridTwo}>
-            <input
-              name={`title_${locale}`}
-              placeholder="Offer title"
-              defaultValue={editingOffer?.title ?? ""}
-              style={inputStyle}
-            />
-            <textarea
-              name={`description_${locale}`}
-              rows={4}
-              placeholder="Description"
-              defaultValue={editingOffer?.description ?? ""}
-              style={inputStyle}
-            />
-          </div>
-          <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            {editingOffer ? "Update offer" : "Save offer"}
-          </button>
-          {editingOffer ? (
+              <input
+                name="slug"
+                placeholder="New slug override"
+                defaultValue={editingOffer.slug}
+                style={inputStyle}
+              />
+              <input
+                name="validFrom"
+                type="date"
+                defaultValue={editingOffer.validFrom}
+                style={inputStyle}
+              />
+              <input
+                name="validUntil"
+                type="date"
+                defaultValue={editingOffer.validUntil}
+                style={inputStyle}
+              />
+              <input
+                name="imageSrc"
+                placeholder="Image URL"
+                defaultValue={editingOffer.imageSrc}
+                style={inputStyle}
+              />
+              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input type="checkbox" name="isActive" defaultChecked={editingOffer.isActive} />
+                Offer active
+              </label>
+            </div>
+            <div style={gridTwo}>
+              <input
+                name={`title_${locale}`}
+                placeholder="Offer title"
+                defaultValue={editingOffer.title}
+                style={inputStyle}
+              />
+              <textarea
+                name={`description_${locale}`}
+                rows={4}
+                placeholder="Description"
+                defaultValue={editingOffer.description}
+                style={inputStyle}
+              />
+            </div>
+            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+              Update offer
+            </button>
             <Link
               href={`/${locale}/admin/entities/offers`}
               style={{ color: "var(--muted)", textDecoration: "underline", width: "fit-content" }}
             >
               Clear edit mode
             </Link>
-          ) : null}
-        </form>
+          </form>
+        ) : null}
       </section>
     </AdminShell>
   );

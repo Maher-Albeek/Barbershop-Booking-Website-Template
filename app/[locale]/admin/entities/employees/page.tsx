@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
+import { FormModal } from "../../_form-modal";
 import { setEmployeeActiveAction, upsertEmployeeAction } from "../../actions";
 import {
   AdminShell,
@@ -99,81 +100,130 @@ export default async function AdminEmployeesPage({
             ? `Editing: ${editingMember.name} (${editingMember.slug})`
             : "Create a new employee or click Edit employee on an existing card."}
         </div>
-        <form action={upsertEmployeeAction} style={{ display: "grid", gap: 14 }}>
-          <input type="hidden" name="locale" value={locale} />
-          {editingMember ? (
+        <FormModal
+          buttonLabel="Add new employee"
+          title="Create employee"
+          description="Add a new team member to the selected locale."
+        >
+          <form action={upsertEmployeeAction} style={{ display: "grid", gap: 14 }}>
+            <input type="hidden" name="locale" value={locale} />
+            <div style={gridTwo}>
+              <input name="slug" placeholder="Slug" style={inputStyle} />
+              <input name="loginEmail" placeholder="Employee login email" style={inputStyle} />
+              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input type="checkbox" name="isActive" defaultChecked />
+                Active employee
+              </label>
+              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input type="checkbox" name="linkLogin" />
+                Create/link login
+              </label>
+            </div>
+            <section
+              style={{ border: "1px solid var(--border)", borderRadius: 18, padding: 14, display: "grid", gap: 12 }}
+            >
+              <strong style={{ textTransform: "uppercase", fontSize: 12, letterSpacing: "0.08em" }}>
+                Locale: {locale}
+              </strong>
+              <div style={gridTwo}>
+                <input
+                  name={`name_${locale}`}
+                  placeholder={`Display name (${locale})`}
+                  style={inputStyle}
+                />
+                <input
+                  name={`image_${locale}`}
+                  placeholder={`Avatar URL (${locale})`}
+                  style={inputStyle}
+                />
+                <input
+                  name={`specialties_${locale}`}
+                  placeholder={`Comma-separated specialties (${locale})`}
+                  style={inputStyle}
+                />
+                <textarea
+                  name={`bio_${locale}`}
+                  rows={4}
+                  placeholder={`Bio (${locale})`}
+                  style={inputStyle}
+                />
+              </div>
+            </section>
+            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+              Save employee
+            </button>
+          </form>
+        </FormModal>
+
+        {editingMember ? (
+          <form action={upsertEmployeeAction} style={{ display: "grid", gap: 14 }}>
+            <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="employeeSlug" value={editingMember.slug} />
-          ) : null}
-          <div style={gridTwo}>
-            {editingMember ? (
+            <div style={gridTwo}>
               <div style={{ ...inputStyle, background: "rgba(214, 176, 125, 0.12)" }}>
                 Editing slug: {editingMember.slug}
               </div>
-            ) : (
-              <input name="employeeSlug" placeholder="Existing slug" style={inputStyle} />
-            )}
-            <input
-              name="slug"
-              placeholder="Slug"
-              defaultValue={editingMember?.slug ?? ""}
-              style={inputStyle}
-            />
-            <input name="loginEmail" placeholder="Employee login email" style={inputStyle} />
-            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="isActive" defaultChecked={editingMember?.isActive ?? true} />
-              Active employee
-            </label>
-            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input type="checkbox" name="linkLogin" />
-              Create/link login
-            </label>
-          </div>
-          <section
-            style={{ border: "1px solid var(--border)", borderRadius: 18, padding: 14, display: "grid", gap: 12 }}
-          >
-            <strong style={{ textTransform: "uppercase", fontSize: 12, letterSpacing: "0.08em" }}>
-              Locale: {locale}
-            </strong>
-            <div style={gridTwo}>
               <input
-                name={`name_${locale}`}
-                placeholder={`Display name (${locale})`}
-                defaultValue={editingMember?.name ?? ""}
+                name="slug"
+                placeholder="Slug"
+                defaultValue={editingMember.slug}
                 style={inputStyle}
               />
-              <input
-                name={`image_${locale}`}
-                placeholder={`Avatar URL (${locale})`}
-                defaultValue={editingMember?.imageSrc ?? ""}
-                style={inputStyle}
-              />
-              <input
-                name={`specialties_${locale}`}
-                placeholder={`Comma-separated specialties (${locale})`}
-                defaultValue={editingMember?.specialties.join(", ") ?? ""}
-                style={inputStyle}
-              />
-              <textarea
-                name={`bio_${locale}`}
-                rows={4}
-                placeholder={`Bio (${locale})`}
-                defaultValue={editingMember?.bio ?? ""}
-                style={inputStyle}
-              />
+              <input name="loginEmail" placeholder="Employee login email" style={inputStyle} />
+              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input type="checkbox" name="isActive" defaultChecked={editingMember.isActive} />
+                Active employee
+              </label>
+              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <input type="checkbox" name="linkLogin" />
+                Create/link login
+              </label>
             </div>
-          </section>
-          <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-            {editingMember ? "Update employee" : "Save employee"}
-          </button>
-          {editingMember ? (
+            <section
+              style={{ border: "1px solid var(--border)", borderRadius: 18, padding: 14, display: "grid", gap: 12 }}
+            >
+              <strong style={{ textTransform: "uppercase", fontSize: 12, letterSpacing: "0.08em" }}>
+                Locale: {locale}
+              </strong>
+              <div style={gridTwo}>
+                <input
+                  name={`name_${locale}`}
+                  placeholder={`Display name (${locale})`}
+                  defaultValue={editingMember.name}
+                  style={inputStyle}
+                />
+                <input
+                  name={`image_${locale}`}
+                  placeholder={`Avatar URL (${locale})`}
+                  defaultValue={editingMember.imageSrc}
+                  style={inputStyle}
+                />
+                <input
+                  name={`specialties_${locale}`}
+                  placeholder={`Comma-separated specialties (${locale})`}
+                  defaultValue={editingMember.specialties.join(", ")}
+                  style={inputStyle}
+                />
+                <textarea
+                  name={`bio_${locale}`}
+                  rows={4}
+                  placeholder={`Bio (${locale})`}
+                  defaultValue={editingMember.bio}
+                  style={inputStyle}
+                />
+              </div>
+            </section>
+            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+              Update employee
+            </button>
             <Link
               href={`/${locale}/admin/entities/employees`}
               style={{ color: "var(--muted)", textDecoration: "underline", width: "fit-content" }}
             >
               Clear edit mode
             </Link>
-          ) : null}
-        </form>
+          </form>
+        ) : null}
       </section>
     </AdminShell>
   );
