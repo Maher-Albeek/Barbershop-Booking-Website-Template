@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
@@ -15,25 +14,16 @@ import {
 
 type AdminServicesPageProps = {
   params: Promise<{ locale: string }>;
-  searchParams?: Promise<{ service?: string }>;
 };
 
-export default async function AdminServicesPage({
-  params,
-  searchParams
-}: AdminServicesPageProps) {
+export default async function AdminServicesPage({ params }: AdminServicesPageProps) {
   const { locale } = await params;
-  const resolvedSearchParams = searchParams ? await searchParams : undefined;
 
   if (!isLocale(locale)) {
     notFound();
   }
 
   const services = siteConfig.services[locale].services;
-  const editingSlug = resolvedSearchParams?.service?.trim() || "";
-  const editingService = editingSlug
-    ? services.find((service) => service.slug === editingSlug)
-    : undefined;
 
   return (
     <AdminShell locale={locale}>
@@ -52,31 +42,65 @@ export default async function AdminServicesPage({
                   ? "Price: Variable"
                   : `Price: ${service.priceLabel || "Not set"}`}
               </div>
-              <Link
-                href={`/${locale}/admin/entities/services?service=${encodeURIComponent(service.slug)}`}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "10px 14px",
-                  borderRadius: 12,
-                  border: "1px solid var(--border)",
-                  background: "var(--surface)",
-                  color: "var(--foreground)",
-                  fontWeight: 700,
-                  textDecoration: "none",
-                  width: "fit-content"
-                }}
+              <FormModal
+                buttonLabel="Edit service"
+                title={`Edit service: ${service.name}`}
+                description="Update this service entry."
               >
-                Edit service
-              </Link>
+                <form action={upsertServiceAction} style={{ display: "grid", gap: 14 }}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <input type="hidden" name="serviceSlug" value={service.slug} />
+                  <div style={gridTwo}>
+                    <div style={{ ...inputStyle, background: "rgba(214, 176, 125, 0.12)" }}>
+                      Editing slug: {service.slug}
+                    </div>
+                    <input
+                      name="slug"
+                      placeholder="New slug override"
+                      defaultValue={service.slug}
+                      style={inputStyle}
+                    />
+                    <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <input type="checkbox" name="isActive" defaultChecked={service.isActive} />
+                      Active service
+                    </label>
+                  </div>
+                  <div style={gridTwo}>
+                    <input
+                      name={`name_${locale}`}
+                      placeholder="Service name"
+                      defaultValue={service.name}
+                      style={inputStyle}
+                    />
+                    <input
+                      name={`description_${locale}`}
+                      placeholder="Description"
+                      defaultValue={service.description}
+                      style={inputStyle}
+                    />
+                    <input
+                      name={`duration_${locale}`}
+                      placeholder="Duration label (e.g. 30 Min.)"
+                      defaultValue={service.durationLabel}
+                      style={inputStyle}
+                    />
+                    <input
+                      name={`price_${locale}`}
+                      placeholder="Price label"
+                      defaultValue={service.priceLabel}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+                    Update service
+                  </button>
+                </form>
+              </FormModal>
             </article>
           ))}
         </div>
         <div style={{ color: "var(--muted)", marginTop: 16 }}>
-          {editingService
-            ? `Editing: ${editingService.name} (${editingService.slug})`
-            : "Create a new service or click Edit service on an existing card."}
+          Create a new service or click Edit service on an existing card.
         </div>
         <FormModal
           buttonLabel="Add new service"
@@ -109,62 +133,6 @@ export default async function AdminServicesPage({
           </form>
         </FormModal>
 
-        {editingService ? (
-          <form action={upsertServiceAction} style={{ display: "grid", gap: 14 }}>
-            <input type="hidden" name="locale" value={locale} />
-            <input type="hidden" name="serviceSlug" value={editingService.slug} />
-            <div style={gridTwo}>
-              <div style={{ ...inputStyle, background: "rgba(214, 176, 125, 0.12)" }}>
-                Editing slug: {editingService.slug}
-              </div>
-              <input
-                name="slug"
-                placeholder="New slug override"
-                defaultValue={editingService.slug}
-                style={inputStyle}
-              />
-              <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <input type="checkbox" name="isActive" defaultChecked={editingService.isActive} />
-                Active service
-              </label>
-            </div>
-            <div style={gridTwo}>
-              <input
-                name={`name_${locale}`}
-                placeholder="Service name"
-                defaultValue={editingService.name}
-                style={inputStyle}
-              />
-              <input
-                name={`description_${locale}`}
-                placeholder="Description"
-                defaultValue={editingService.description}
-                style={inputStyle}
-              />
-              <input
-                name={`duration_${locale}`}
-                placeholder="Duration label (e.g. 30 Min.)"
-                defaultValue={editingService.durationLabel}
-                style={inputStyle}
-              />
-              <input
-                name={`price_${locale}`}
-                placeholder="Price label"
-                defaultValue={editingService.priceLabel}
-                style={inputStyle}
-              />
-            </div>
-            <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
-              Update service
-            </button>
-            <Link
-              href={`/${locale}/admin/entities/services`}
-              style={{ color: "var(--muted)", textDecoration: "underline", width: "fit-content" }}
-            >
-              Clear edit mode
-            </Link>
-          </form>
-        ) : null}
       </section>
     </AdminShell>
   );
