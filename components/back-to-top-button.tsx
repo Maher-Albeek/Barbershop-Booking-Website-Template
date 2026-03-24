@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 export function BackToTopButton({ label = "Back to top" }: { label?: string }) {
   const [visible, setVisible] = useState(false);
@@ -48,7 +50,7 @@ export function BackToTopButton({ label = "Back to top" }: { label?: string }) {
         transition: "background 0.2s, color 0.2s"
       }}
     >
-      ↑
+      <FontAwesomeIcon icon={faArrowUp} aria-hidden="true" />
     </button>
   );
 }

@@ -3,6 +3,8 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faXmark, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import styles from "./fullscreen-hero.module.css";
 
 type HeaderHref =
@@ -104,16 +106,9 @@ export function FullscreenHeroHeader({
           style={circleButtonStyle}
         >
           {menuOpen ? (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              <path d="M6 6L18 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
+            <FontAwesomeIcon icon={faXmark} width={18} height={18} aria-hidden="true" />
           ) : (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 7H20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              <path d="M4 12H20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              <path d="M4 17H20" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
+            <FontAwesomeIcon icon={faBars} width={18} height={18} aria-hidden="true" />
           )}
         </button>
 
@@ -140,30 +135,7 @@ export function FullscreenHeroHeader({
                   userSelect: "none"
                 }}
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <path d="M3 12H21" stroke="currentColor" strokeWidth="1.5" />
-                  <path
-                    d="M12 3C14.5 5.74 15.92 8.8 16 12C15.92 15.2 14.5 18.26 12 21"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M12 3C9.5 5.74 8.08 8.8 8 12C8.08 15.2 9.5 18.26 12 21"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                  />
-                </svg>
+                <FontAwesomeIcon icon={faGlobe} width={18} height={18} aria-hidden="true" />
               </summary>
               <div
                 style={{

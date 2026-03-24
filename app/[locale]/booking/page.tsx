@@ -1,6 +1,8 @@
 import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { listAvailableSlots } from "@/lib/booking";
 import { getContentSectionContainerStyle } from "@/lib/content-background-image";
 import { getHeroImageUrl } from "@/lib/hero-image";
@@ -370,19 +372,11 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                           isDone ? " booking-flow-check-done" : ""
                         }`}
                       >
-                        <svg
+                        <FontAwesomeIcon
+                          icon={faCheck}
                           stroke="white"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="m4.5 12.75 6 6 9-13.5"
-                            strokeLinejoin="round"
-                            strokeLinecap="round"
-                          />
-                        </svg>
+                          aria-hidden="true"
+                        />
                       </div>
                     );
                   })}

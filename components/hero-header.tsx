@@ -3,6 +3,8 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { useEffect, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
 type NavItem = {
@@ -95,25 +97,8 @@ export function HeroHeader({ brandName, navItems, localeItems }: HeroHeaderProps
           height: 40px;
           cursor: pointer;
           padding: 0;
-        }
-        .hero-header__hamburger span {
-          display: block;
-          width: 20px;
-          height: 2px;
-          background: #fffaf4;
-          border-radius: 2px;
-          transition: transform 0.22s ease, opacity 0.22s ease;
-          transform-origin: center;
-        }
-        .hero-header__hamburger.open span:nth-child(1) {
-          transform: translateY(7px) rotate(45deg);
-        }
-        .hero-header__hamburger.open span:nth-child(2) {
-          opacity: 0;
-          transform: scaleX(0);
-        }
-        .hero-header__hamburger.open span:nth-child(3) {
-          transform: translateY(-7px) rotate(-45deg);
+          color: #fffaf4;
+          font-size: 18px;
         }
         /* Mobile drawer */
         .hero-header__drawer {
@@ -177,15 +162,13 @@ export function HeroHeader({ brandName, navItems, localeItems }: HeroHeaderProps
             <LanguageSwitcher items={localeItems as { href: Route; label: string; isActive: boolean }[]} />
           )}
           <button
-            className={`hero-header__hamburger${menuOpen ? " open" : ""}`}
+            className="hero-header__hamburger"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen((o) => !o)}
           >
-            <span />
-            <span />
-            <span />
+            <FontAwesomeIcon icon={menuOpen ? faXmark : faBars} aria-hidden="true" />
           </button>
         </div>
       </header>

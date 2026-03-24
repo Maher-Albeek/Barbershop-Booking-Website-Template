@@ -643,7 +643,7 @@ export default async function HomePage({ params }: HomePageProps) {
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
           marginRight: "calc(50% - 50vw)",
-          marginTop: 10,
+          marginTop: 60,
           marginBottom: 60,
           background: "#efefef",
           borderTop: "1px solid #e4e4e4",
