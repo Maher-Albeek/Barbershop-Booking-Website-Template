@@ -14,6 +14,7 @@ import {
   getOffersContent,
   getContactContent
 } from "@/lib/site-config";
+import { getPrimaryShopId, getActiveServices, getVisibleGalleryImages, getActiveOffers } from "@/lib/admin-data";
 import { ContactForm } from "./contact/contact-form";
 import { ContactMap } from "./contact/contact-map";
 import { BackToTopButton } from "@/components/back-to-top-button";
@@ -153,9 +154,13 @@ export default async function HomePage({ params }: HomePageProps) {
   const galleryContent = getGalleryContent(locale);
   const offersContent = getOffersContent(locale);
   const contactContent = getContactContent(locale);
+  const shopId = await getPrimaryShopId();
   const dbEmployees = await getActiveEmployees();
   const firstHighlight = content.highlights[0];
-  const activeServices = servicesContent.services.filter((service) => service.isActive);
+  
+  // Fetch active services from database
+  const activeServices = shopId ? await getActiveServices(shopId) : [];
+  
   const activeMembers = dbEmployees.map((emp) => ({
     slug: `employee-${emp.id}`,
     isActive: emp.isActive,
@@ -166,12 +171,13 @@ export default async function HomePage({ params }: HomePageProps) {
     bio: emp.bio
   }));
   const teamUsesSlider = activeMembers.length > 3;
-  const visibleImages = galleryContent.images
-    .filter((image) => image.isVisible)
-    .sort((left, right) => left.sortOrder - right.sortOrder);
-  const visibleOffers = offersContent.offers.filter(
-    (offer) => offer.isActive && isOfferCurrentlyVisible(offer.validFrom, offer.validUntil)
-  );
+  
+  // Fetch visible gallery images from database
+  const visibleImages = shopId ? await getVisibleGalleryImages(shopId) : [];
+  
+  // Fetch active offers from database
+  const visibleOffers = shopId ? await getActiveOffers(shopId) : [];
+  
   const bookings = listBookings();
   const validBookings = bookings.filter(
     (booking) => booking.status === "confirmed" || booking.status === "completed"
@@ -271,14 +277,9 @@ export default async function HomePage({ params }: HomePageProps) {
             }}
           >
             {activeServices.map((service) => {
-              const priceLabel =
-                service.pricing === "variable"
-                  ? dictionary.services.variablePriceLabel
-                  : `${dictionary.services.fixedPriceLabel}: ${service.priceLabel}`;
-
               return (
                 <article
-                  key={service.slug}
+                  key={service.id}
                   style={{
                     borderRadius: 28,
                     border: "1px solid var(--border)",
@@ -290,33 +291,7 @@ export default async function HomePage({ params }: HomePageProps) {
                   }}
                 >
                   <div style={{ display: "grid", gap: 10 }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: 12,
-                        flexWrap: "wrap"
-                      }}
-                    >
-                      <h3 style={{ margin: 0, fontSize: 28 }}>{service.name}</h3>
-                      <span
-                        style={{
-                          borderRadius: 999,
-                          padding: "8px 12px",
-                          background: "rgba(214, 176, 125, 0.22)",
-                          color: "var(--brand-accent)",
-                          fontSize: 13,
-                          fontWeight: 700
-                        }}
-                      >
-                        {service.durationLabel}
-                      </span>
-                    </div>
-
-                    <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-                      {service.description}
-                    </p>
+                    <h3 style={{ margin: 0, fontSize: 28 }}>{service.name}</h3>
                   </div>
 
                   <div
@@ -324,26 +299,12 @@ export default async function HomePage({ params }: HomePageProps) {
                       borderTop: "1px solid var(--border)",
                       paddingTop: 16,
                       display: "flex",
-                      justifyContent: "space-between",
+                      justifyContent: "flex-end",
                       alignItems: "center",
                       gap: 16,
                       flexWrap: "wrap"
                     }}
                   >
-                    <div style={{ display: "grid", gap: 6 }}>
-                      <span
-                        style={{
-                          fontSize: 12,
-                          textTransform: "uppercase",
-                          letterSpacing: "0.14em",
-                          color: "var(--muted)"
-                        }}
-                      >
-                        {dictionary.services.durationLabel}
-                      </span>
-                      <strong>{priceLabel}</strong>
-                    </div>
-
                     <Link
                       href={onePageHref(locale, "/booking")}
                       style={{
@@ -487,9 +448,9 @@ export default async function HomePage({ params }: HomePageProps) {
               gap: 18
             }}
           >
-            {visibleImages.map((image, index) => (
+            {visibleImages.map((image) => (
               <article
-                key={image.slug}
+                key={image.id}
                 style={{
                   borderRadius: 28,
                   border: "1px solid var(--border)",
@@ -499,31 +460,16 @@ export default async function HomePage({ params }: HomePageProps) {
                   display: "grid"
                 }}
               >
-                {image.sourceHref ? (
-                  <a href={image.sourceHref} target="_blank" rel="noreferrer">
-                    <img
-                      src={image.imageSrc}
-                      alt={image.alt}
-                      style={{
-                        width: "100%",
-                        aspectRatio: index === 0 ? "4 / 5" : index % 3 === 0 ? "1 / 1" : "4 / 3",
-                        objectFit: "cover",
-                        display: "block"
-                      }}
-                    />
-                  </a>
-                ) : (
-                  <img
-                    src={image.imageSrc}
-                    alt={image.alt}
-                    style={{
-                      width: "100%",
-                      aspectRatio: index === 0 ? "4 / 5" : index % 3 === 0 ? "1 / 1" : "4 / 3",
-                      objectFit: "cover",
-                      display: "block"
-                    }}
-                  />
-                )}
+                <img
+                  src={image.imageUrl}
+                  alt={`Gallery image ${image.id}`}
+                  style={{
+                    width: "100%",
+                    aspectRatio: "4 / 3",
+                    objectFit: "cover",
+                    display: "block"
+                  }}
+                />
 
                 <div style={{ padding: 22, display: "grid", gap: 12 }}>
                   <div
@@ -534,12 +480,8 @@ export default async function HomePage({ params }: HomePageProps) {
                       color: "var(--muted)"
                     }}
                   >
-                    {dictionary.gallery.imageLabel} {String(image.sortOrder).padStart(2, "0")}
+                    Gallery
                   </div>
-
-                  <p style={{ margin: 0, color: "var(--foreground)", lineHeight: 1.7 }}>
-                    {image.caption}
-                  </p>
                 </div>
               </article>
             ))}
@@ -564,7 +506,7 @@ export default async function HomePage({ params }: HomePageProps) {
           >
             {visibleOffers.map((offer) => (
               <article
-                key={offer.slug}
+                key={offer.id}
                 style={{
                   borderRadius: 28,
                   border: "1px solid var(--border)",
@@ -574,58 +516,22 @@ export default async function HomePage({ params }: HomePageProps) {
                   display: "grid"
                 }}
               >
-                {offer.imageSrc ? (
-                  <img
-                    src={offer.imageSrc}
-                    alt={offer.title}
-                    style={{
-                      width: "100%",
-                      aspectRatio: "4 / 3",
-                      objectFit: "cover",
-                      display: "block"
-                    }}
-                  />
-                ) : null}
-
                 <div style={{ padding: 24, display: "grid", gap: 18 }}>
                   <div style={{ display: "grid", gap: 12 }}>
                     <div style={{ display: "grid", gap: 8 }}>
-                      <div
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifySelf: "start",
-                          borderRadius: 999,
-                          padding: "8px 12px",
-                          background: "rgba(214, 176, 125, 0.22)",
-                          color: "var(--brand-accent)",
-                          fontSize: 13,
-                          fontWeight: 700
-                        }}
-                      >
-                        {dictionary.offers.validUntilLabel} {offer.validUntil}
-                      </div>
                       <h3 style={{ margin: 0, fontSize: 28 }}>{offer.title}</h3>
                     </div>
 
-                    <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-                      {offer.description}
-                    </p>
+                    {offer.description && (
+                      <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
+                        {offer.description}
+                      </p>
+                    )}
                   </div>
 
                   <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
                     <Link
-                      href={
-                        offer.serviceSlug
-                          ? {
-                              pathname: `/${locale}/booking` as Route,
-                              query: {
-                                service: offer.serviceSlug,
-                                serviceConfirmed: "1"
-                              }
-                            }
-                          : onePageHref(locale, "/booking")
-                      }
+                      href={onePageHref(locale, "/booking")}
                       style={{
                         display: "inline-flex",
                         padding: "13px 18px",

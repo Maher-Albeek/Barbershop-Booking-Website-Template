@@ -15,15 +15,24 @@ import {
   saveContactContent,
   saveHomepageCounterOverrides,
   saveEmailSettings,
-  saveGalleryImage,
   saveOffer,
   saveHomepageHeroContent,
   saveService,
   saveShopSettings,
   saveWorkingHours,
   setBookingStatus,
+  deleteOffer,
   deleteGalleryImage,
-  deleteOffer
+  getPrimaryShopId,
+  saveServiceToDatabase,
+  deleteServiceFromDatabase,
+  saveOfferToDatabase,
+  deleteOfferFromDatabase,
+  saveGalleryImageToDatabase,
+  deleteGalleryImageFromDatabase,
+  getServicesFromDatabase,
+  getOffersFromDatabase,
+  getGalleryImagesFromDatabase
 } from "@/lib/admin-data";
 import { locales, type Locale } from "@/lib/i18n";
 import { getAdminPageHref, type AdminPageKey } from "./_navigation";
@@ -131,42 +140,30 @@ function redirectToAdmin(locale: Locale, pageKey: AdminPageKey) {
   redirect(getAdminPageHref(locale, pageKey));
 }
 
-async function getPrimaryShopId() {
-  const shop = await prisma.shop.findFirst({
-    select: { id: true },
-    orderBy: { id: "asc" }
-  });
-
-  return shop?.id ?? null;
-}
-
 export async function upsertServiceAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
+  const serviceId = parseOptionalPositiveInt(formData.get("serviceId"));
+  const shopId = await getPrimaryShopId();
 
-  saveService({
-    serviceSlug: normalize(formData.get("serviceSlug")) || undefined,
-    slug: normalize(formData.get("slug")) || undefined,
-    isActive: checked(formData, "isActive"),
-    translations: {
-      en: {
-        name: normalize(formData.get("name_en")),
-        description: normalize(formData.get("description_en")),
-        durationLabel: normalize(formData.get("duration_en")),
-        priceLabel: normalize(formData.get("price_en"))
-      },
-      de: {
-        name: normalize(formData.get("name_de")),
-        description: normalize(formData.get("description_de")),
-        durationLabel: normalize(formData.get("duration_de")),
-        priceLabel: normalize(formData.get("price_de"))
-      },
-      ar: {
-        name: normalize(formData.get("name_ar")),
-        description: normalize(formData.get("description_ar")),
-        durationLabel: normalize(formData.get("duration_ar")),
-        priceLabel: normalize(formData.get("price_ar"))
-      }
-    }
+  if (!shopId) {
+    redirectToAdmin(locale, "services");
+  }
+
+  const serviceName = normalize(formData.get("name_en")) || 
+                     normalize(formData.get("name_de")) || 
+                     normalize(formData.get("name_ar"));
+
+  if (!serviceName) {
+    redirectToAdmin(locale, "services");
+  }
+
+  const isActive = checked(formData, "isActive");
+
+  // Save to database
+  await saveServiceToDatabase(shopId, {
+    serviceId: serviceId || undefined,
+    name: serviceName,
+    isActive
   });
 
   redirectToAdmin(locale, "services");
@@ -314,14 +311,26 @@ export async function updateBookingStatusAction(formData: FormData) {
 
 export async function upsertGalleryAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
+  const imageId = parseOptionalPositiveInt(formData.get("imageId"));
+  const shopId = await getPrimaryShopId();
 
-  saveGalleryImage({
-    slug: normalize(formData.get("slug")) || undefined,
-    imageSrc: normalize(formData.get("imageSrc")),
-    alt: normalize(formData.get("alt")),
-    caption: normalize(formData.get("caption")),
-    isVisible: checked(formData, "isVisible"),
-    sortOrder: Number(normalize(formData.get("sortOrder")) || 0)
+  if (!shopId) {
+    redirectToAdmin(locale, "galleryPage");
+  }
+
+  const imageUrl = normalize(formData.get("imageSrc"));
+
+  if (!imageUrl) {
+    redirectToAdmin(locale, "galleryPage");
+  }
+
+  const isVisible = checked(formData, "isVisible");
+
+  // Save to database
+  await saveGalleryImageToDatabase(shopId, {
+    imageId: imageId || undefined,
+    imageUrl,
+    isVisible
   });
 
   redirectToAdmin(locale, "galleryPage");
@@ -329,34 +338,46 @@ export async function upsertGalleryAction(formData: FormData) {
 
 export async function deleteGalleryAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
-  deleteGalleryImage(normalize(formData.get("slug")));
+  const imageId = parseOptionalPositiveInt(formData.get("imageId"));
+
+  if (!imageId) {
+    redirectToAdmin(locale, "galleryPage");
+  }
+
+  // Delete from database
+  await deleteGalleryImageFromDatabase(imageId);
   redirectToAdmin(locale, "galleryPage");
 }
 
 export async function upsertOfferAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
+  const offerId = parseOptionalPositiveInt(formData.get("offerId"));
+  const shopId = await getPrimaryShopId();
 
-  saveOffer({
-    offerSlug: normalize(formData.get("offerSlug")) || undefined,
-    slug: normalize(formData.get("slug")) || undefined,
-    isActive: checked(formData, "isActive"),
-    validFrom: normalize(formData.get("validFrom")),
-    validUntil: normalize(formData.get("validUntil")),
-    imageSrc: normalize(formData.get("imageSrc")) || undefined,
-    translations: {
-      en: {
-        title: normalize(formData.get("title_en")),
-        description: normalize(formData.get("description_en"))
-      },
-      de: {
-        title: normalize(formData.get("title_de")),
-        description: normalize(formData.get("description_de"))
-      },
-      ar: {
-        title: normalize(formData.get("title_ar")),
-        description: normalize(formData.get("description_ar"))
-      }
-    }
+  if (!shopId) {
+    redirectToAdmin(locale, "offers");
+  }
+
+  const offerTitle = normalize(formData.get("title_en")) || 
+                    normalize(formData.get("title_de")) || 
+                    normalize(formData.get("title_ar"));
+
+  if (!offerTitle) {
+    redirectToAdmin(locale, "offers");
+  }
+
+  const offerDescription = normalize(formData.get("description_en")) || 
+                          normalize(formData.get("description_de")) || 
+                          normalize(formData.get("description_ar"));
+
+  const isActive = checked(formData, "isActive");
+
+  // Save to database
+  await saveOfferToDatabase(shopId, {
+    offerId: offerId || undefined,
+    title: offerTitle,
+    description: offerDescription || undefined,
+    isActive
   });
 
   redirectToAdmin(locale, "offers");
@@ -364,7 +385,14 @@ export async function upsertOfferAction(formData: FormData) {
 
 export async function deleteOfferAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
-  deleteOffer(normalize(formData.get("slug")));
+  const offerId = parseOptionalPositiveInt(formData.get("offerId"));
+
+  if (!offerId) {
+    redirectToAdmin(locale, "offers");
+  }
+
+  // Delete from database
+  await deleteOfferFromDatabase(offerId);
   redirectToAdmin(locale, "offers");
 }
 

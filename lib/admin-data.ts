@@ -9,9 +9,22 @@ import {
 import { locales, type Locale } from "@/lib/i18n";
 import { siteConfig, getContactContent, getHomepageContent } from "@/lib/site-config";
 import { savePersistedTeamMembers } from "@/lib/team-config-storage";
+import { prisma } from "@/lib/prisma";
 
 function persistTeamConfig() {
   savePersistedTeamMembers(siteConfig.team);
+}
+
+/**
+ * Get the primary shop ID for database operations
+ * Returns the first shop ID, typically 1 for single-shop installations
+ */
+export async function getPrimaryShopId(): Promise<number | null> {
+  const shop = await prisma.shop.findFirst({
+    select: { id: true },
+    orderBy: { id: "asc" }
+  });
+  return shop?.id ?? null;
 }
 
 export function slugify(value: string) {
@@ -21,6 +34,204 @@ export function slugify(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 48);
+}
+
+// ============================================================================
+// DATABASE-BACKED FUNCTIONS (Prisma)
+// ============================================================================
+
+/**
+ * Save or update a service in the database
+ * This is the new database-backed version that replaces the siteConfig approach
+ */
+export async function saveServiceToDatabase(
+  shopId: number,
+  input: {
+    serviceId?: number;
+    name: string;
+    isActive: boolean;
+  }
+) {
+  if (input.serviceId) {
+    // Update existing service
+    return await prisma.service.update({
+      where: { id: input.serviceId },
+      data: {
+        name: input.name,
+        isActive: input.isActive
+      }
+    });
+  } else {
+    // Create new service
+    return await prisma.service.create({
+      data: {
+        shopId,
+        name: input.name,
+        isActive: input.isActive
+      }
+    });
+  }
+}
+
+/**
+ * Delete a service from the database
+ */
+export async function deleteServiceFromDatabase(serviceId: number) {
+  return await prisma.service.delete({
+    where: { id: serviceId }
+  });
+}
+
+/**
+ * Get all services for a shop from the database
+ */
+export async function getServicesFromDatabase(shopId: number) {
+  return await prisma.service.findMany({
+    where: { shopId },
+    orderBy: { name: "asc" }
+  });
+}
+
+/**
+ * Save or update an offer in the database
+ */
+export async function saveOfferToDatabase(
+  shopId: number,
+  input: {
+    offerId?: number;
+    title: string;
+    description?: string;
+    isActive: boolean;
+  }
+) {
+  if (input.offerId) {
+    // Update existing offer
+    return await prisma.offer.update({
+      where: { id: input.offerId },
+      data: {
+        title: input.title,
+        description: input.description || null,
+        isActive: input.isActive
+      }
+    });
+  } else {
+    // Create new offer
+    return await prisma.offer.create({
+      data: {
+        shopId,
+        title: input.title,
+        description: input.description || null,
+        isActive: input.isActive
+      }
+    });
+  }
+}
+
+/**
+ * Delete an offer from the database
+ */
+export async function deleteOfferFromDatabase(offerId: number) {
+  return await prisma.offer.delete({
+    where: { id: offerId }
+  });
+}
+
+/**
+ * Get all offers for a shop from the database
+ */
+export async function getOffersFromDatabase(shopId: number) {
+  return await prisma.offer.findMany({
+    where: { shopId },
+    orderBy: { title: "asc" }
+  });
+}
+
+/**
+ * Save or update a gallery image in the database
+ */
+export async function saveGalleryImageToDatabase(
+  shopId: number,
+  input: {
+    imageId?: number;
+    imageUrl: string;
+    isVisible: boolean;
+  }
+) {
+  if (input.imageId) {
+    // Update existing gallery image
+    return await prisma.galleryImage.update({
+      where: { id: input.imageId },
+      data: {
+        imageUrl: input.imageUrl,
+        isVisible: input.isVisible
+      }
+    });
+  } else {
+    // Create new gallery image
+    return await prisma.galleryImage.create({
+      data: {
+        shopId,
+        imageUrl: input.imageUrl,
+        isVisible: input.isVisible
+      }
+    });
+  }
+}
+
+/**
+ * Delete a gallery image from the database
+ */
+export async function deleteGalleryImageFromDatabase(imageId: number) {
+  return await prisma.galleryImage.delete({
+    where: { id: imageId }
+  });
+}
+
+/**
+ * Get all gallery images for a shop from the database
+ */
+export async function getGalleryImagesFromDatabase(shopId: number) {
+  return await prisma.galleryImage.findMany({
+    where: { shopId },
+    orderBy: { id: "desc" }
+  });
+}
+
+// ============================================================================
+// PUBLIC READ-ONLY GETTERS (for displaying on pages)
+// ============================================================================
+
+/**
+ * Get active services for the home page
+ * Used by app/[locale]/page.tsx to display services section
+ */
+export async function getActiveServices(shopId: number) {
+  return await prisma.service.findMany({
+    where: { shopId, isActive: true },
+    orderBy: { name: "asc" }
+  });
+}
+
+/**
+ * Get active, visible gallery images sorted for display
+ * Used by app/[locale]/page.tsx to display gallery section
+ */
+export async function getVisibleGalleryImages(shopId: number) {
+  return await prisma.galleryImage.findMany({
+    where: { shopId, isVisible: true },
+    orderBy: { id: "desc" }
+  });
+}
+
+/**
+ * Get active offers for the home page
+ * Used by app/[locale]/page.tsx to display offers section
+ */
+export async function getActiveOffers(shopId: number) {
+  return await prisma.offer.findMany({
+    where: { shopId, isActive: true },
+    orderBy: { title: "asc" }
+  });
 }
 
 export function ensureLocale(value: string): Locale {
