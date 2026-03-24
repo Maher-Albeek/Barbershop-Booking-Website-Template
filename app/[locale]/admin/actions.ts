@@ -5,6 +5,7 @@ import { writeFile, mkdir, readdir, unlink } from "fs/promises";
 import { join } from "path";
 import { requireRole } from "@/lib/auth";
 import { isHeroImageKey } from "@/lib/hero-image";
+import { prisma } from "@/lib/prisma";
 import {
   addBlockedTime,
   ensureLocale,
@@ -14,8 +15,6 @@ import {
   saveContactContent,
   saveHomepageCounterOverrides,
   saveEmailSettings,
-  saveEmployee,
-  setEmployeeActive,
   saveGalleryImage,
   saveOffer,
   saveHomepageHeroContent,
@@ -53,14 +52,20 @@ function parseOptionalNonNegativeInt(value: FormDataEntryValue | null) {
   return parsed;
 }
 
-function firstNonEmpty(...values: Array<string | undefined>) {
-  for (const value of values) {
-    if (typeof value === "string" && value.trim()) {
-      return value.trim();
-    }
+function parseOptionalPositiveInt(value: FormDataEntryValue | null) {
+  const normalized = normalize(value);
+
+  if (!normalized) {
+    return null;
   }
 
-  return "";
+  const parsed = Number.parseInt(normalized, 10);
+
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+
+  return parsed;
 }
 
 function imageMimeToExtension(mimeType: string) {
@@ -126,6 +131,15 @@ function redirectToAdmin(locale: Locale, pageKey: AdminPageKey) {
   redirect(getAdminPageHref(locale, pageKey));
 }
 
+async function getPrimaryShopId() {
+  const shop = await prisma.shop.findFirst({
+    select: { id: true },
+    orderBy: { id: "asc" }
+  });
+
+  return shop?.id ?? null;
+}
+
 export async function upsertServiceAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
 
@@ -160,69 +174,75 @@ export async function upsertServiceAction(formData: FormData) {
 
 export async function upsertEmployeeAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
-  const employeeSlug = normalize(formData.get("employeeSlug")) || undefined;
-  const slugInput = normalize(formData.get("slug"));
-  const resolvedSlug = slugify(
-    slugInput || normalize(formData.get("name_de")) || normalize(formData.get("name_en")) || employeeSlug || ""
-  );
-  const imageInput = firstNonEmpty(
-    normalize(formData.get("image_en")),
-    normalize(formData.get("image_de")),
-    normalize(formData.get("image_ar"))
-  );
-  const uploadedImageUrl = await saveEmployeeAvatarFromDataUrl(resolvedSlug, imageInput);
+  const employeeId = parseOptionalPositiveInt(formData.get("employeeId"));
+  const name = normalize(formData.get("name"));
+  const bioValue = normalize(formData.get("bio"));
+  const avatarInput = normalize(formData.get("avatar"));
+  const isActive = checked(formData, "isActive");
 
-  saveEmployee({
-    employeeSlug,
-    slug: slugInput || undefined,
-    isActive: checked(formData, "isActive"),
-    email: normalize(formData.get("loginEmail")) || undefined,
-    linkLogin: checked(formData, "linkLogin"),
-    translations: {
-      en: {
-        name: normalize(formData.get("name_en")),
-        bio: normalize(formData.get("bio_en")),
-        imageSrc: uploadedImageUrl || normalize(formData.get("image_en")),
-        specialties: normalize(formData.get("specialties_en"))
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean)
-      },
-      de: {
-        name: normalize(formData.get("name_de")),
-        bio: normalize(formData.get("bio_de")),
-        imageSrc: uploadedImageUrl || normalize(formData.get("image_de")),
-        specialties: normalize(formData.get("specialties_de"))
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean)
-      },
-      ar: {
-        name: normalize(formData.get("name_ar")),
-        bio: normalize(formData.get("bio_ar")),
-        imageSrc: uploadedImageUrl || normalize(formData.get("image_ar")),
-        specialties: normalize(formData.get("specialties_ar"))
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean)
-      }
+  if (employeeId) {
+    const existingEmployee = await prisma.employee.findUnique({
+      where: { id: employeeId },
+      select: { id: true, name: true, avatar: true }
+    });
+
+    if (!existingEmployee) {
+      redirectToAdmin(locale, "employees");
     }
-  });
+
+    const avatarUploadKey = slugify(name || existingEmployee.name || `employee-${employeeId}`);
+    const uploadedAvatar = await saveEmployeeAvatarFromDataUrl(avatarUploadKey, avatarInput);
+
+    await prisma.employee.update({
+      where: { id: employeeId },
+      data: {
+        name: name || existingEmployee.name,
+        bio: bioValue || null,
+        avatar: uploadedAvatar || avatarInput || existingEmployee.avatar || null,
+        isActive
+      }
+    });
+  } else {
+    if (!name) {
+      redirectToAdmin(locale, "employees");
+    }
+
+    const shopId = await getPrimaryShopId();
+
+    if (!shopId) {
+      redirectToAdmin(locale, "employees");
+    }
+
+    const avatarUploadKey = slugify(name);
+    const uploadedAvatar = await saveEmployeeAvatarFromDataUrl(avatarUploadKey, avatarInput);
+
+    await prisma.employee.create({
+      data: {
+        shopId,
+        name,
+        bio: bioValue || null,
+        avatar: uploadedAvatar || avatarInput || null,
+        isActive
+      }
+    });
+  }
 
   redirectToAdmin(locale, "employees");
 }
 
 export async function setEmployeeActiveAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
-  const employeeSlug = normalize(formData.get("employeeSlug"));
+  const employeeId = parseOptionalPositiveInt(formData.get("employeeId"));
 
-  if (!employeeSlug) {
+  if (!employeeId) {
     redirectToAdmin(locale, "employees");
   }
 
-  setEmployeeActive({
-    employeeSlug,
-    isActive: checked(formData, "isActive")
+  await prisma.employee.update({
+    where: { id: employeeId },
+    data: {
+      isActive: checked(formData, "isActive")
+    }
   });
 
   redirectToAdmin(locale, "employees");

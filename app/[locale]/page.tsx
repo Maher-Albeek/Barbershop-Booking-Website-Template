@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getContentSectionContainerStyle } from "@/lib/content-background-image";
+import { getActiveEmployees } from "@/lib/employee-fetch";
 import { listBookings } from "@/lib/booking";
 import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
@@ -9,7 +10,6 @@ import {
   siteConfig,
   getHomepageContent,
   getServicesContent,
-  getTeamContent,
   getGalleryContent,
   getOffersContent,
   getContactContent
@@ -150,13 +150,21 @@ export default async function HomePage({ params }: HomePageProps) {
   const dictionary = getDictionary(locale);
   const content = getHomepageContent(locale);
   const servicesContent = getServicesContent(locale);
-  const teamContent = getTeamContent(locale);
   const galleryContent = getGalleryContent(locale);
   const offersContent = getOffersContent(locale);
   const contactContent = getContactContent(locale);
+  const dbEmployees = await getActiveEmployees();
   const firstHighlight = content.highlights[0];
   const activeServices = servicesContent.services.filter((service) => service.isActive);
-  const activeMembers = teamContent.members.filter((member) => member.isActive);
+  const activeMembers = dbEmployees.map((emp) => ({
+    slug: `employee-${emp.id}`,
+    isActive: emp.isActive,
+    imageSrc: emp.avatar || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+    bookingServiceSlugs: [],
+    specialties: [],
+    name: emp.name,
+    bio: emp.bio
+  }));
   const teamUsesSlider = activeMembers.length > 3;
   const visibleImages = galleryContent.images
     .filter((image) => image.isVisible)
@@ -190,7 +198,7 @@ export default async function HomePage({ params }: HomePageProps) {
     0
   );
   const employeeCount =
-    siteConfig.homepageCounterOverrides.employees ?? teamContent.members.length;
+    siteConfig.homepageCounterOverrides.employees ?? dbEmployees.length;
   const maxCustomersDailyCount =
     siteConfig.homepageCounterOverrides.maxCustomersDaily ?? maxDailyCustomers;
   const maxAppointmentsDailyCount =

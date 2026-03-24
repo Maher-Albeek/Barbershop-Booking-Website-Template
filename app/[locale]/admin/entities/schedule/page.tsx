@@ -5,6 +5,7 @@ import {
 } from "@/lib/admin-data";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
+import { getAllEmployees } from "@/lib/employee-fetch";
 import {
   addBlockedTimeAction,
   upsertAssignmentAction,
@@ -32,6 +33,12 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
     notFound();
   }
 
+  const dbEmployees = await getAllEmployees();
+  const employees = dbEmployees.map((emp) => ({
+    slug: `employee-${emp.id}`,
+    name: emp.name
+  }));
+
   return (
     <AdminShell locale={locale}>
       <section style={sectionStyle}>
@@ -40,7 +47,7 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
           title="Assignments, working hours, blocked times"
         />
         <div style={gridTwo}>
-          {siteConfig.team[locale].members.map((member) => (
+          {employees.map((member) => (
             <article key={member.slug} style={{ ...surfaceCardStyle, display: "grid", gap: 10 }}>
               <strong>{member.name}</strong>
               <div>
@@ -75,7 +82,7 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
             <form action={upsertAssignmentAction} style={{ display: "grid", gap: 14 }}>
               <input type="hidden" name="locale" value={locale} />
               <select name="employeeSlug" style={inputStyle}>
-                {siteConfig.team[locale].members.map((member) => (
+                {employees.map((member) => (
                   <option key={member.slug} value={member.slug}>
                     {member.name}
                   </option>
@@ -115,7 +122,7 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
             <form action={upsertWorkingHoursAction} style={{ display: "grid", gap: 14 }}>
               <input type="hidden" name="locale" value={locale} />
               <select name="employeeSlug" style={inputStyle}>
-                {siteConfig.team[locale].members.map((member) => (
+                {employees.map((member) => (
                   <option key={member.slug} value={member.slug}>
                     {member.name}
                   </option>
@@ -148,7 +155,7 @@ export default async function AdminSchedulePage({ params }: AdminSchedulePagePro
             <form action={addBlockedTimeAction} style={{ display: "grid", gap: 14 }}>
               <input type="hidden" name="locale" value={locale} />
               <select name="employeeSlug" style={inputStyle}>
-                {siteConfig.team[locale].members.map((member) => (
+                {employees.map((member) => (
                   <option key={member.slug} value={member.slug}>
                     {member.name}
                   </option>

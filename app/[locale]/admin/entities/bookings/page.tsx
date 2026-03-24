@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import {
-  getBookingOptions,
   listFilteredBookings
 } from "@/lib/admin-data";
+import { getActiveEmployees } from "@/lib/employee-fetch";
 import { isLocale } from "@/lib/i18n";
+import { siteConfig, getServicesContent } from "@/lib/site-config";
 import { updateBookingStatusAction } from "../../actions";
 import {
   AdminShell,
@@ -31,7 +32,16 @@ export default async function AdminBookingsPage({ params, searchParams }: AdminB
     notFound();
   }
 
-  const options = getBookingOptions(locale);
+  const dbEmployees = await getActiveEmployees();
+  const employees = dbEmployees.map((emp) => ({
+    slug: `employee-${emp.id}`,
+    name: emp.name,
+    isActive: emp.isActive
+  }));
+
+  const servicesContent = getServicesContent(locale);
+  const services = servicesContent.services;
+
   const bookings = listFilteredBookings({
     date: filters.bookingDate,
     employeeSlug: filters.bookingEmployee,
@@ -51,7 +61,7 @@ export default async function AdminBookingsPage({ params, searchParams }: AdminB
             style={inputStyle}
           >
             <option value="">All employees</option>
-            {options.employees.map((member) => (
+            {employees.map((member) => (
               <option key={member.slug} value={member.slug}>
                 {member.name}
               </option>
@@ -59,7 +69,7 @@ export default async function AdminBookingsPage({ params, searchParams }: AdminB
           </select>
           <select name="bookingService" defaultValue={filters.bookingService ?? ""} style={inputStyle}>
             <option value="">All services</option>
-            {options.services.map((service) => (
+            {services.map((service) => (
               <option key={service.slug} value={service.slug}>
                 {service.name}
               </option>

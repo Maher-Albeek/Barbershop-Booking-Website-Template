@@ -5,9 +5,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { listAvailableSlots } from "@/lib/booking";
 import { getContentSectionContainerStyle } from "@/lib/content-background-image";
+import { getActiveEmployees } from "@/lib/employee-fetch";
 import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getOffersContent, getServicesContent, getTeamContent } from "@/lib/site-config";
+import { siteConfig, getOffersContent, getServicesContent } from "@/lib/site-config";
 import { submitBooking } from "./actions";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 
@@ -162,7 +163,18 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
   const dictionary = getDictionary(locale);
   const servicesContent = getServicesContent(locale);
   const offersContent = getOffersContent(locale);
-  const teamContent = getTeamContent(locale);
+  const dbEmployees = await getActiveEmployees();
+  const teamContent = {
+    members: dbEmployees.map((emp) => ({
+      slug: `employee-${emp.id}`,
+      isActive: emp.isActive,
+      imageSrc: emp.avatar || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=80",
+      bookingServiceSlugs: [],
+      specialties: [],
+      name: emp.name,
+      bio: emp.bio
+    }))
+  };
   const bookingConfig = siteConfig.booking;
   const activeServices = servicesContent.services.filter((item) => item.isActive);
   const activeOffers = offersContent.offers
@@ -184,7 +196,6 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
     ? teamContent.members.filter(
         (member) =>
           member.isActive &&
-          member.bookingServiceSlugs.includes(selectedService.slug) &&
           serviceAssignments.some((assignment) => assignment.employeeSlug === member.slug)
       )
     : [];
