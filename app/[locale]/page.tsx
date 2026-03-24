@@ -544,7 +544,17 @@ export default async function HomePage({ params }: HomePageProps) {
 
                   <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
                     <Link
-                      href={onePageHref(locale, "/booking")}
+                      href={
+                        offer.serviceSlug
+                          ? {
+                              pathname: `/${locale}/booking` as Route,
+                              query: {
+                                service: offer.serviceSlug,
+                                serviceConfirmed: "1"
+                              }
+                            }
+                          : onePageHref(locale, "/booking")
+                      }
                       style={{
                         display: "inline-flex",
                         padding: "13px 18px",

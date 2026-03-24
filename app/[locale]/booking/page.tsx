@@ -5,7 +5,7 @@ import { listAvailableSlots } from "@/lib/booking";
 import { getContentSectionContainerStyle } from "@/lib/content-background-image";
 import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
-import { siteConfig, getServicesContent, getTeamContent } from "@/lib/site-config";
+import { siteConfig, getOffersContent, getServicesContent, getTeamContent } from "@/lib/site-config";
 import { submitBooking } from "./actions";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 
@@ -124,6 +124,15 @@ function errorMessage(code: string | undefined, dictionary: ReturnType<typeof ge
   }
 }
 
+function isOfferCurrentlyVisible(validFrom: string, validUntil: string) {
+  const now = new Date();
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const startsAt = new Date(`${validFrom}T00:00:00.000Z`);
+  const endsAt = new Date(`${validUntil}T23:59:59.999Z`);
+
+  return today >= startsAt && today <= endsAt;
+}
+
 export default async function BookingPage({ params, searchParams }: BookingPageProps) {
   const [
     { locale },
@@ -150,9 +159,19 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
 
   const dictionary = getDictionary(locale);
   const servicesContent = getServicesContent(locale);
+  const offersContent = getOffersContent(locale);
   const teamContent = getTeamContent(locale);
   const bookingConfig = siteConfig.booking;
   const activeServices = servicesContent.services.filter((item) => item.isActive);
+  const activeOffers = offersContent.offers
+    .filter((offer) => offer.isActive && isOfferCurrentlyVisible(offer.validFrom, offer.validUntil))
+    .map((offer) => ({
+      ...offer,
+      linkedService: offer.serviceSlug
+        ? activeServices.find((serviceItem) => serviceItem.slug === offer.serviceSlug)
+        : undefined
+    }))
+    .filter((offer) => Boolean(offer.linkedService));
   const selectedService = activeServices.find((item) => item.slug === service);
   const serviceAssignments = selectedService
     ? bookingConfig.employeeServices.filter(
@@ -608,6 +627,62 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                     {dictionary.booking.serviceStepDescription}
                   </p>
                 </div>
+
+                {activeOffers.length > 0 ? (
+                  <section
+                    style={{
+                      display: "grid",
+                      gap: 10,
+                      padding: 14,
+                      borderRadius: 16,
+                      border: "1px solid var(--border)",
+                      background: "var(--surface)"
+                    }}
+                  >
+                    <strong>
+                      {dictionary.navigation.find((item) => item.href === "/offers")?.label ?? "Offers"}
+                    </strong>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                        gap: 10
+                      }}
+                    >
+                      {activeOffers.map((offer) => (
+                        <Link
+                          key={offer.slug}
+                          href={bookingHref(locale, {
+                            service: offer.linkedService?.slug,
+                            serviceConfirmed: "1",
+                            name,
+                            email,
+                            notes
+                          }, "booking-flow")}
+                          scroll={false}
+                          style={{
+                            borderRadius: 14,
+                            padding: 12,
+                            border: "1px solid rgba(214, 176, 125, 0.28)",
+                            background: "rgba(214, 176, 125, 0.12)",
+                            display: "grid",
+                            gap: 6,
+                            textDecoration: "none",
+                            color: "inherit"
+                          }}
+                        >
+                          <strong>{offer.title}</strong>
+                          <span style={{ color: "var(--muted)", fontSize: 14 }}>
+                            {offer.linkedService?.name}
+                          </span>
+                          <span style={{ fontSize: 13, color: "var(--brand-accent)", fontWeight: 700 }}>
+                            {dictionary.offers.validUntilLabel} {offer.validUntil}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
 
                 <fieldset
                   style={{ margin: 0, padding: 0, border: "none", display: "grid", gap: 14 }}

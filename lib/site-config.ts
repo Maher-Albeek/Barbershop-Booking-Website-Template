@@ -66,6 +66,7 @@ type LocalizedGalleryContent = {
 
 type Offer = {
   slug: string;
+  serviceSlug?: string;
   isActive: boolean;
   validFrom: string;
   validUntil: string;
@@ -738,6 +739,7 @@ export const siteConfig: {
       offers: [
         {
           slug: "weekday-beard-detail",
+          serviceSlug: "beard-ritual",
           isActive: true,
           validFrom: "2026-03-01",
           validUntil: "2026-04-15",
@@ -749,6 +751,7 @@ export const siteConfig: {
         },
         {
           slug: "father-son-session",
+          serviceSlug: "full-grooming-session",
           isActive: true,
           validFrom: "2026-03-10",
           validUntil: "2026-05-05",
@@ -758,6 +761,7 @@ export const siteConfig: {
         },
         {
           slug: "winter-refresh",
+          serviceSlug: "signature-cut",
           isActive: true,
           validFrom: "2026-01-05",
           validUntil: "2026-02-10",
@@ -769,6 +773,7 @@ export const siteConfig: {
         },
         {
           slug: "members-preview",
+          serviceSlug: "signature-cut",
           isActive: false,
           validFrom: "2026-03-20",
           validUntil: "2026-04-30",
@@ -786,6 +791,7 @@ export const siteConfig: {
       offers: [
         {
           slug: "weekday-beard-detail",
+          serviceSlug: "beard-ritual",
           isActive: true,
           validFrom: "2026-03-01",
           validUntil: "2026-04-15",
@@ -797,6 +803,7 @@ export const siteConfig: {
         },
         {
           slug: "father-son-session",
+          serviceSlug: "full-grooming-session",
           isActive: true,
           validFrom: "2026-03-10",
           validUntil: "2026-05-05",
@@ -806,6 +813,7 @@ export const siteConfig: {
         },
         {
           slug: "winter-refresh",
+          serviceSlug: "signature-cut",
           isActive: true,
           validFrom: "2026-01-05",
           validUntil: "2026-02-10",
@@ -817,6 +825,7 @@ export const siteConfig: {
         },
         {
           slug: "members-preview",
+          serviceSlug: "signature-cut",
           isActive: false,
           validFrom: "2026-03-20",
           validUntil: "2026-04-30",
@@ -834,6 +843,7 @@ export const siteConfig: {
       offers: [
         {
           slug: "weekday-beard-detail",
+          serviceSlug: "beard-ritual",
           isActive: true,
           validFrom: "2026-03-01",
           validUntil: "2026-04-15",
@@ -845,6 +855,7 @@ export const siteConfig: {
         },
         {
           slug: "father-son-session",
+          serviceSlug: "full-grooming-session",
           isActive: true,
           validFrom: "2026-03-10",
           validUntil: "2026-05-05",
@@ -854,6 +865,7 @@ export const siteConfig: {
         },
         {
           slug: "winter-refresh",
+          serviceSlug: "signature-cut",
           isActive: true,
           validFrom: "2026-01-05",
           validUntil: "2026-02-10",
@@ -865,6 +877,7 @@ export const siteConfig: {
         },
         {
           slug: "members-preview",
+          serviceSlug: "signature-cut",
           isActive: false,
           validFrom: "2026-03-20",
           validUntil: "2026-04-30",

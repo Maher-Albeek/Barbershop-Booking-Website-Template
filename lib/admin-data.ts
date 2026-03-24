@@ -432,6 +432,7 @@ export function saveOffer(input: {
     const existing = index >= 0 ? offers[index] : undefined;
     const nextOffer = {
       slug,
+      serviceSlug: existing?.serviceSlug ?? fallbackExisting?.serviceSlug,
       isActive: input.isActive,
       validFrom: input.validFrom,
       validUntil: input.validUntil,
