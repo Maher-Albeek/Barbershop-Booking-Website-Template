@@ -15,6 +15,7 @@ import {
 } from "@/lib/site-config";
 import { ContactForm } from "./contact/contact-form";
 import { ContactMap } from "./contact/contact-map";
+import { BackToTopButton } from "@/components/back-to-top-button";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 import { HorizontalScrollControls } from "@/components/horizontal-scroll-controls";
 
@@ -852,6 +853,8 @@ export default async function HomePage({ params }: HomePageProps) {
           </article>
         </section>
       </div>
+
+      <BackToTopButton />
     </main>
   );
 }
