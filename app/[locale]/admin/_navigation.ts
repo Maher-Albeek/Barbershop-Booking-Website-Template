@@ -10,6 +10,7 @@ export type AdminPageKey =
   | "bookingPage"
   | "contactPage"
   | "services"
+  | "database"
   | "employees"
   | "schedule"
   | "bookings"
@@ -106,6 +107,13 @@ export const adminNavGroups: AdminNavGroup[] = [
         story: "ADMIN-002",
         path: "entities/services",
         description: "Create and update service records shown in booking and public pages."
+      },
+      {
+        key: "database",
+        label: "Database Manage",
+        story: "ADMIN-018",
+        path: "entities/database",
+        description: "Display all database tables and inspect their current row values."
       },
       {
         key: "employees",
