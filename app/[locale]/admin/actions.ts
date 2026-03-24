@@ -9,6 +9,7 @@ import {
   addBlockedTime,
   ensureLocale,
   isValidTimeRange,
+  slugify,
   saveAssignment,
   saveContactContent,
   saveHomepageCounterOverrides,
@@ -50,6 +51,69 @@ function parseOptionalNonNegativeInt(value: FormDataEntryValue | null) {
   }
 
   return parsed;
+}
+
+function firstNonEmpty(...values: Array<string | undefined>) {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function imageMimeToExtension(mimeType: string) {
+  switch (mimeType) {
+    case "image/avif":
+      return "avif";
+    case "image/webp":
+      return "webp";
+    case "image/jpeg":
+      return "jpg";
+    case "image/png":
+      return "png";
+    case "image/gif":
+      return "gif";
+    default:
+      return null;
+  }
+}
+
+async function saveEmployeeAvatarFromDataUrl(slug: string, maybeDataUrl: string) {
+  if (!slug || !maybeDataUrl.startsWith("data:image/")) {
+    return "";
+  }
+
+  const parsed = maybeDataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+
+  if (!parsed) {
+    return "";
+  }
+
+  const mimeType = parsed[1];
+  const base64 = parsed[2];
+  const extension = imageMimeToExtension(mimeType);
+
+  if (!extension) {
+    return "";
+  }
+
+  const uploadDir = join(process.cwd(), "public", "employees");
+  await mkdir(uploadDir, { recursive: true });
+
+  const existingFiles = await readdir(uploadDir);
+  await Promise.all(
+    existingFiles
+      .filter((filename) => filename.startsWith(`${slug}.`))
+      .map((filename) => unlink(join(uploadDir, filename)))
+  );
+
+  const fileName = `${slug}.${extension}`;
+  const filePath = join(uploadDir, fileName);
+  await writeFile(filePath, Buffer.from(base64, "base64"));
+
+  return `/employees/${fileName}`;
 }
 
 async function authorize(localeValue: string) {
@@ -96,10 +160,21 @@ export async function upsertServiceAction(formData: FormData) {
 
 export async function upsertEmployeeAction(formData: FormData) {
   const locale = await authorize(normalize(formData.get("locale")));
+  const employeeSlug = normalize(formData.get("employeeSlug")) || undefined;
+  const slugInput = normalize(formData.get("slug"));
+  const resolvedSlug = slugify(
+    slugInput || normalize(formData.get("name_de")) || normalize(formData.get("name_en")) || employeeSlug || ""
+  );
+  const imageInput = firstNonEmpty(
+    normalize(formData.get("image_en")),
+    normalize(formData.get("image_de")),
+    normalize(formData.get("image_ar"))
+  );
+  const uploadedImageUrl = await saveEmployeeAvatarFromDataUrl(resolvedSlug, imageInput);
 
   saveEmployee({
-    employeeSlug: normalize(formData.get("employeeSlug")) || undefined,
-    slug: normalize(formData.get("slug")) || undefined,
+    employeeSlug,
+    slug: slugInput || undefined,
     isActive: checked(formData, "isActive"),
     email: normalize(formData.get("loginEmail")) || undefined,
     linkLogin: checked(formData, "linkLogin"),
@@ -107,7 +182,7 @@ export async function upsertEmployeeAction(formData: FormData) {
       en: {
         name: normalize(formData.get("name_en")),
         bio: normalize(formData.get("bio_en")),
-        imageSrc: normalize(formData.get("image_en")),
+        imageSrc: uploadedImageUrl || normalize(formData.get("image_en")),
         specialties: normalize(formData.get("specialties_en"))
           .split(",")
           .map((item) => item.trim())
@@ -116,7 +191,7 @@ export async function upsertEmployeeAction(formData: FormData) {
       de: {
         name: normalize(formData.get("name_de")),
         bio: normalize(formData.get("bio_de")),
-        imageSrc: normalize(formData.get("image_de")),
+        imageSrc: uploadedImageUrl || normalize(formData.get("image_de")),
         specialties: normalize(formData.get("specialties_de"))
           .split(",")
           .map((item) => item.trim())
@@ -125,7 +200,7 @@ export async function upsertEmployeeAction(formData: FormData) {
       ar: {
         name: normalize(formData.get("name_ar")),
         bio: normalize(formData.get("bio_ar")),
-        imageSrc: normalize(formData.get("image_ar")),
+        imageSrc: uploadedImageUrl || normalize(formData.get("image_ar")),
         specialties: normalize(formData.get("specialties_ar"))
           .split(",")
           .map((item) => item.trim())

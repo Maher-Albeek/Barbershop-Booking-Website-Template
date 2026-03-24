@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
+import { AvatarDropField } from "./_avatar-drop-field";
 import { FormModal } from "../../_form-modal";
 import { setEmployeeActiveAction, upsertEmployeeAction } from "../../actions";
 import {
@@ -79,11 +80,10 @@ export default async function AdminEmployeesPage({ params }: AdminEmployeesPageP
                         defaultValue={member.name}
                         style={inputStyle}
                       />
-                      <input
+                      <AvatarDropField
                         name={`image_${locale}`}
-                        placeholder={`Avatar URL (${locale})`}
+                        label={`Avatar (${locale})`}
                         defaultValue={member.imageSrc}
-                        style={inputStyle}
                       />
                       <input
                         name={`specialties_${locale}`}
@@ -168,10 +168,9 @@ export default async function AdminEmployeesPage({ params }: AdminEmployeesPageP
                   placeholder={`Display name (${locale})`}
                   style={inputStyle}
                 />
-                <input
+                <AvatarDropField
                   name={`image_${locale}`}
-                  placeholder={`Avatar URL (${locale})`}
-                  style={inputStyle}
+                  label={`Avatar (${locale})`}
                 />
                 <input
                   name={`specialties_${locale}`}
