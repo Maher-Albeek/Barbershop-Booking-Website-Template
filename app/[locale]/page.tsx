@@ -40,11 +40,14 @@ const sectionByPath: Record<string, string | undefined> = {
   "/team": "team",
   "/gallery": "gallery",
   "/offers": "offers",
-  "/contact": "contact",
-  "/booking": "booking"
+  "/contact": "contact"
 };
 
 function onePageHref(locale: Locale, path: string): HeroHref {
+  if (path === "/booking") {
+    return navHref(locale, "/booking");
+  }
+
   const pathname = `/${locale}` as Route;
   const hash = sectionByPath[path];
 
@@ -140,12 +143,6 @@ export default async function HomePage({ params }: HomePageProps) {
   const visibleOffers = offersContent.offers.filter(
     (offer) => offer.isActive && isOfferCurrentlyVisible(offer.validFrom, offer.validUntil)
   );
-  const contactItems = [
-    contactContent.items.phone,
-    contactContent.items.email,
-    contactContent.items.address,
-    contactContent.items.whatsapp
-  ].filter((item) => item !== undefined);
   const heroImageUrl = getHeroImageUrl("home");
   const contactNav = dictionary.navigation.find((item) => item.href === "/contact");
 
@@ -590,140 +587,9 @@ export default async function HomePage({ params }: HomePageProps) {
           <section
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
               gap: 18
             }}
           >
-            <article
-              style={{
-                borderRadius: 28,
-                border: "1px solid var(--border)",
-                background: "var(--surface-strong)",
-                boxShadow: "var(--shadow)",
-                padding: 24,
-                display: "grid",
-                gap: 18
-              }}
-            >
-              <div style={{ display: "grid", gap: 10 }}>
-                <div
-                  style={{
-                    fontSize: 12,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.14em",
-                    color: "var(--muted)"
-                  }}
-                >
-                  {dictionary.contact.directLabel}
-                </div>
-                <h3 style={{ margin: 0, fontSize: 30 }}>{dictionary.contact.title}</h3>
-              </div>
-
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                  gap: 16
-                }}
-              >
-                {contactItems.map((item) => (
-                  <article
-                    key={item.label}
-                    style={{
-                      borderRadius: 22,
-                      border: "1px solid var(--border)",
-                      background: "rgba(214, 176, 125, 0.12)",
-                      padding: 18,
-                      display: "grid",
-                      gap: 10
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: 12,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.12em",
-                        color: "var(--muted)"
-                      }}
-                    >
-                      {item.label}
-                    </div>
-                    {item.href ? (
-                      <a href={item.href} style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.5 }}>
-                        {item.value}
-                      </a>
-                    ) : (
-                      <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.5 }}>
-                        {item.value}
-                      </div>
-                    )}
-                  </article>
-                ))}
-              </div>
-
-              <article
-                style={{
-                  borderRadius: 22,
-                  border: "1px solid var(--border)",
-                  background: "rgba(214, 176, 125, 0.08)",
-                  padding: 18,
-                  display: "grid",
-                  gap: 14
-                }}
-              >
-                <div style={{ display: "grid", gap: 6 }}>
-                  <div
-                    style={{
-                      fontSize: 12,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.12em",
-                      color: "var(--muted)"
-                    }}
-                  >
-                    {contactContent.workingHoursTitle}
-                  </div>
-                  <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-                    {contactContent.workingHoursNote}
-                  </p>
-                </div>
-
-                <div style={{ display: "grid", gap: 10 }}>
-                  {contactContent.workingHours.map((entry) => (
-                    <div
-                      key={entry.days}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        gap: 16,
-                        flexWrap: "wrap",
-                        paddingTop: 10,
-                        borderTop: "1px solid var(--border)"
-                      }}
-                    >
-                      <strong>{entry.days}</strong>
-                      <span>{entry.hours}</span>
-                    </div>
-                  ))}
-                </div>
-              </article>
-
-              <Link
-                href={onePageHref(locale, "/booking")}
-                style={{
-                  display: "inline-flex",
-                  justifyContent: "center",
-                  padding: "13px 18px",
-                  borderRadius: 999,
-                  background: "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
-                  color: "#fffaf4",
-                  fontWeight: 700,
-                  justifySelf: "start"
-                }}
-              >
-                {dictionary.contact.bookingCta}
-              </Link>
-            </article>
-
             <article
               style={{
                 borderRadius: 28,
@@ -803,54 +669,8 @@ export default async function HomePage({ params }: HomePageProps) {
                 </div>
               )}
             </article>
+
           </section>
-        </section>
-      </div>
-
-      <div style={getContentSectionContainerStyle("booking")}>
-        <section id="booking" style={fullScreenSectionStyle}>
-          <SectionTitle
-            eyebrow={dictionary.booking.eyebrow}
-            title={dictionary.booking.title}
-            subtitle={dictionary.booking.subtitle}
-          />
-
-          <article
-            style={{
-              borderRadius: 28,
-              border: "1px solid var(--border)",
-              background: "var(--surface-strong)",
-              boxShadow: "var(--shadow)",
-              padding: 24,
-              display: "grid",
-              gap: 16,
-              maxWidth: 760
-            }}
-          >
-            <h3 style={{ margin: 0, fontSize: 30 }}>{dictionary.booking.serviceStepTitle}</h3>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-              {dictionary.booking.detailsDescription}
-            </p>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-              {dictionary.booking.privacyNote}
-            </p>
-
-            <Link
-              href={navHref(locale, "/booking")}
-              style={{
-                display: "inline-flex",
-                justifyContent: "center",
-                padding: "13px 18px",
-                borderRadius: 999,
-                background: "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
-                color: "#fffaf4",
-                fontWeight: 700,
-                justifySelf: "start"
-              }}
-            >
-              {dictionary.actions.bookNow}
-            </Link>
-          </article>
         </section>
       </div>
 

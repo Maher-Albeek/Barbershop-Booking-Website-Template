@@ -222,7 +222,7 @@ const dictionaries = {
       bookingCta: "Dieses Angebot buchen"
     },
     booking: {
-      eyebrow: "Oeffentliche Buchung",
+      eyebrow: "Buchung",
       title: "Starte deinen Termin ohne Anmeldung.",
       subtitle:
         "Waehle zuerst eine Leistung und fahre dann mit Barber, Uhrzeit und Kontaktdaten fort.",
