@@ -11,6 +11,7 @@ import {
   isValidTimeRange,
   saveAssignment,
   saveContactContent,
+  saveHomepageCounterOverrides,
   saveEmailSettings,
   saveEmployee,
   setEmployeeActive,
@@ -33,6 +34,22 @@ function normalize(value: FormDataEntryValue | null) {
 
 function checked(formData: FormData, key: string) {
   return normalize(formData.get(key)) === "on";
+}
+
+function parseOptionalNonNegativeInt(value: FormDataEntryValue | null) {
+  const normalized = normalize(value);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number.parseInt(normalized, 10);
+
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return null;
+  }
+
+  return parsed;
 }
 
 async function authorize(localeValue: string) {
@@ -355,6 +372,19 @@ export async function updateHomepageHeroContentAction(formData: FormData) {
   });
 
   redirectToAdmin(locale, "homePage");
+}
+
+export async function updateHomepageCounterOverridesAction(formData: FormData) {
+  const locale = await authorize(normalize(formData.get("locale")));
+
+  saveHomepageCounterOverrides({
+    employees: parseOptionalNonNegativeInt(formData.get("counterEmployees")),
+    maxCustomersDaily: parseOptionalNonNegativeInt(formData.get("counterMaxCustomersDaily")),
+    maxAppointmentsDaily: parseOptionalNonNegativeInt(formData.get("counterMaxAppointmentsDaily")),
+    allBookings: parseOptionalNonNegativeInt(formData.get("counterAllBookings"))
+  });
+
+  redirectToAdmin(locale, "settings");
 }
 
 export async function uploadHeroImageAction(formData: FormData) {

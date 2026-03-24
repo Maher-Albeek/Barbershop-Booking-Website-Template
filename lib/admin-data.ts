@@ -35,8 +35,30 @@ export function getThemeStyle(): CSSProperties {
   } as CSSProperties;
 }
 
+function formatDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export function getDashboardData(locale: Locale) {
   const bookings = listBookings();
+  const todayKey = formatDateKey(new Date());
+  const todaysBookings = bookings.filter(
+    (booking) =>
+      booking.date === todayKey &&
+      (booking.status === "confirmed" || booking.status === "completed")
+  );
+  const customerKeys = todaysBookings.map((booking) => booking.email || booking.customerName);
+  const todaysCustomers = new Set(customerKeys).size;
+  const todaysEmployees = new Set(todaysBookings.map((booking) => booking.employeeSlug)).size;
+  const todayWeekday = new Date().getDay();
+  const onDutyEmployees = new Set(
+    siteConfig.booking.workingHours
+      .filter((entry) => entry.weekday === todayWeekday && !entry.isOff)
+      .map((entry) => entry.employeeSlug)
+  ).size;
 
   return {
     recentBookings: bookings.slice(0, 6),
@@ -45,7 +67,36 @@ export function getDashboardData(locale: Locale) {
       employees: siteConfig.team[locale].members.length,
       services: siteConfig.services[locale].services.length,
       activeOffers: siteConfig.offers[locale].offers.filter((offer) => offer.isActive).length
-    }
+    },
+    dailyOperations: {
+      date: todayKey,
+      employeesServingCustomers: todaysEmployees,
+      employeesOnDuty: onDutyEmployees,
+      customersBooked: todaysCustomers,
+      bookingsScheduled: todaysBookings.length
+    },
+    shopEssentials: [
+      {
+        title: "Supplies and inventory",
+        description: "Track clipper guards, blades, neck strips, towels, and retail products before the next rush."
+      },
+      {
+        title: "Hygiene and sanitation",
+        description: "Keep chair stations, tools, and waiting areas disinfected with a clear cleaning schedule."
+      },
+      {
+        title: "Equipment maintenance",
+        description: "Plan regular checks for clippers, trimmers, dryers, and chairs to avoid service interruptions."
+      },
+      {
+        title: "Staff and shift planning",
+        description: "Balance appointments, walk-ins, breaks, and peak-hour coverage across the team."
+      },
+      {
+        title: "Customer follow-up",
+        description: "Collect feedback, reviews, and rebooking reminders to improve retention and repeat visits."
+      }
+    ]
   };
 }
 
@@ -521,6 +572,20 @@ export function saveHomepageHeroContent(input: {
     kicker: firstNonEmptyString(input.kicker, existingHero.kicker),
     subtitle: firstNonEmptyString(input.subtitle, existingHero.subtitle),
     title: firstNonEmptyString(input.title, existingHero.title)
+  };
+}
+
+export function saveHomepageCounterOverrides(input: {
+  employees: number | null;
+  maxCustomersDaily: number | null;
+  maxAppointmentsDaily: number | null;
+  allBookings: number | null;
+}) {
+  siteConfig.homepageCounterOverrides = {
+    employees: input.employees,
+    maxCustomersDaily: input.maxCustomersDaily,
+    maxAppointmentsDaily: input.maxAppointmentsDaily,
+    allBookings: input.allBookings
   };
 }
 

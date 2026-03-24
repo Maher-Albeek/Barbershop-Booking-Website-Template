@@ -227,6 +227,12 @@ export const siteConfig: {
     blockedTimes: EmployeeBlockedTime[];
     existingBookings: ExistingBooking[];
   };
+  homepageCounterOverrides: {
+    employees: number | null;
+    maxCustomersDaily: number | null;
+    maxAppointmentsDaily: number | null;
+    allBookings: number | null;
+  };
   emailSettings: {
     providerName: string;
     fromEmail: string;
@@ -1528,6 +1534,12 @@ export const siteConfig: {
         end: "14:30"
       }
     ]
+  },
+  homepageCounterOverrides: {
+    employees: null,
+    maxCustomersDaily: null,
+    maxAppointmentsDaily: null,
+    allBookings: null
   },
   emailSettings: {
     providerName: "Console transport",

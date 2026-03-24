@@ -1,3 +1,5 @@
+import type { Route } from "next";
+
 export type AdminPageKey =
   | "dashboard"
   | "homePage"
@@ -162,6 +164,6 @@ export function getAdminPagePath(pageKey: AdminPageKey) {
   return adminNavItems.find((item) => item.key === pageKey)?.path ?? "dashboard";
 }
 
-export function getAdminPageHref(locale: string, pageKey: AdminPageKey) {
-  return `/${locale}/admin/${getAdminPagePath(pageKey)}`;
+export function getAdminPageHref(locale: string, pageKey: AdminPageKey): Route {
+  return `/${locale}/admin/${getAdminPagePath(pageKey)}` as Route;
 }

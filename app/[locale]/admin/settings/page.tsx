@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { isLocale, locales } from "@/lib/i18n";
 import { siteConfig } from "@/lib/site-config";
-import { updateShopSettingsAction } from "../actions";
+import { updateHomepageCounterOverridesAction, updateShopSettingsAction } from "../actions";
 import {
   AdminShell,
   SectionTitle,
@@ -110,6 +110,53 @@ export default async function AdminSettingsPage({ params }: AdminSettingsPagePro
           </div>
           <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
             Save shop settings
+          </button>
+        </form>
+      </section>
+
+      <section style={sectionStyle}>
+        <SectionTitle story="ADMIN-010" title="Homepage counter overrides" />
+        <form action={updateHomepageCounterOverridesAction} style={{ display: "grid", gap: 14 }}>
+          <input type="hidden" name="locale" value={locale} />
+          <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
+            Leave a field empty to use automatic calculated values from booking data.
+          </p>
+          <div style={gridTwo}>
+            <input
+              name="counterEmployees"
+              type="number"
+              min={0}
+              defaultValue={siteConfig.homepageCounterOverrides.employees ?? ""}
+              placeholder="All employees"
+              style={inputStyle}
+            />
+            <input
+              name="counterMaxCustomersDaily"
+              type="number"
+              min={0}
+              defaultValue={siteConfig.homepageCounterOverrides.maxCustomersDaily ?? ""}
+              placeholder="Max customers daily"
+              style={inputStyle}
+            />
+            <input
+              name="counterMaxAppointmentsDaily"
+              type="number"
+              min={0}
+              defaultValue={siteConfig.homepageCounterOverrides.maxAppointmentsDaily ?? ""}
+              placeholder="Max appointments daily"
+              style={inputStyle}
+            />
+            <input
+              name="counterAllBookings"
+              type="number"
+              min={0}
+              defaultValue={siteConfig.homepageCounterOverrides.allBookings ?? ""}
+              placeholder="All bookings"
+              style={inputStyle}
+            />
+          </div>
+          <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
+            Save counter overrides
           </button>
         </form>
       </section>

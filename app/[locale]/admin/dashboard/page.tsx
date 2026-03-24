@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDashboardData } from "@/lib/admin-data";
@@ -46,6 +47,43 @@ export default async function AdminDashboardPage({ params }: AdminDashboardPageP
       </section>
 
       <section style={sectionStyle}>
+        <SectionTitle story="ADMIN-001" title="Daily team and customer count" />
+        <div style={{ color: "var(--muted)", marginTop: -4 }}>
+          Snapshot for {dashboard.dailyOperations.date}
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 14
+          }}
+        >
+          {[
+            ["Employees serving customers", String(dashboard.dailyOperations.employeesServingCustomers)],
+            ["Employees on duty", String(dashboard.dailyOperations.employeesOnDuty)],
+            ["Customers booked today", String(dashboard.dailyOperations.customersBooked)],
+            ["Bookings scheduled today", String(dashboard.dailyOperations.bookingsScheduled)]
+          ].map(([label, value]) => (
+            <article key={label} style={surfaceCardStyle}>
+              <div
+                style={{
+                  fontSize: 12,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--muted)"
+                }}
+              >
+                {label}
+              </div>
+              <strong style={{ display: "block", marginTop: 10, fontSize: "clamp(1.5rem, 3.4vw, 1.8rem)" }}>
+                {value}
+              </strong>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section style={sectionStyle}>
         <SectionTitle story="ADMIN-001" title="Recent booking overview" />
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -74,6 +112,18 @@ export default async function AdminDashboardPage({ params }: AdminDashboardPageP
       </section>
 
       <section style={sectionStyle}>
+        <SectionTitle story="ADMIN-001" title="What else a barber shop needs" />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
+          {dashboard.shopEssentials.map((item) => (
+            <article key={item.title} style={surfaceCardStyle}>
+              <strong>{item.title}</strong>
+              <p style={{ margin: "10px 0 0", color: "var(--muted)", lineHeight: 1.6 }}>{item.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section style={sectionStyle}>
         <SectionTitle story="ADMIN-002 to ADMIN-017" title="Admin pages" />
         <div style={{ display: "grid", gap: 16 }}>
           {adminNavGroups.map((group) => (
@@ -92,7 +142,7 @@ export default async function AdminDashboardPage({ params }: AdminDashboardPageP
                 {group.items.map((item) => (
                   <Link
                     key={item.key}
-                    href={getAdminPageHref(locale, item.key)}
+                    href={getAdminPageHref(locale, item.key) as Route}
                     style={{ ...surfaceCardStyle, display: "grid", gap: 8, textDecoration: "none", color: "inherit" }}
                   >
                     <span style={{ fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--muted)" }}>

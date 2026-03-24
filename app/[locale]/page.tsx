@@ -2,6 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getContentSectionContainerStyle } from "@/lib/content-background-image";
+import { listBookings } from "@/lib/booking";
 import { getHeroImageUrl } from "@/lib/hero-image";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import {
@@ -16,6 +17,7 @@ import {
 import { ContactForm } from "./contact/contact-form";
 import { ContactMap } from "./contact/contact-map";
 import { BackToTopButton } from "@/components/back-to-top-button";
+import { AnimatedCounter } from "@/components/animated-counter";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 import { HorizontalScrollControls } from "@/components/horizontal-scroll-controls";
 
@@ -119,6 +121,58 @@ const fullScreenSectionStyle = {
   alignContent: "start"
 } as const;
 
+type CounterIconKind = "staff" | "customers" | "appointments" | "total";
+
+function CounterIcon({ kind }: { kind: CounterIconKind }) {
+  const iconStyle = {
+    width: 72,
+    height: 72,
+    color: "#c48425"
+  } as const;
+
+  if (kind === "staff") {
+    return (
+      <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="1.8" style={iconStyle}>
+        <circle cx="36" cy="20" r="9" />
+        <path d="M14 58c2-11 11-18 22-18s20 7 22 18" />
+        <path d="M12 40c2-6 7-10 13-11" />
+        <path d="M47 29c6 1 11 5 13 11" />
+      </svg>
+    );
+  }
+
+  if (kind === "customers") {
+    return (
+      <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="1.8" style={iconStyle}>
+        <circle cx="27" cy="24" r="8" />
+        <circle cx="46" cy="26" r="6" />
+        <path d="M12 56c2-10 8-16 16-16 9 0 15 6 17 16" />
+        <path d="M40 56c1-7 5-12 11-12 5 0 9 3 11 10" />
+      </svg>
+    );
+  }
+
+  if (kind === "appointments") {
+    return (
+      <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="1.8" style={iconStyle}>
+        <rect x="11" y="15" width="50" height="45" rx="7" />
+        <path d="M11 28h50" />
+        <path d="M22 10v10M50 10v10" />
+        <path d="M23 39h10M39 39h10M23 49h10" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="1.8" style={iconStyle}>
+      <path d="M18 37c0-12 8-21 18-21s18 9 18 21" />
+      <path d="M13 37h46" />
+      <path d="M18 37c0 12 8 21 18 21s18-9 18-21" />
+      <path d="M36 16v42M18 27h36M18 47h36" />
+    </svg>
+  );
+}
+
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
 
@@ -143,6 +197,50 @@ export default async function HomePage({ params }: HomePageProps) {
   const visibleOffers = offersContent.offers.filter(
     (offer) => offer.isActive && isOfferCurrentlyVisible(offer.validFrom, offer.validUntil)
   );
+  const bookings = listBookings();
+  const validBookings = bookings.filter(
+    (booking) => booking.status === "confirmed" || booking.status === "completed"
+  );
+  const dailyBookingsMap = new Map<string, number>();
+  const dailyCustomersMap = new Map<string, Set<string>>();
+
+  for (const booking of validBookings) {
+    dailyBookingsMap.set(booking.date, (dailyBookingsMap.get(booking.date) ?? 0) + 1);
+
+    if (!dailyCustomersMap.has(booking.date)) {
+      dailyCustomersMap.set(booking.date, new Set<string>());
+    }
+
+    dailyCustomersMap.get(booking.date)?.add(booking.email || booking.customerName);
+  }
+
+  const maxDailyBookings = [...dailyBookingsMap.values()].reduce(
+    (max, current) => Math.max(max, current),
+    0
+  );
+  const maxDailyCustomers = [...dailyCustomersMap.values()].reduce(
+    (max, customers) => Math.max(max, customers.size),
+    0
+  );
+  const employeeCount =
+    siteConfig.homepageCounterOverrides.employees ?? teamContent.members.length;
+  const maxCustomersDailyCount =
+    siteConfig.homepageCounterOverrides.maxCustomersDaily ?? maxDailyCustomers;
+  const maxAppointmentsDailyCount =
+    siteConfig.homepageCounterOverrides.maxAppointmentsDaily ?? maxDailyBookings;
+  const allBookingsCount =
+    siteConfig.homepageCounterOverrides.allBookings ?? bookings.length;
+  const counterLabelsByLocale = {
+    de: ["Mitarbeiter", " Kunden taeglich", " Termine taeglich", "Alle Buchungen"],
+    en: ["employees", " customers daily", " appointments daily", "All bookings"],
+    ar: ["الموظفين", " عدد عملاء يوميا", " عدد مواعيد يوميا", "جميع الحجوزات"]
+  } as const;
+  const counterItems = [
+    { icon: "staff" as const, value: employeeCount, label: counterLabelsByLocale[locale][0] },
+    { icon: "customers" as const, value: maxCustomersDailyCount, label: counterLabelsByLocale[locale][1] },
+    { icon: "appointments" as const, value: maxAppointmentsDailyCount, label: counterLabelsByLocale[locale][2] },
+    { icon: "total" as const, value: allBookingsCount, label: counterLabelsByLocale[locale][3] }
+  ];
   const heroImageUrl = getHeroImageUrl("home");
   const contactNav = dictionary.navigation.find((item) => item.href === "/contact");
 
@@ -570,6 +668,50 @@ export default async function HomePage({ params }: HomePageProps) {
               </article>
             ))}
           </section>
+        </section>
+      </div>
+
+      <div style={getContentSectionContainerStyle("services")}>
+        <section
+          style={{
+            width: "100vw",
+            marginLeft: "calc(50% - 50vw)",
+            marginRight: "calc(50% - 50vw)",
+            marginTop: 10,
+            marginBottom: 10,
+            background: "#efefef",
+            borderTop: "1px solid #e4e4e4",
+            borderBottom: "1px solid #e4e4e4",
+            padding: "54px clamp(20px, calc((100vw - 1200px) / 2 + 20px), 240px)"
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+              gap: 28,
+              alignItems: "start"
+            }}
+          >
+            {counterItems.map((item) => (
+              <article
+                key={item.label}
+                style={{
+                  display: "grid",
+                  gap: 16,
+                  justifyItems: "center",
+                  textAlign: "center",
+                  alignContent: "start"
+                }}
+              >
+                <CounterIcon kind={item.icon} />
+                <strong style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 2.6rem)", lineHeight: 1 }}>
+                  <AnimatedCounter value={item.value} suffix="+" locale={locale} />
+                </strong>
+                <div style={{ color: "#1f2a37", fontSize: "clamp(1.15rem, 2.1vw, 1.6rem)" }}>{item.label}</div>
+              </article>
+            ))}
+          </div>
         </section>
       </div>
 
