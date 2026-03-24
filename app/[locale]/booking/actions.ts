@@ -23,10 +23,12 @@ export async function submitBooking(formData: FormData) {
 
   if (service) {
     params.set("service", service);
+    params.set("serviceConfirmed", "1");
   }
 
   if (employee) {
     params.set("employee", employee);
+    params.set("employeeConfirmed", "1");
   }
 
   if (date) {
@@ -39,6 +41,10 @@ export async function submitBooking(formData: FormData) {
 
   if (employee) {
     params.set("slotEmployee", employee);
+  }
+
+  if (employee && date && start) {
+    params.set("timeConfirmed", "1");
   }
 
   if (customerName) {

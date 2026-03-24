@@ -99,6 +99,16 @@ const dictionaries = {
       customerStepTitle: "Enter your booking details",
       customerStepDescription:
         "Add your name, email, and optional notes to create a confirmed appointment.",
+      reviewStepLabel: "Final check",
+      reviewStepTitle: "Review your booking",
+      reviewStepDescription:
+        "Check your appointment and contact details. If everything looks right, confirm the booking.",
+      continueToReviewLabel: "Review booking",
+      reviewCustomerTitle: "Your details",
+      backToServiceLabel: "Back to service",
+      backToEmployeeLabel: "Back to employee",
+      backToTimeLabel: "Back to time",
+      editLabel: "Edit",
       selectedSlotTitle: "Selected appointment",
       selectedDateLabel: "Date",
       selectedTimeLabel: "Time",
@@ -261,6 +271,16 @@ const dictionaries = {
       customerStepTitle: "Buchungsdaten eingeben",
       customerStepDescription:
         "Trage Name, E-Mail und optionale Hinweise ein, um den Termin direkt zu bestaetigen.",
+      reviewStepLabel: "Letzte Pruefung",
+      reviewStepTitle: "Buchung pruefen",
+      reviewStepDescription:
+        "Pruefe Termin- und Kontaktdaten. Wenn alles stimmt, kannst du die Buchung bestaetigen.",
+      continueToReviewLabel: "Buchung pruefen",
+      reviewCustomerTitle: "Deine Angaben",
+      backToServiceLabel: "Zurueck zur Leistung",
+      backToEmployeeLabel: "Zurueck zum Barber",
+      backToTimeLabel: "Zurueck zur Zeit",
+      editLabel: "Bearbeiten",
       selectedSlotTitle: "Ausgewaehlter Termin",
       selectedDateLabel: "Datum",
       selectedTimeLabel: "Uhrzeit",
@@ -426,6 +446,16 @@ const dictionaries = {
       customerStepTitle: "\u0623\u062f\u062e\u0644 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062d\u062c\u0632",
       customerStepDescription:
         "\u0623\u0636\u0641 \u0627\u0644\u0627\u0633\u0645 \u0648\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a \u0648\u0627\u0644\u0645\u0644\u0627\u062d\u0638\u0627\u062a \u0627\u0644\u0627\u062e\u062a\u064a\u0627\u0631\u064a\u0629 \u0644\u0625\u0646\u0634\u0627\u0621 \u0645\u0648\u0639\u062f \u0645\u0624\u0643\u062f.",
+      reviewStepLabel: "\u0627\u0644\u0645\u0631\u0627\u062c\u0639\u0629 \u0627\u0644\u0646\u0647\u0627\u0626\u064a\u0629",
+      reviewStepTitle: "\u0631\u0627\u062c\u0639 \u062d\u062c\u0632\u0643",
+      reviewStepDescription:
+        "\u062a\u062d\u0642\u0642 \u0645\u0646 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0645\u0648\u0639\u062f \u0648\u0627\u0644\u062a\u0648\u0627\u0635\u0644. \u0625\u0630\u0627 \u0643\u0627\u0646 \u0643\u0644 \u0634\u064a\u0621 \u0635\u062d\u064a\u062d\u0627 \u064a\u0645\u0643\u0646\u0643 \u062a\u0623\u0643\u064a\u062f \u0627\u0644\u062d\u062c\u0632.",
+      continueToReviewLabel: "\u0645\u0631\u0627\u062c\u0639\u0629 \u0627\u0644\u062d\u062c\u0632",
+      reviewCustomerTitle: "\u0628\u064a\u0627\u0646\u0627\u062a\u0643",
+      backToServiceLabel: "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u062e\u062f\u0645\u0629",
+      backToEmployeeLabel: "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u062d\u0644\u0627\u0642",
+      backToTimeLabel: "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0648\u0642\u062a",
+      editLabel: "\u062a\u0639\u062f\u064a\u0644",
       selectedSlotTitle: "\u0627\u0644\u0645\u0648\u0639\u062f \u0627\u0644\u0645\u062d\u062f\u062f",
       selectedDateLabel: "\u0627\u0644\u062a\u0627\u0631\u064a\u062e",
       selectedTimeLabel: "\u0627\u0644\u0648\u0642\u062a",
@@ -577,6 +607,15 @@ const dictionaries = {
       customerStepLabel: string;
       customerStepTitle: string;
       customerStepDescription: string;
+      reviewStepLabel: string;
+      reviewStepTitle: string;
+      reviewStepDescription: string;
+      continueToReviewLabel: string;
+      reviewCustomerTitle: string;
+      backToServiceLabel: string;
+      backToEmployeeLabel: string;
+      backToTimeLabel: string;
+      editLabel: string;
       selectedSlotTitle: string;
       selectedDateLabel: string;
       selectedTimeLabel: string;

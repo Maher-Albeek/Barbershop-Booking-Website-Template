@@ -13,10 +13,14 @@ type BookingPageProps = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{
     service?: string;
+    serviceConfirmed?: string;
     employee?: string;
+    employeeConfirmed?: string;
     date?: string;
     start?: string;
     slotEmployee?: string;
+    timeConfirmed?: string;
+    customerConfirmed?: string;
     error?: string;
     name?: string;
     email?: string;
@@ -72,10 +76,14 @@ function bookingHref(
   locale: Locale,
   params: {
     service?: string;
+    serviceConfirmed?: string;
     employee?: string;
+    employeeConfirmed?: string;
     date?: string;
     start?: string;
     slotEmployee?: string;
+    timeConfirmed?: string;
+    customerConfirmed?: string;
     name?: string;
     email?: string;
     notes?: string;
@@ -119,7 +127,21 @@ function errorMessage(code: string | undefined, dictionary: ReturnType<typeof ge
 export default async function BookingPage({ params, searchParams }: BookingPageProps) {
   const [
     { locale },
-    { service, employee, date, start, slotEmployee, error, name, email, notes }
+    {
+      service,
+      serviceConfirmed,
+      employee,
+      employeeConfirmed,
+      date,
+      start,
+      slotEmployee,
+      timeConfirmed,
+      customerConfirmed,
+      error,
+      name,
+      email,
+      notes
+    }
   ] = await Promise.all([params, searchParams]);
 
   if (!isLocale(locale)) {
@@ -206,6 +228,36 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
       eligibleEmployees.find((member) => member.slug === selectedSlot.employeeSlug)?.name) ||
     selectedEmployee?.name ||
     dictionary.booking.employeeAnyOption;
+  const hasValidEmployeeSelection = employee === "any" || Boolean(selectedEmployee);
+  const hasServiceStepConfirmed = Boolean(selectedService && serviceConfirmed === "1");
+  const hasEmployeeStepConfirmed = Boolean(
+    hasServiceStepConfirmed && hasValidEmployeeSelection && employeeConfirmed === "1"
+  );
+  const hasTimeStepConfirmed = Boolean(
+    hasEmployeeStepConfirmed && selectedSlot && timeConfirmed === "1"
+  );
+  const hasCustomerStepConfirmed = Boolean(
+    hasTimeStepConfirmed && name && customerConfirmed === "1"
+  );
+  const activeStep = !hasServiceStepConfirmed
+    ? 1
+    : !hasEmployeeStepConfirmed
+      ? 2
+      : !hasTimeStepConfirmed
+        ? 3
+        : !hasCustomerStepConfirmed
+          ? 4
+          : 5;
+  const confirmedStepCount = hasCustomerStepConfirmed
+    ? 4
+    : hasTimeStepConfirmed
+      ? 3
+      : hasEmployeeStepConfirmed
+        ? 2
+        : hasServiceStepConfirmed
+          ? 1
+          : 0;
+  const timelineProgressPercent = Math.round((confirmedStepCount / 4) * 100);
   const feedbackMessage = errorMessage(error, dictionary);
   const contactNav = dictionary.navigation.find((item) => item.href === "/contact");
 
@@ -234,10 +286,14 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
           label: item,
           href: bookingHref(item, {
             service: selectedService?.slug,
+            serviceConfirmed,
             employee: selectedEmployeeValue,
+            employeeConfirmed,
             date,
             start,
             slotEmployee,
+            timeConfirmed,
+            customerConfirmed,
             name,
             email,
             notes,
@@ -252,12 +308,270 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
         <section
           id="booking-flow"
           style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1.7fr) minmax(280px, 0.9fr)",
-            gap: 18
+            display: "block"
           }}
         >
           <div style={{ display: "grid", gap: 18 }}>
+            <section
+              style={{
+                borderRadius: 28,
+                border: "1px solid var(--border)",
+                background: "var(--surface-strong)",
+                boxShadow: "var(--shadow)",
+                padding: 18,
+                display: "grid",
+                gap: 12
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 12,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.14em",
+                  color: "var(--muted)"
+                }}
+              >
+                Flow Timeline
+              </div>
+              <div className="booking-flow-loader" aria-hidden="true">
+                <div
+                  className="booking-flow-bar"
+                  style={{ width: `${timelineProgressPercent}%` }}
+                />
+                <div className="booking-flow-nodes">
+                  <div className="booking-flow-node booking-flow-node-start" />
+
+                  {[2, 3, 4].map((index) => {
+                    const isDone = activeStep >= index;
+
+                    return (
+                      <div
+                        key={index}
+                        className={`booking-flow-node booking-flow-check${
+                          isDone ? " booking-flow-check-done" : ""
+                        }`}
+                      >
+                        <svg
+                          stroke="white"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="m4.5 12.75 6 6 9-13.5"
+                            strokeLinejoin="round"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+                  gap: 8,
+                  fontSize: 12,
+                  color: "var(--muted)"
+                }}
+              >
+                {[
+                  { index: 1, label: dictionary.booking.serviceStepTitle },
+                  { index: 2, label: dictionary.booking.employeeStepTitle },
+                  { index: 3, label: dictionary.booking.timeStepTitle },
+                  { index: 4, label: dictionary.booking.customerStepTitle }
+                ].map((step) => {
+                  const isPrevious = step.index < activeStep;
+
+                  if (!isPrevious) {
+                    return <span key={step.index}>{step.label}</span>;
+                  }
+
+                  if (step.index === 1) {
+                    return (
+                      <Link
+                        key={step.index}
+                        href={bookingHref(locale, {
+                          service: selectedService?.slug,
+                          name,
+                          email,
+                          notes
+                        }, "booking-flow")}
+                        scroll={false}
+                        style={{ color: "var(--brand-accent)", textDecoration: "underline" }}
+                      >
+                        {step.label}
+                      </Link>
+                    );
+                  }
+
+                  if (step.index === 2) {
+                    return (
+                      <Link
+                        key={step.index}
+                        href={bookingHref(locale, {
+                          service: selectedService?.slug,
+                          serviceConfirmed: "1",
+                          employee: selectedEmployeeValue,
+                          name,
+                          email,
+                          notes
+                        }, "booking-flow")}
+                        scroll={false}
+                        style={{ color: "var(--brand-accent)", textDecoration: "underline" }}
+                      >
+                        {step.label}
+                      </Link>
+                    );
+                  }
+
+                  if (step.index === 3) {
+                    return (
+                      <Link
+                        key={step.index}
+                        href={bookingHref(locale, {
+                          service: selectedService?.slug,
+                          serviceConfirmed: "1",
+                          employee: selectedEmployeeValue,
+                          employeeConfirmed: "1",
+                          date,
+                          start,
+                          slotEmployee,
+                          name,
+                          email,
+                          notes
+                        }, "booking-flow")}
+                        scroll={false}
+                        style={{ color: "var(--brand-accent)", textDecoration: "underline" }}
+                      >
+                        {step.label}
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={step.index}
+                      href={bookingHref(locale, {
+                        service: selectedService?.slug,
+                        serviceConfirmed: "1",
+                        employee: selectedEmployeeValue,
+                        employeeConfirmed: "1",
+                        date,
+                        start,
+                        slotEmployee,
+                        timeConfirmed: "1",
+                        name,
+                        email,
+                        notes
+                      }, "booking-flow")}
+                      scroll={false}
+                      style={{ color: "var(--brand-accent)", textDecoration: "underline" }}
+                    >
+                      {step.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+
+            <style>{`
+              .booking-flow-loader {
+                position: relative;
+                background: #535353;
+                border-radius: 999px;
+                height: 12px;
+                width: 100%;
+                max-width: 520px;
+                margin: 6px 0 2px;
+              }
+
+              .booking-flow-bar {
+                position: absolute;
+                inset: 0 auto 0 0;
+                background: rgb(0, 205, 0);
+                border-radius: 999px;
+                transition: width 360ms ease;
+              }
+
+              .booking-flow-nodes {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 2;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                pointer-events: none;
+              }
+
+              .booking-flow-node {
+                height: 24px;
+                width: 24px;
+                border-radius: 999px;
+                background: #535353;
+                border: 2px solid #535353;
+                display: grid;
+                place-items: center;
+                transform: scale(0.8);
+              }
+
+              .booking-flow-node-start {
+                background: #535353;
+                border-color: #535353;
+                transform: scale(0.72);
+              }
+
+              .booking-flow-check {
+                transition: transform 220ms ease, background-color 220ms ease, border-color 220ms ease;
+              }
+
+              .booking-flow-check svg {
+                width: 15px;
+                height: 15px;
+                opacity: 0;
+                transition: opacity 180ms ease;
+              }
+
+              .booking-flow-check-done {
+                transform: scale(1);
+                background: rgb(0, 205, 0);
+                border-color: rgb(0, 205, 0);
+                animation: bookingFlowCheckPop 240ms ease;
+              }
+
+              .booking-flow-check-done svg {
+                opacity: 1;
+              }
+
+              @keyframes bookingFlowCheckPop {
+                from {
+                  transform: scale(0.82);
+                }
+                to {
+                  transform: scale(1);
+                }
+              }
+
+              @keyframes bookingStepSlideIn {
+                from {
+                  opacity: 0;
+                  transform: translateX(22px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateX(0);
+                }
+              }
+            `}</style>
+
+            {activeStep === 1 ? (
             <form
               action={`/${locale}/booking#booking-flow`}
               method="get"
@@ -268,9 +582,15 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                 boxShadow: "var(--shadow)",
                 padding: 24,
                 display: "grid",
-                gap: 24
+                gap: 24,
+                animation: "bookingStepSlideIn 320ms ease"
               }}
             >
+              <input type="hidden" name="serviceConfirmed" value="1" />
+              <input type="hidden" name="name" value={name ?? ""} />
+              <input type="hidden" name="email" value={email ?? ""} />
+              <input type="hidden" name="notes" value={notes ?? ""} />
+
               <section style={{ display: "grid", gap: 16 }}>
                 <div style={{ display: "grid", gap: 8 }}>
                   <div
@@ -390,172 +710,219 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                   </button>
                 </div>
               </section>
+            </form>
+            ) : null}
 
-              <section
-                aria-disabled={!selectedService}
+            {activeStep === 2 && hasServiceStepConfirmed ? (
+              <form
+                action={`/${locale}/booking#booking-flow`}
+                method="get"
                 style={{
+                  borderRadius: 28,
+                  border: "1px solid var(--border)",
+                  background: "var(--surface-strong)",
+                  boxShadow: "var(--shadow)",
+                  padding: 24,
                   display: "grid",
-                  gap: 14,
-                  paddingTop: 24,
-                  borderTop: "1px solid var(--border)",
-                  opacity: selectedService ? 1 : 0.52
+                  gap: 18,
+                  animation: "bookingStepSlideIn 320ms ease"
                 }}
               >
-                <h3 style={{ margin: 0, fontSize: 24 }}>{dictionary.booking.detailsTitle}</h3>
-                <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-                  {dictionary.booking.detailsDescription}
-                </p>
+                <input type="hidden" name="service" value={selectedService?.slug ?? ""} />
+                <input type="hidden" name="serviceConfirmed" value="1" />
+                <input type="hidden" name="employeeConfirmed" value="1" />
+                <input type="hidden" name="name" value={name ?? ""} />
+                <input type="hidden" name="email" value={email ?? ""} />
+                <input type="hidden" name="notes" value={notes ?? ""} />
 
-                <div
-                  style={{
-                    display: "grid",
-                    gap: 14,
-                    padding: 18,
-                    borderRadius: 22,
-                    border: "1px solid var(--border)",
-                    background: "var(--surface)"
-                  }}
-                >
-                  <div style={{ display: "grid", gap: 6 }}>
-                    <div
+                <div>
+                  <Link
+                    href={bookingHref(locale, {
+                      service: selectedService?.slug,
+                      name,
+                      email,
+                      notes
+                    }, "booking-flow")}
+                    scroll={false}
+                    style={{ color: "var(--brand-accent)", textDecoration: "underline", fontSize: 14 }}
+                  >
+                    {dictionary.booking.backToServiceLabel}
+                  </Link>
+                </div>
+
+                <div style={{ display: "grid", gap: 6 }}>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      color: "var(--muted)"
+                    }}
+                  >
+                    {dictionary.booking.employeeStepLabel}
+                  </div>
+                  <h3 style={{ margin: 0, fontSize: 24 }}>{dictionary.booking.employeeStepTitle}</h3>
+                  <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
+                    {dictionary.booking.employeeStepDescription}
+                  </p>
+                </div>
+
+                {eligibleEmployees.length > 0 ? (
+                  <>
+                    <label
+                      htmlFor="employee-any"
                       style={{
-                        fontSize: 12,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.14em",
-                        color: "var(--muted)"
+                        display: "grid",
+                        gap: 8,
+                        padding: 18,
+                        borderRadius: 20,
+                        border:
+                          selectedEmployeeValue === "any"
+                            ? "1px solid var(--brand-accent)"
+                            : "1px solid var(--border)",
+                        background:
+                          selectedEmployeeValue === "any"
+                            ? "rgba(214, 176, 125, 0.14)"
+                            : "var(--surface)"
                       }}
                     >
-                      {dictionary.booking.employeeStepLabel}
-                    </div>
-                    <h4 style={{ margin: 0, fontSize: 24 }}>{dictionary.booking.employeeStepTitle}</h4>
-                    <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-                      {dictionary.booking.employeeStepDescription}
-                    </p>
-                  </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                        <input
+                          id="employee-any"
+                          type="radio"
+                          name="employee"
+                          value="any"
+                          required
+                          defaultChecked={selectedEmployeeValue === "any"}
+                        />
+                        <strong>{dictionary.booking.employeeAnyOption}</strong>
+                      </div>
+                      <span style={{ color: "var(--muted)", lineHeight: 1.6 }}>
+                        {dictionary.booking.employeeAnyDescription}
+                      </span>
+                    </label>
 
-                  {selectedService && eligibleEmployees.length > 0 ? (
-                    <>
-                      <label
-                        htmlFor="employee-any"
+                    <div style={{ display: "grid", gap: 12 }}>
+                      <strong style={{ fontSize: 15 }}>{dictionary.booking.employeeSpecificLabel}</strong>
+                      <div
                         style={{
                           display: "grid",
-                          gap: 8,
-                          padding: 18,
-                          borderRadius: 20,
-                          border:
-                            selectedEmployeeValue === "any"
-                              ? "1px solid var(--brand-accent)"
-                              : "1px solid var(--border)",
-                          background:
-                            selectedEmployeeValue === "any"
-                              ? "rgba(214, 176, 125, 0.14)"
-                              : "var(--surface-strong)"
+                          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                          gap: 12
                         }}
                       >
-                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                          <input
-                            id="employee-any"
-                            type="radio"
-                            name="employee"
-                            value="any"
-                            defaultChecked={selectedEmployeeValue === "any"}
-                          />
-                          <strong>{dictionary.booking.employeeAnyOption}</strong>
-                        </div>
-                        <span style={{ color: "var(--muted)", lineHeight: 1.6 }}>
-                          {dictionary.booking.employeeAnyDescription}
-                        </span>
-                      </label>
+                        {eligibleEmployees.map((member) => {
+                          const isSelected = member.slug === selectedEmployeeValue;
 
-                      <div style={{ display: "grid", gap: 12 }}>
-                        <strong style={{ fontSize: 15 }}>
-                          {dictionary.booking.employeeSpecificLabel}
-                        </strong>
+                          return (
+                            <label
+                              key={member.slug}
+                              htmlFor={member.slug}
+                              style={{
+                                display: "grid",
+                                gap: 10,
+                                padding: 18,
+                                borderRadius: 20,
+                                border: isSelected
+                                  ? "1px solid var(--brand-accent)"
+                                  : "1px solid var(--border)",
+                                background: isSelected
+                                  ? "rgba(214, 176, 125, 0.14)"
+                                  : "var(--surface)"
+                              }}
+                            >
+                              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                <input
+                                  id={member.slug}
+                                  type="radio"
+                                  name="employee"
+                                  value={member.slug}
+                                  defaultChecked={isSelected}
+                                />
+                                <strong>{member.name}</strong>
+                              </div>
 
-                        <div
-                          style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                            gap: 12
-                          }}
-                        >
-                          {eligibleEmployees.map((member) => {
-                            const isSelected = member.slug === selectedEmployeeValue;
+                              <span style={{ color: "var(--muted)", lineHeight: 1.6 }}>
+                                {member.bio ?? member.specialties.join(" - ")}
+                              </span>
 
-                            return (
-                              <label
-                                key={member.slug}
-                                htmlFor={member.slug}
-                                style={{
-                                  display: "grid",
-                                  gap: 10,
-                                  padding: 18,
-                                  borderRadius: 20,
-                                  border: isSelected
-                                    ? "1px solid var(--brand-accent)"
-                                    : "1px solid var(--border)",
-                                  background: isSelected
-                                    ? "rgba(214, 176, 125, 0.14)"
-                                    : "var(--surface-strong)"
-                                }}
-                              >
-                                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                                  <input
-                                    id={member.slug}
-                                    type="radio"
-                                    name="employee"
-                                    value={member.slug}
-                                    defaultChecked={isSelected}
-                                  />
-                                  <strong>{member.name}</strong>
-                                </div>
-
-                                <span style={{ color: "var(--muted)", lineHeight: 1.6 }}>
-                                  {member.bio ?? member.specialties.join(" - ")}
-                                </span>
-
-                                <span style={{ fontSize: 14 }}>
-                                  <strong>{dictionary.booking.employeeSpecialtiesLabel}:</strong>{" "}
-                                  {member.specialties.join(" - ")}
-                                </span>
-                              </label>
-                            );
-                          })}
-                        </div>
+                              <span style={{ fontSize: 14 }}>
+                                <strong>{dictionary.booking.employeeSpecialtiesLabel}:</strong>{" "}
+                                {member.specialties.join(" - ")}
+                              </span>
+                            </label>
+                          );
+                        })}
                       </div>
-                    </>
-                  ) : selectedService ? (
-                    <div
+                    </div>
+
+                    <button
+                      type="submit"
                       style={{
-                        borderRadius: 20,
-                        padding: 18,
-                        background: "rgba(214, 176, 125, 0.12)",
-                        color: "var(--brand-accent)",
-                        display: "grid",
-                        gap: 8
+                        width: "fit-content",
+                        borderRadius: 999,
+                        border: "none",
+                        padding: "10px 16px",
+                        fontWeight: 700,
+                        background:
+                          "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
+                        color: "#fffaf4",
+                        cursor: "pointer"
                       }}
                     >
-                      <strong>{dictionary.booking.employeeUnavailableTitle}</strong>
-                      <span style={{ lineHeight: 1.6 }}>
-                        {dictionary.booking.employeeUnavailableDescription}
-                      </span>
-                    </div>
-                  ) : null}
-                </div>
-              </section>
-            </form>
+                      {dictionary.booking.employeeStepTitle}
+                    </button>
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      borderRadius: 20,
+                      padding: 18,
+                      background: "rgba(214, 176, 125, 0.12)",
+                      color: "var(--brand-accent)",
+                      display: "grid",
+                      gap: 8
+                    }}
+                  >
+                    <strong>{dictionary.booking.employeeUnavailableTitle}</strong>
+                    <span style={{ lineHeight: 1.6 }}>
+                      {dictionary.booking.employeeUnavailableDescription}
+                    </span>
+                  </div>
+                )}
+              </form>
+            ) : null}
 
-            <section
-              style={{
-                borderRadius: 28,
-                border: "1px solid var(--border)",
-                background: "var(--surface-strong)",
-                boxShadow: "var(--shadow)",
-                padding: 24,
-                display: "grid",
-                gap: 18
-              }}
-            >
+            {activeStep === 3 && hasEmployeeStepConfirmed ? (
+              <section
+                style={{
+                  borderRadius: 28,
+                  border: "1px solid var(--border)",
+                  background: "var(--surface-strong)",
+                  boxShadow: "var(--shadow)",
+                  padding: 24,
+                  display: "grid",
+                  gap: 18,
+                  animation: "bookingStepSlideIn 320ms ease"
+                }}
+              >
+              <div>
+                <Link
+                  href={bookingHref(locale, {
+                    service: selectedService?.slug,
+                    serviceConfirmed: "1",
+                    employee: selectedEmployeeValue,
+                    name,
+                    email,
+                    notes
+                  }, "booking-flow")}
+                  scroll={false}
+                  style={{ color: "var(--brand-accent)", textDecoration: "underline", fontSize: 14 }}
+                >
+                  {dictionary.booking.backToEmployeeLabel}
+                </Link>
+              </div>
+
               <div style={{ display: "grid", gap: 6 }}>
                 <div
                   style={{
@@ -607,7 +974,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                       style={{ display: "grid", gap: 10 }}
                     >
                       <input type="hidden" name="service" value={selectedService.slug} />
+                      <input type="hidden" name="serviceConfirmed" value="1" />
                       <input type="hidden" name="employee" value={selectedEmployeeValue} />
+                      <input type="hidden" name="employeeConfirmed" value="1" />
                       <input type="hidden" name="name" value={name ?? ""} />
                       <input type="hidden" name="email" value={email ?? ""} />
                       <input type="hidden" name="notes" value={notes ?? ""} />
@@ -681,7 +1050,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                               key={`${slot.employeeSlug}-${slot.dateKey}-${slot.start}`}
                               href={bookingHref(locale, {
                                 service: selectedService.slug,
+                                serviceConfirmed: "1",
                                 employee: selectedEmployeeValue,
+                                employeeConfirmed: "1",
                                 date: slot.dateKey,
                                 start: slot.start,
                                 slotEmployee: slot.employeeSlug,
@@ -752,6 +1123,43 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                       {dictionary.booking.selectedDateLabel}
                     </div>
                   )}
+
+                  {selectedSlot ? (
+                    <form
+                      method="get"
+                      action={`/${locale}/booking#booking-flow`}
+                      style={{ display: "flex", justifyContent: "flex-end" }}
+                    >
+                      <input type="hidden" name="service" value={selectedService.slug} />
+                      <input type="hidden" name="serviceConfirmed" value="1" />
+                      <input type="hidden" name="employee" value={selectedEmployeeValue} />
+                      <input type="hidden" name="employeeConfirmed" value="1" />
+                      <input type="hidden" name="date" value={selectedSlot.dateKey} />
+                      <input type="hidden" name="start" value={selectedSlot.start} />
+                      <input type="hidden" name="slotEmployee" value={selectedSlot.employeeSlug} />
+                      <input type="hidden" name="timeConfirmed" value="1" />
+                      <input type="hidden" name="name" value={name ?? ""} />
+                      <input type="hidden" name="email" value={email ?? ""} />
+                      <input type="hidden" name="notes" value={notes ?? ""} />
+
+                      <button
+                        type="submit"
+                        style={{
+                          width: "fit-content",
+                          borderRadius: 999,
+                          border: "none",
+                          padding: "10px 16px",
+                          fontWeight: 700,
+                          background:
+                            "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
+                          color: "#fffaf4",
+                          cursor: "pointer"
+                        }}
+                      >
+                        {dictionary.booking.timeStepTitle}
+                      </button>
+                    </form>
+                  ) : null}
                 </div>
               ) : selectedService && (selectedEmployeeValue === "any" || selectedEmployee) ? (
                 <div
@@ -779,25 +1187,54 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                   {dictionary.booking.timeStep}
                 </div>
               )}
-            </section>
+              </section>
+            ) : null}
 
-            <form
-              action={submitBooking}
-              style={{
-                borderRadius: 28,
-                border: "1px solid var(--border)",
-                background: "var(--surface-strong)",
-                boxShadow: "var(--shadow)",
-                padding: 24,
-                display: "grid",
-                gap: 18
-              }}
-            >
-              <input type="hidden" name="locale" value={locale} />
+            {activeStep === 4 && hasTimeStepConfirmed ? (
+              <form
+                action={`/${locale}/booking#booking-flow`}
+                method="get"
+                style={{
+                  borderRadius: 28,
+                  border: "1px solid var(--border)",
+                  background: "var(--surface-strong)",
+                  boxShadow: "var(--shadow)",
+                  padding: 24,
+                  display: "grid",
+                  gap: 18,
+                  animation: "bookingStepSlideIn 320ms ease"
+                }}
+              >
+              <div>
+                <Link
+                  href={bookingHref(locale, {
+                    service: selectedService?.slug,
+                    serviceConfirmed: "1",
+                    employee: selectedEmployeeValue,
+                    employeeConfirmed: "1",
+                    date,
+                    start,
+                    slotEmployee,
+                    name,
+                    email,
+                    notes
+                  }, "booking-flow")}
+                  scroll={false}
+                  style={{ color: "var(--brand-accent)", textDecoration: "underline", fontSize: 14 }}
+                >
+                  {dictionary.booking.backToTimeLabel}
+                </Link>
+              </div>
+
               <input type="hidden" name="service" value={selectedService?.slug ?? ""} />
-              <input type="hidden" name="employee" value={selectedSlot?.employeeSlug ?? ""} />
+              <input type="hidden" name="serviceConfirmed" value="1" />
+              <input type="hidden" name="employee" value={selectedEmployeeValue} />
+              <input type="hidden" name="employeeConfirmed" value="1" />
               <input type="hidden" name="date" value={selectedSlot?.dateKey ?? ""} />
               <input type="hidden" name="start" value={selectedSlot?.start ?? ""} />
+              <input type="hidden" name="slotEmployee" value={selectedSlot?.employeeSlug ?? ""} />
+              <input type="hidden" name="timeConfirmed" value="1" />
+              <input type="hidden" name="customerConfirmed" value="1" />
 
               <div style={{ display: "grid", gap: 6 }}>
                 <div
@@ -875,12 +1312,6 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                       </div>
                       <strong>{selectedSlot.priceLabel}</strong>
                     </div>
-                    <div>
-                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
-                        {dictionary.booking.selectedStatusLabel}
-                      </div>
-                      <strong>{dictionary.booking.confirmedStatus}</strong>
-                    </div>
                   </div>
                 </div>
               ) : (
@@ -902,7 +1333,7 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
               <label style={{ display: "grid", gap: 8 }}>
                 <span>{dictionary.booking.nameLabel}</span>
                 <input
-                  name="customerName"
+                  name="name"
                   defaultValue={name}
                   required
                   style={{
@@ -961,124 +1392,220 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                   cursor: !selectedSlot ? "not-allowed" : "pointer"
                 }}
               >
-                {dictionary.booking.submitLabel}
+                {dictionary.booking.continueToReviewLabel}
               </button>
-            </form>
-          </div>
+              </form>
+            ) : null}
 
-          <aside
-            style={{
-              borderRadius: 28,
-              border: "1px solid var(--border)",
-              background: "var(--surface-strong)",
-              boxShadow: "var(--shadow)",
-              padding: 24,
-              display: "grid",
-              gap: 18,
-              alignContent: "start"
-            }}
-          >
-            <div>
-              <div
+            {activeStep === 5 && hasCustomerStepConfirmed ? (
+              <form
+                action={submitBooking}
                 style={{
-                  fontSize: 12,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.14em",
-                  color: "var(--muted)"
-                }}
-              >
-                {selectedService ? dictionary.booking.serviceStepLabel : dictionary.booking.eyebrow}
-              </div>
-              <h2 style={{ margin: "10px 0 8px", fontSize: 28 }}>
-                {selectedService ? selectedService.name : dictionary.booking.noSelectionTitle}
-              </h2>
-              <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
-                {selectedService
-                  ? selectedService.description
-                  : dictionary.booking.noSelectionDescription}
-              </p>
-            </div>
-
-            {selectedService ? (
-              <div
-                style={{
+                  borderRadius: 28,
+                  border: "1px solid var(--border)",
+                  background: "var(--surface-strong)",
+                  boxShadow: "var(--shadow)",
+                  padding: 24,
                   display: "grid",
-                  gap: 12,
-                  padding: 18,
-                  borderRadius: 20,
-                  background: "var(--surface)"
+                  gap: 18,
+                  animation: "bookingStepSlideIn 320ms ease"
                 }}
               >
-                <div>
-                  <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
-                    {dictionary.services.durationLabel}
+                <input type="hidden" name="locale" value={locale} />
+                <input type="hidden" name="service" value={selectedService?.slug ?? ""} />
+                <input type="hidden" name="employee" value={selectedSlot?.employeeSlug ?? ""} />
+                <input type="hidden" name="date" value={selectedSlot?.dateKey ?? ""} />
+                <input type="hidden" name="start" value={selectedSlot?.start ?? ""} />
+                <input type="hidden" name="customerName" value={name ?? ""} />
+                <input type="hidden" name="email" value={email ?? ""} />
+                <input type="hidden" name="notes" value={notes ?? ""} />
+
+                <div style={{ display: "grid", gap: 6 }}>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.14em",
+                      color: "var(--muted)"
+                    }}
+                  >
+                    {dictionary.booking.reviewStepLabel}
                   </div>
-                  <strong>{selectedService.durationLabel}</strong>
+                  <h3 style={{ margin: 0, fontSize: 26 }}>{dictionary.booking.reviewStepTitle}</h3>
+                  <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
+                    {dictionary.booking.reviewStepDescription}
+                  </p>
                 </div>
 
-                <div>
-                  <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
-                    {dictionary.booking.selectedPriceLabel}
+                <div
+                  style={{
+                    borderRadius: 20,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                    padding: 18,
+                    display: "grid",
+                    gap: 12
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: 12,
+                      flexWrap: "wrap"
+                    }}
+                  >
+                    <strong style={{ fontSize: 18 }}>{dictionary.booking.selectedSlotTitle}</strong>
+                    <Link
+                      href={bookingHref(locale, {
+                        service: selectedService?.slug,
+                        serviceConfirmed: "1",
+                        employee: selectedEmployeeValue,
+                        employeeConfirmed: "1",
+                        date,
+                        start,
+                        slotEmployee,
+                        name,
+                        email,
+                        notes
+                      }, "booking-flow")}
+                      scroll={false}
+                      style={{ color: "var(--brand-accent)", textDecoration: "underline", fontSize: 14 }}
+                    >
+                      {dictionary.booking.editLabel}
+                    </Link>
                   </div>
-                  <strong>
-                    {selectedSlot?.priceLabel ??
-                      (selectedService.pricing === "variable"
-                        ? dictionary.services.variablePriceLabel
-                        : `${dictionary.services.fixedPriceLabel}: ${selectedService.priceLabel}`)}
-                  </strong>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
-                    {dictionary.booking.selectedEmployeeLabel}
-                  </div>
-                  <strong>{selectedSummaryEmployee}</strong>
-                </div>
-
-                {selectedSlot ? (
-                  <>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                      gap: 12
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
+                        {dictionary.booking.serviceStepTitle}
+                      </div>
+                      <strong>{selectedService?.name}</strong>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
+                        {dictionary.booking.selectedEmployeeLabel}
+                      </div>
+                      <strong>{selectedSlot?.employeeName ?? selectedSummaryEmployee}</strong>
+                    </div>
                     <div>
                       <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
                         {dictionary.booking.selectedDateLabel}
                       </div>
-                      <strong>{selectedSlot.dateKey}</strong>
+                      <strong>{selectedSlot?.dateKey}</strong>
                     </div>
                     <div>
                       <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
                         {dictionary.booking.selectedTimeLabel}
                       </div>
                       <strong>
-                        {selectedSlot.start} - {selectedSlot.end}
+                        {selectedSlot?.start} - {selectedSlot?.end}
                       </strong>
                     </div>
-                  </>
-                ) : selectedEmployeeValue === "any" ? (
-                  <div>
-                    <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
-                      {dictionary.booking.slotWindowLabel}
+                    <div>
+                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
+                        {dictionary.booking.selectedPriceLabel}
+                      </div>
+                      <strong>{selectedSlot?.priceLabel}</strong>
                     </div>
-                    <strong>{bookingConfig.searchWindowDays} days</strong>
                   </div>
-                ) : null}
-              </div>
-            ) : null}
+                </div>
 
-            <div
-              style={{
-                borderRadius: 20,
-                background: "rgba(214, 176, 125, 0.18)",
-                padding: 18,
-                color: "var(--brand-accent)",
-                fontWeight: 700,
-                lineHeight: 1.6,
-                display: "grid",
-                gap: 6
-              }}
-            >
-              <span>{dictionary.booking.privacyNote}</span>
-              <span>{dictionary.booking.slotTimezoneNote}</span>
-            </div>
-          </aside>
+                <div
+                  style={{
+                    borderRadius: 20,
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                    padding: 18,
+                    display: "grid",
+                    gap: 12
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: 12,
+                      flexWrap: "wrap"
+                    }}
+                  >
+                    <strong style={{ fontSize: 18 }}>{dictionary.booking.reviewCustomerTitle}</strong>
+                    <Link
+                      href={bookingHref(locale, {
+                        service: selectedService?.slug,
+                        serviceConfirmed: "1",
+                        employee: selectedEmployeeValue,
+                        employeeConfirmed: "1",
+                        date,
+                        start,
+                        slotEmployee,
+                        timeConfirmed: "1",
+                        name,
+                        email,
+                        notes
+                      }, "booking-flow")}
+                      scroll={false}
+                      style={{ color: "var(--brand-accent)", textDecoration: "underline", fontSize: 14 }}
+                    >
+                      {dictionary.booking.editLabel}
+                    </Link>
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                      gap: 12
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
+                        {dictionary.booking.nameLabel}
+                      </div>
+                      <strong>{name}</strong>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
+                        {dictionary.booking.emailLabel}
+                      </div>
+                      <strong>{email || "-"}</strong>
+                    </div>
+                    <div style={{ gridColumn: "1 / -1" }}>
+                      <div style={{ fontSize: 12, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--muted)" }}>
+                        {dictionary.booking.notesLabel}
+                      </div>
+                      <strong>{notes || "-"}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={!selectedSlot || !selectedService || !name}
+                  style={{
+                    padding: "14px 18px",
+                    borderRadius: 999,
+                    border: "none",
+                    background: !selectedSlot || !name
+                      ? "var(--border)"
+                      : "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
+                    color: "#fffaf4",
+                    fontWeight: 700,
+                    cursor: !selectedSlot || !name ? "not-allowed" : "pointer"
+                  }}
+                >
+                  {dictionary.booking.submitLabel}
+                </button>
+              </form>
+            ) : null}
+          </div>
         </section>
       </div>
     </main>
