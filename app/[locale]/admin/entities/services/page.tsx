@@ -36,6 +36,15 @@ export default async function AdminServicesPage({ params }: AdminServicesPagePro
             <article key={service.id} style={{ ...surfaceCardStyle, display: "grid", gap: 10 }}>
               <strong>{service.name}</strong>
               <div style={{ color: "var(--muted)" }}>ID: {service.id}</div>
+              {service.description ? (
+                <div style={{ color: "var(--muted)", lineHeight: 1.6 }}>{service.description}</div>
+              ) : null}
+              <div style={{ color: "var(--muted)" }}>
+                {service.durationMinutes ? `${service.durationMinutes} min` : "No duration set"}
+                {service.price !== null && service.price !== undefined
+                  ? ` · ${service.price.toFixed(2)}`
+                  : " · No price set"}
+              </div>
               <div>
                 {service.isActive ? "🟢 Active" : "⚪ Inactive"}
               </div>
@@ -53,11 +62,39 @@ export default async function AdminServicesPage({ params }: AdminServicesPagePro
                       placeholder="Service name"
                       defaultValue={service.name}
                       style={inputStyle}
+                      required
                     />
                     <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <input type="checkbox" name="isActive" defaultChecked={service.isActive} />
                       Active service
                     </label>
+                  </div>
+                  <textarea
+                    name="description"
+                    rows={4}
+                    placeholder="Description"
+                    defaultValue={service.description ?? ""}
+                    style={inputStyle}
+                  />
+                  <div style={gridTwo}>
+                    <input
+                      name="durationMinutes"
+                      type="number"
+                      min="1"
+                      step="1"
+                      placeholder="Duration in minutes"
+                      defaultValue={service.durationMinutes ?? ""}
+                      style={inputStyle}
+                    />
+                    <input
+                      name="price"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="Price"
+                      defaultValue={service.price ?? ""}
+                      style={inputStyle}
+                    />
                   </div>
                   <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
                     Update service
@@ -83,6 +120,30 @@ export default async function AdminServicesPage({ params }: AdminServicesPagePro
               style={inputStyle}
               required
             />
+            <textarea
+              name="description"
+              rows={4}
+              placeholder="Description"
+              style={inputStyle}
+            />
+            <div style={gridTwo}>
+              <input
+                name="durationMinutes"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="Duration in minutes"
+                style={inputStyle}
+              />
+              <input
+                name="price"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Price"
+                style={inputStyle}
+              />
+            </div>
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <input type="checkbox" name="isActive" defaultChecked />
               Active service

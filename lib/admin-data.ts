@@ -49,6 +49,9 @@ export async function saveServiceToDatabase(
   input: {
     serviceId?: number;
     name: string;
+    description?: string;
+    durationMinutes?: number | null;
+    price?: number | null;
     isActive: boolean;
   }
 ) {
@@ -58,6 +61,9 @@ export async function saveServiceToDatabase(
       where: { id: input.serviceId },
       data: {
         name: input.name,
+        description: input.description || null,
+        durationMinutes: input.durationMinutes ?? null,
+        price: input.price ?? null,
         isActive: input.isActive
       }
     });
@@ -67,6 +73,9 @@ export async function saveServiceToDatabase(
       data: {
         shopId,
         name: input.name,
+        description: input.description || null,
+        durationMinutes: input.durationMinutes ?? null,
+        price: input.price ?? null,
         isActive: input.isActive
       }
     });
@@ -101,6 +110,8 @@ export async function saveOfferToDatabase(
     offerId?: number;
     title: string;
     description?: string;
+    price?: number | null;
+    avatar?: string;
     isActive: boolean;
   }
 ) {
@@ -111,6 +122,8 @@ export async function saveOfferToDatabase(
       data: {
         title: input.title,
         description: input.description || null,
+        price: input.price ?? null,
+        avatar: input.avatar || null,
         isActive: input.isActive
       }
     });
@@ -121,6 +134,8 @@ export async function saveOfferToDatabase(
         shopId,
         title: input.title,
         description: input.description || null,
+        price: input.price ?? null,
+        avatar: input.avatar || null,
         isActive: input.isActive
       }
     });
@@ -154,6 +169,7 @@ export async function saveGalleryImageToDatabase(
   input: {
     imageId?: number;
     imageUrl: string;
+    description?: string;
     isVisible: boolean;
   }
 ) {
@@ -163,6 +179,7 @@ export async function saveGalleryImageToDatabase(
       where: { id: input.imageId },
       data: {
         imageUrl: input.imageUrl,
+        description: input.description || null,
         isVisible: input.isVisible
       }
     });
@@ -172,6 +189,7 @@ export async function saveGalleryImageToDatabase(
       data: {
         shopId,
         imageUrl: input.imageUrl,
+        description: input.description || null,
         isVisible: input.isVisible
       }
     });

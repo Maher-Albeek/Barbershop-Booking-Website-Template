@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { isLocale } from "@/lib/i18n";
 import { getGalleryImagesFromDatabase, getPrimaryShopId } from "@/lib/admin-data";
 import { deleteGalleryAction, upsertGalleryAction } from "../../actions";
+import { FormModal } from "../../_form-modal";
+import { ImageDropField } from "../../_image-drop-field";
 import {
   AdminShell,
   SectionTitle,
@@ -45,9 +47,44 @@ export default async function AdminGalleryPage({ params }: AdminGalleryPageProps
                 alt={`Gallery image ${image.id}`}
                 style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", borderRadius: 14 }}
               />
+              {image.description ? <p style={{ margin: 0 }}>{image.description}</p> : null}
               <div style={{ color: "var(--muted)" }}>
                 ID: {image.id} · {image.isVisible ? "🟢 Visible" : "⚪ Hidden"}
               </div>
+              <FormModal
+                buttonLabel="Edit image"
+                title={`Edit gallery image ${image.id}`}
+                description="Replace the image, edit its description, or update its visibility."
+              >
+                <form action={upsertGalleryAction} style={{ display: "grid", gap: 14 }}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <input type="hidden" name="imageId" value={image.id} />
+                  <ImageDropField
+                    name="imageSrc"
+                    label="Gallery image"
+                    defaultValue={image.imageUrl}
+                  />
+                  <label style={{ display: "grid", gap: 8 }}>
+                    <span>Description</span>
+                    <textarea
+                      name="description"
+                      defaultValue={image.description ?? ""}
+                      rows={3}
+                      style={{ ...inputStyle, resize: "vertical", minHeight: 96 }}
+                    />
+                  </label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <input type="checkbox" name="isVisible" defaultChecked={image.isVisible} />
+                    Visible on public gallery
+                  </label>
+                  <button
+                    type="submit"
+                    style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}
+                  >
+                    Update image
+                  </button>
+                </form>
+              </FormModal>
               <form action={deleteGalleryAction}>
                 <input type="hidden" name="locale" value={locale} />
                 <input type="hidden" name="imageId" value={image.id} />
@@ -61,12 +98,15 @@ export default async function AdminGalleryPage({ params }: AdminGalleryPageProps
         <form action={upsertGalleryAction} style={{ display: "grid", gap: 14, marginTop: 24 }}>
           <strong>Add a new gallery image</strong>
           <input type="hidden" name="locale" value={locale} />
-          <input
-            name="imageSrc"
-            placeholder="Image URL"
-            style={inputStyle}
-            required
-          />
+          <ImageDropField name="imageSrc" label="Gallery image" />
+          <label style={{ display: "grid", gap: 8 }}>
+            <span>Description</span>
+            <textarea
+              name="description"
+              rows={3}
+              style={{ ...inputStyle, resize: "vertical", minHeight: 96 }}
+            />
+          </label>
           <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <input type="checkbox" name="isVisible" defaultChecked />
             Visible on public gallery

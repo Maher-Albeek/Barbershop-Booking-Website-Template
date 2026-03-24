@@ -101,9 +101,21 @@ const workingHourSeeds = {
 } as const;
 
 const galleryImageSeeds = [
-  "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1200&q=80"
+  {
+    imageUrl:
+      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1200&q=80",
+    description: "Modern barber chairs and mirrors prepared for the day ahead."
+  },
+  {
+    imageUrl:
+      "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=1200&q=80",
+    description: "A close-up grooming moment during a detailed beard shaping service."
+  },
+  {
+    imageUrl:
+      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1200&q=80",
+    description: "Fresh fade work captured under warm studio lighting in the shop."
+  }
 ] as const;
 
 const offerSeeds = [
@@ -321,9 +333,10 @@ async function seedBlockedTimes(employeesByName: Map<string, { id: number }>) {
 
 async function seedGallery(shopId: number) {
   await prisma.galleryImage.createMany({
-    data: galleryImageSeeds.map((imageUrl) => ({
+    data: galleryImageSeeds.map((image) => ({
       shopId,
-      imageUrl,
+      imageUrl: image.imageUrl,
+      description: image.description,
       isVisible: true
     }))
   });

@@ -14,7 +14,12 @@ import {
   getOffersContent,
   getContactContent
 } from "@/lib/site-config";
-import { getPrimaryShopId, getActiveServices, getVisibleGalleryImages, getActiveOffers } from "@/lib/admin-data";
+import {
+  getPrimaryShopId,
+  getServicesFromDatabase,
+  getVisibleGalleryImages,
+  getOffersFromDatabase
+} from "@/lib/admin-data";
 import { ContactForm } from "./contact/contact-form";
 import { ContactMap } from "./contact/contact-map";
 import { BackToTopButton } from "@/components/back-to-top-button";
@@ -159,7 +164,9 @@ export default async function HomePage({ params }: HomePageProps) {
   const firstHighlight = content.highlights[0];
   
   // Fetch active services from database
-  const activeServices = shopId ? await getActiveServices(shopId) : [];
+  const activeServices = (shopId ? await getServicesFromDatabase(shopId) : []).filter(
+    (service) => service.isActive
+  );
   
   const activeMembers = dbEmployees.map((emp) => ({
     slug: `employee-${emp.id}`,
@@ -176,7 +183,9 @@ export default async function HomePage({ params }: HomePageProps) {
   const visibleImages = shopId ? await getVisibleGalleryImages(shopId) : [];
   
   // Fetch active offers from database
-  const visibleOffers = shopId ? await getActiveOffers(shopId) : [];
+  const visibleOffers = (shopId ? await getOffersFromDatabase(shopId) : []).filter(
+    (offer) => offer.isActive
+  );
   
   const bookings = listBookings();
   const validBookings = bookings.filter(
@@ -292,6 +301,41 @@ export default async function HomePage({ params }: HomePageProps) {
                 >
                   <div style={{ display: "grid", gap: 10 }}>
                     <h3 style={{ margin: 0, fontSize: 28 }}>{service.name}</h3>
+                    {service.description ? (
+                      <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
+                        {service.description}
+                      </p>
+                    ) : null}
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                      {service.durationMinutes ? (
+                        <span
+                          style={{
+                            borderRadius: 999,
+                            padding: "8px 12px",
+                            background: "rgba(214, 176, 125, 0.22)",
+                            color: "var(--brand-accent)",
+                            fontSize: 13,
+                            fontWeight: 700
+                          }}
+                        >
+                          {service.durationMinutes} min
+                        </span>
+                      ) : null}
+                      {service.price !== null && service.price !== undefined ? (
+                        <span
+                          style={{
+                            borderRadius: 999,
+                            padding: "8px 12px",
+                            background: "rgba(214, 176, 125, 0.22)",
+                            color: "var(--brand-accent)",
+                            fontSize: 13,
+                            fontWeight: 700
+                          }}
+                        >
+                          {service.price.toFixed(2)}
+                        </span>
+                      ) : null}
+                    </div>
                   </div>
 
                   <div
@@ -462,7 +506,7 @@ export default async function HomePage({ params }: HomePageProps) {
               >
                 <img
                   src={image.imageUrl}
-                  alt={`Gallery image ${image.id}`}
+                  alt={image.description || `Gallery image ${image.id}`}
                   style={{
                     width: "100%",
                     aspectRatio: "4 / 3",
@@ -482,6 +526,11 @@ export default async function HomePage({ params }: HomePageProps) {
                   >
                     Gallery
                   </div>
+                  {image.description ? (
+                    <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
+                      {image.description}
+                    </p>
+                  ) : null}
                 </div>
               </article>
             ))}
@@ -516,10 +565,27 @@ export default async function HomePage({ params }: HomePageProps) {
                   display: "grid"
                 }}
               >
+                {offer.avatar ? (
+                  <img
+                    src={offer.avatar}
+                    alt={offer.title}
+                    style={{
+                      width: "100%",
+                      aspectRatio: "4 / 3",
+                      objectFit: "cover",
+                      display: "block"
+                    }}
+                  />
+                ) : null}
                 <div style={{ padding: 24, display: "grid", gap: 18 }}>
                   <div style={{ display: "grid", gap: 12 }}>
                     <div style={{ display: "grid", gap: 8 }}>
                       <h3 style={{ margin: 0, fontSize: 28 }}>{offer.title}</h3>
+                      {offer.price !== null && offer.price !== undefined ? (
+                        <div style={{ color: "var(--brand-accent)", fontWeight: 700 }}>
+                          {offer.price.toFixed(2)}
+                        </div>
+                      ) : null}
                     </div>
 
                     {offer.description && (

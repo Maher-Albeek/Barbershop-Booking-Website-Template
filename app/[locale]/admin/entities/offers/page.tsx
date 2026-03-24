@@ -3,6 +3,7 @@ import { isLocale } from "@/lib/i18n";
 import { getOffersFromDatabase, getPrimaryShopId } from "@/lib/admin-data";
 import { FormModal } from "../../_form-modal";
 import { deleteOfferAction, upsertOfferAction } from "../../actions";
+import { AvatarDropField } from "../employees/_avatar-drop-field";
 import {
   AdminShell,
   SectionTitle,
@@ -34,9 +35,21 @@ export default async function AdminOffersPage({ params }: AdminOffersPageProps) 
         <div style={gridTwo}>
           {offers.map((offer) => (
             <article key={offer.id} style={{ ...surfaceCardStyle, display: "grid", gap: 10 }}>
+              {offer.avatar ? (
+                <img
+                  src={offer.avatar}
+                  alt={offer.title}
+                  style={{ width: "100%", height: 180, objectFit: "cover", borderRadius: 16 }}
+                />
+              ) : null}
               <strong>{offer.title}</strong>
               <div style={{ color: "var(--muted)" }}>ID: {offer.id}</div>
               <div>{offer.isActive ? "🟢 Active" : "⚪ Inactive"}</div>
+              <div style={{ color: "var(--muted)" }}>
+                {offer.price !== null && offer.price !== undefined
+                  ? `${offer.price.toFixed(2)}`
+                  : "No price set"}
+              </div>
               {offer.description && (
                 <div style={{ fontSize: "0.9rem", color: "var(--muted)" }}>
                   {offer.description.substring(0, 100)}...
@@ -63,12 +76,26 @@ export default async function AdminOffersPage({ params }: AdminOffersPageProps) 
                       Offer active
                     </label>
                   </div>
+                  <input
+                    name="price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Price"
+                    defaultValue={offer.price ?? ""}
+                    style={inputStyle}
+                  />
                   <textarea
                     name="description_en"
                     rows={4}
                     placeholder="Description"
                     defaultValue={offer.description || ""}
                     style={inputStyle}
+                  />
+                  <AvatarDropField
+                    name="avatar"
+                    label="Offer avatar"
+                    defaultValue={offer.avatar ?? ""}
                   />
                   <button type="submit" style={{ ...inputStyle, cursor: "pointer", fontWeight: 700 }}>
                     Update offer
@@ -101,12 +128,21 @@ export default async function AdminOffersPage({ params }: AdminOffersPageProps) 
               style={inputStyle}
               required
             />
+            <input
+              name="price"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Price"
+              style={inputStyle}
+            />
             <textarea
               name="description_en"
               rows={4}
               placeholder="Description"
               style={inputStyle}
             />
+            <AvatarDropField name="avatar" label="Offer avatar" />
             <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <input type="checkbox" name="isActive" defaultChecked />
               Offer active

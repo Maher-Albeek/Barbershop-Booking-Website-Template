@@ -77,6 +77,22 @@ function parseOptionalPositiveInt(value: FormDataEntryValue | null) {
   return parsed;
 }
 
+function parseOptionalPositiveFloat(value: FormDataEntryValue | null) {
+  const normalized = normalize(value);
+
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number.parseFloat(normalized.replace(",", "."));
+
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return null;
+  }
+
+  return parsed;
+}
+
 function imageMimeToExtension(mimeType: string) {
   switch (mimeType) {
     case "image/avif":
@@ -94,7 +110,7 @@ function imageMimeToExtension(mimeType: string) {
   }
 }
 
-async function saveEmployeeAvatarFromDataUrl(slug: string, maybeDataUrl: string) {
+async function saveImageFromDataUrl(directoryName: string, slug: string, maybeDataUrl: string) {
   if (!slug || !maybeDataUrl.startsWith("data:image/")) {
     return "";
   }
@@ -113,7 +129,7 @@ async function saveEmployeeAvatarFromDataUrl(slug: string, maybeDataUrl: string)
     return "";
   }
 
-  const uploadDir = join(process.cwd(), "public", "employees");
+  const uploadDir = join(process.cwd(), "public", directoryName);
   await mkdir(uploadDir, { recursive: true });
 
   const existingFiles = await readdir(uploadDir);
@@ -127,7 +143,19 @@ async function saveEmployeeAvatarFromDataUrl(slug: string, maybeDataUrl: string)
   const filePath = join(uploadDir, fileName);
   await writeFile(filePath, Buffer.from(base64, "base64"));
 
-  return `/employees/${fileName}`;
+  return `/${directoryName}/${fileName}`;
+}
+
+async function saveEmployeeAvatarFromDataUrl(slug: string, maybeDataUrl: string) {
+  return saveImageFromDataUrl("employees", slug, maybeDataUrl);
+}
+
+async function saveOfferAvatarFromDataUrl(slug: string, maybeDataUrl: string) {
+  return saveImageFromDataUrl("offers", slug, maybeDataUrl);
+}
+
+async function saveGalleryImageFromDataUrl(slug: string, maybeDataUrl: string) {
+  return saveImageFromDataUrl("gallery", slug, maybeDataUrl);
 }
 
 async function authorize(localeValue: string) {
@@ -136,7 +164,7 @@ async function authorize(localeValue: string) {
   return locale;
 }
 
-function redirectToAdmin(locale: Locale, pageKey: AdminPageKey) {
+function redirectToAdmin(locale: Locale, pageKey: AdminPageKey): never {
   redirect(getAdminPageHref(locale, pageKey));
 }
 
@@ -157,12 +185,18 @@ export async function upsertServiceAction(formData: FormData) {
     redirectToAdmin(locale, "services");
   }
 
+  const serviceDescription = normalize(formData.get("description"));
+  const durationMinutes = parseOptionalPositiveInt(formData.get("durationMinutes"));
+  const price = parseOptionalPositiveFloat(formData.get("price"));
   const isActive = checked(formData, "isActive");
 
   // Save to database
   await saveServiceToDatabase(shopId, {
     serviceId: serviceId || undefined,
     name: serviceName,
+    description: serviceDescription || undefined,
+    durationMinutes,
+    price,
     isActive
   });
 
@@ -318,18 +352,23 @@ export async function upsertGalleryAction(formData: FormData) {
     redirectToAdmin(locale, "galleryPage");
   }
 
-  const imageUrl = normalize(formData.get("imageSrc"));
+  const imageInput = normalize(formData.get("imageSrc"));
 
-  if (!imageUrl) {
+  if (!imageInput) {
     redirectToAdmin(locale, "galleryPage");
   }
 
+  const uploadKey = `gallery-${Date.now()}`;
+  const uploadedImageUrl = await saveGalleryImageFromDataUrl(uploadKey, imageInput);
+  const imageUrl = uploadedImageUrl || imageInput;
+  const description = normalize(formData.get("description"));
   const isVisible = checked(formData, "isVisible");
 
   // Save to database
   await saveGalleryImageToDatabase(shopId, {
     imageId: imageId || undefined,
     imageUrl,
+    description: description || undefined,
     isVisible
   });
 
@@ -369,14 +408,20 @@ export async function upsertOfferAction(formData: FormData) {
   const offerDescription = normalize(formData.get("description_en")) || 
                           normalize(formData.get("description_de")) || 
                           normalize(formData.get("description_ar"));
-
+  const offerPrice = parseOptionalPositiveFloat(formData.get("price"));
+  const avatarInput = normalize(formData.get("avatar"));
   const isActive = checked(formData, "isActive");
+
+  const avatarUploadKey = slugify(offerTitle || `offer-${offerId ?? "new"}`);
+  const uploadedAvatar = await saveOfferAvatarFromDataUrl(avatarUploadKey, avatarInput);
 
   // Save to database
   await saveOfferToDatabase(shopId, {
     offerId: offerId || undefined,
     title: offerTitle,
     description: offerDescription || undefined,
+    price: offerPrice,
+    avatar: uploadedAvatar || avatarInput || undefined,
     isActive
   });
 
