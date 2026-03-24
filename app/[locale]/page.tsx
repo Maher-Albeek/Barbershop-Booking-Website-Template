@@ -578,7 +578,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <div style={getContentSectionContainerStyle("contact")}>
         <section
           id="contact"
-          style={{ ...fullScreenSectionStyle, gap: 24 }}
+          style={{ ...fullScreenSectionStyle, gap: 24, minHeight: "auto" }}
         >
           <SectionTitle
             eyebrow={contactContent.eyebrow}

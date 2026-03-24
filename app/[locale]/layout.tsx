@@ -22,10 +22,10 @@ export default async function LocaleLayout({
   }
 
   return (
-    <>
-      {children}
+    <div className="locale-shell">
+      <div className="locale-main">{children}</div>
       <SiteFooter locale={locale} />
       <CookieConsent locale={locale} />
-    </>
+    </div>
   );
 }

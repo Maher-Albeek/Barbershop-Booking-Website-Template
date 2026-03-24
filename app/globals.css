@@ -17,17 +17,33 @@
 
 html {
   scroll-behavior: smooth;
+  min-height: 100%;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
   background:
     radial-gradient(circle at top left, rgba(214, 176, 125, 0.28), transparent 32%),
     radial-gradient(circle at bottom right, rgba(34, 51, 59, 0.12), transparent 28%),
     var(--background);
   color: var(--foreground);
   font-family: Georgia, "Times New Roman", serif;
+}
+
+.locale-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.locale-main {
+  flex: 1 0 auto;
+  min-width: 0;
 }
 
 a {

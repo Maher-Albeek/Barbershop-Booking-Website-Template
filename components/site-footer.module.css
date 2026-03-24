@@ -1,5 +1,6 @@
 .footerShell {
   width: 100%;
+  flex-shrink: 0;
 }
 
 .footerFrame {
@@ -34,6 +35,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .legalColumn {
@@ -69,6 +71,7 @@
   color: rgba(214, 176, 125, 0.82);
   line-height: 1.55;
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .socialLinks {
@@ -107,6 +110,7 @@
   font-size: 13px;
   color: rgba(214, 176, 125, 0.82);
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .contactItem svg {
@@ -173,6 +177,7 @@
   padding: 0;
   font-family: inherit;
   display: inline;
+  overflow-wrap: anywhere;
 }
 
 .legalLink:hover {
@@ -189,11 +194,17 @@
   }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 700px) {
   .footerBody {
     grid-template-columns: 1fr;
     gap: 28px;
-    padding: 28px 18px;
+    padding: 30px 18px;
+  }
+}
+
+@media (max-width: 540px) {
+  .footerBody {
+    padding: 26px 16px;
   }
 }
 
