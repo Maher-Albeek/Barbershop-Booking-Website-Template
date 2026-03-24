@@ -89,6 +89,7 @@ function SectionTitle({
         width: "100vw",
         marginLeft: "calc(50% - 50vw)",
         marginRight: "calc(50% - 50vw)",
+        minHeight:"0svh",
         alignContent: "start",
         borderRadius: 0,
         border: "1px solid var(--border)",
@@ -125,52 +126,18 @@ type CounterIconKind = "staff" | "customers" | "appointments" | "total";
 
 function CounterIcon({ kind }: { kind: CounterIconKind }) {
   const iconStyle = {
-    width: 72,
-    height: 72,
-    color: "#c48425"
+    fontSize: "3rem",
+    color: "#c46d25"
   } as const;
 
-  if (kind === "staff") {
-    return (
-      <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="1.8" style={iconStyle}>
-        <circle cx="36" cy="20" r="9" />
-        <path d="M14 58c2-11 11-18 22-18s20 7 22 18" />
-        <path d="M12 40c2-6 7-10 13-11" />
-        <path d="M47 29c6 1 11 5 13 11" />
-      </svg>
-    );
-  }
+  const iconClassMap: Record<CounterIconKind, string> = {
+    staff: "fa-thin fa-users",
+    customers: "fa-thin fa-people-group",
+    appointments: "fa-thin fa-calendar",
+    total: "fa-thin fa-chart-bar"
+  };
 
-  if (kind === "customers") {
-    return (
-      <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="1.8" style={iconStyle}>
-        <circle cx="27" cy="24" r="8" />
-        <circle cx="46" cy="26" r="6" />
-        <path d="M12 56c2-10 8-16 16-16 9 0 15 6 17 16" />
-        <path d="M40 56c1-7 5-12 11-12 5 0 9 3 11 10" />
-      </svg>
-    );
-  }
-
-  if (kind === "appointments") {
-    return (
-      <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="1.8" style={iconStyle}>
-        <rect x="11" y="15" width="50" height="45" rx="7" />
-        <path d="M11 28h50" />
-        <path d="M22 10v10M50 10v10" />
-        <path d="M23 39h10M39 39h10M23 49h10" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" strokeWidth="1.8" style={iconStyle}>
-      <path d="M18 37c0-12 8-21 18-21s18 9 18 21" />
-      <path d="M13 37h46" />
-      <path d="M18 37c0 12 8 21 18 21s18-9 18-21" />
-      <path d="M36 16v42M18 27h36M18 47h36" />
-    </svg>
-  );
+  return <i className={`fa-solid ${iconClassMap[kind]}`} style={iconStyle} />;
 }
 
 export default async function HomePage({ params }: HomePageProps) {
@@ -671,49 +638,47 @@ export default async function HomePage({ params }: HomePageProps) {
         </section>
       </div>
 
-      <div style={getContentSectionContainerStyle("services")}>
-        <section
+      <section
+        style={{
+          width: "100vw",
+          marginLeft: "calc(50% - 50vw)",
+          marginRight: "calc(50% - 50vw)",
+          marginTop: 10,
+          marginBottom: 60,
+          background: "#efefef",
+          borderTop: "1px solid #e4e4e4",
+          borderBottom: "1px solid #e4e4e4",
+          padding: "54px clamp(20px, calc((100vw - 1200px) / 2 + 20px), 240px)"
+        }}
+      >
+        <div
           style={{
-            width: "100vw",
-            marginLeft: "calc(50% - 50vw)",
-            marginRight: "calc(50% - 50vw)",
-            marginTop: 10,
-            marginBottom: 10,
-            background: "#efefef",
-            borderTop: "1px solid #e4e4e4",
-            borderBottom: "1px solid #e4e4e4",
-            padding: "54px clamp(20px, calc((100vw - 1200px) / 2 + 20px), 240px)"
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gap: 28,
+            alignItems: "start"
           }}
         >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: 28,
-              alignItems: "start"
-            }}
-          >
-            {counterItems.map((item) => (
-              <article
-                key={item.label}
-                style={{
-                  display: "grid",
-                  gap: 16,
-                  justifyItems: "center",
-                  textAlign: "center",
-                  alignContent: "start"
-                }}
-              >
-                <CounterIcon kind={item.icon} />
-                <strong style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 2.6rem)", lineHeight: 1 }}>
-                  <AnimatedCounter value={item.value} suffix="+" locale={locale} />
-                </strong>
-                <div style={{ color: "#1f2a37", fontSize: "clamp(1.15rem, 2.1vw, 1.6rem)" }}>{item.label}</div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </div>
+          {counterItems.map((item) => (
+            <article
+              key={item.label}
+              style={{
+                display: "grid",
+                gap: 16,
+                justifyItems: "center",
+                textAlign: "center",
+                alignContent: "start"
+              }}
+            >
+              <CounterIcon kind={item.icon} />
+              <strong style={{ margin: 0, fontSize: "clamp(2rem, 4vw, 2.6rem)", lineHeight: 1 }}>
+                <AnimatedCounter value={item.value} suffix="+" locale={locale} />
+              </strong>
+              <div style={{ color: "#1f2a37", fontSize: "clamp(1.15rem, 2.1vw, 1.6rem)" }}>{item.label}</div>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <div style={getContentSectionContainerStyle("contact")}>
         <section
