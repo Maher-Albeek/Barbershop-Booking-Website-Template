@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { BookingStatus, PrismaClient, Role } from "../lib/generated/prisma/client";
+import { BookingStatus, PrismaClient, Role } from "@prisma/client";
 import { hashPassword } from "../lib/password";
 
 const databaseUrl = process.env.DATABASE_URL;
