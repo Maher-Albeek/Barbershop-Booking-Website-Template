@@ -34,11 +34,4 @@ Thumbs.db
 .vscode/
 
 /lib/generated/prisma
-prisma/migrations/20260317163808_init/migration.sql
-prisma/migrations/migration_lock.toml
-prisma/schema.prisma
-prisma.config.ts
 .env.example
-prisma/migrations/20260324230629_update_service_description/migration.sql
-prisma/migrations/20260324231249_add_service_offer_fields/migration.sql
-prisma/migrations/20260325090000_add_gallery_image_description/migration.sql
