@@ -1,5 +1,6 @@
 "use server";
 
+import type { Route } from "next";
 import { redirect } from "next/navigation";
 import { authenticateUser, clearSession, createSession } from "@/lib/auth";
 import { isLocale } from "@/lib/i18n";
@@ -11,6 +12,10 @@ function normalize(value: FormDataEntryValue | null) {
 
 function isAuthRole(value: string): value is AuthRole {
   return value === "admin" || value === "employee";
+}
+
+function asInternalRoute(path: string): Route {
+  return path as Route;
 }
 
 export async function loginUser(formData: FormData) {
@@ -29,7 +34,9 @@ export async function loginUser(formData: FormData) {
 
   if (!email || !password) {
     redirect(
-      `/${locale}/login?role=${requestedRole}&redirectTo=${encodeURIComponent(safeRedirect)}&error=missing_fields`
+      asInternalRoute(
+        `/${locale}/login?role=${requestedRole}&redirectTo=${encodeURIComponent(safeRedirect)}&error=missing_fields`
+      )
     );
   }
 
@@ -37,13 +44,17 @@ export async function loginUser(formData: FormData) {
 
   if (!user) {
     redirect(
-      `/${locale}/login?role=${requestedRole}&redirectTo=${encodeURIComponent(safeRedirect)}&error=invalid_credentials`
+      asInternalRoute(
+        `/${locale}/login?role=${requestedRole}&redirectTo=${encodeURIComponent(safeRedirect)}&error=invalid_credentials`
+      )
     );
   }
 
   if (requestedRole === "admin" && user.role !== "admin") {
     redirect(
-      `/${locale}/login?role=admin&redirectTo=${encodeURIComponent(safeRedirect)}&error=forbidden_role`
+      asInternalRoute(
+        `/${locale}/login?role=admin&redirectTo=${encodeURIComponent(safeRedirect)}&error=forbidden_role`
+      )
     );
   }
 
@@ -56,7 +67,7 @@ export async function loginUser(formData: FormData) {
     canManageAvailability: user.canManageAvailability
   });
 
-  redirect(safeRedirect);
+  redirect(asInternalRoute(safeRedirect));
 }
 
 export async function logoutUser(formData: FormData) {
@@ -64,5 +75,5 @@ export async function logoutUser(formData: FormData) {
   const locale = isLocale(localeValue) ? localeValue : "de";
 
   await clearSession();
-  redirect(`/${locale}/login`);
+  redirect(asInternalRoute(`/${locale}/login`));
 }
