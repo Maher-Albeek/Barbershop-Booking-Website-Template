@@ -29,24 +29,25 @@ export function BackToTopButton({ label = "Back to top" }: { label?: string }) {
       aria-label={label}
       style={{
         position: "fixed",
-        bottom: 28,
-        right: 28,
+        bottom: "calc(env(safe-area-inset-bottom, 0px) + clamp(12px, 3.5vw, 28px))",
+        right: "clamp(12px, 3.5vw, 28px)",
         zIndex: 50,
-        width: 48,
-        height: 48,
+        width: "clamp(44px, 11vw, 48px)",
+        height: "clamp(44px, 11vw, 48px)",
         borderRadius: "50%",
         border: "1px solid var(--surface-strong)",
         background: hovered
           ? "var(--surface-strong)"
           : "transparent",
-        color: hovered ? " var(--foreground)" : "#fffaf4 ",
+        color: hovered ? "var(--foreground)" : "#fffaf4",
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         boxShadow: "var(--shadow)",
-        fontSize: 20,
+        fontSize: "clamp(18px, 4.5vw, 20px)",
         lineHeight: 1,
+        touchAction: "manipulation",
         transition: "background 0.2s, color 0.2s"
       }}
     >

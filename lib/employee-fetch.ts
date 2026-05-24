@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { loadEmployeeProfiles } from "@/lib/employee-profile-storage";
 
 export async function getActiveEmployees() {
   const employees = await prisma.employee.findMany({
@@ -13,11 +14,17 @@ export async function getActiveEmployees() {
     orderBy: { name: "asc" }
   });
 
-  return employees;
+  const employeeProfiles = loadEmployeeProfiles();
+
+  return employees.map((employee) => ({
+    ...employee,
+    position: employeeProfiles[employee.id]?.position,
+    instagramUrl: employeeProfiles[employee.id]?.instagramUrl
+  }));
 }
 
 export async function getEmployeeById(id: number) {
-  return prisma.employee.findUnique({
+  const employee = await prisma.employee.findUnique({
     where: { id },
     select: {
       id: true,
@@ -27,6 +34,18 @@ export async function getEmployeeById(id: number) {
       isActive: true
     }
   });
+
+  if (!employee) {
+    return null;
+  }
+
+  const employeeProfiles = loadEmployeeProfiles();
+
+  return {
+    ...employee,
+    position: employeeProfiles[id]?.position,
+    instagramUrl: employeeProfiles[id]?.instagramUrl
+  };
 }
 
 export async function getAllEmployees() {
@@ -41,5 +60,11 @@ export async function getAllEmployees() {
     orderBy: [{ isActive: "desc" }, { name: "asc" }]
   });
 
-  return employees;
+  const employeeProfiles = loadEmployeeProfiles();
+
+  return employees.map((employee) => ({
+    ...employee,
+    position: employeeProfiles[employee.id]?.position,
+    instagramUrl: employeeProfiles[employee.id]?.instagramUrl
+  }));
 }

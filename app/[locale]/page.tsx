@@ -23,6 +23,8 @@ import {
 import { ContactForm } from "./contact/contact-form";
 import { ContactMap } from "./contact/contact-map";
 import { BackToTopButton } from "@/components/back-to-top-button";
+import { FloatingCookieSettingsButton } from "@/components/floating-cookie-settings-button";
+import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
 import { AnimatedCounter } from "@/components/animated-counter";
 import { FullscreenHero } from "@/components/fullscreen-hero";
 import { HorizontalScrollControls } from "@/components/horizontal-scroll-controls";
@@ -175,7 +177,9 @@ export default async function HomePage({ params }: HomePageProps) {
     bookingServiceSlugs: [],
     specialties: [],
     name: emp.name,
-    bio: emp.bio
+    bio: emp.bio,
+    position: emp.position,
+    instagramUrl: emp.instagramUrl
   }));
   const teamUsesSlider = activeMembers.length > 3;
   
@@ -407,29 +411,62 @@ export default async function HomePage({ params }: HomePageProps) {
                   scrollSnapAlign: teamUsesSlider ? "start" : undefined,
                   flex: teamUsesSlider ? "0 0 calc((100% - 36px) / 3)" : undefined,
                   minWidth: teamUsesSlider ? 280 : undefined,
+                  aspectRatio: "4 / 5",
                   borderRadius: 28,
-                  border: "1px solid var(--border)",
-                  background: "var(--surface-strong)",
+                  border: "1px solid rgba(255, 255, 255, 0.18)",
+                  background: "#101010",
                   boxShadow: "var(--shadow)",
                   overflow: "hidden",
-                  display: "grid"
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "flex-end"
                 }}
               >
                 <img
                   src={member.imageSrc}
                   alt={member.name}
                   style={{
+                    position: "absolute",
+                    inset: 0,
                     width: "100%",
-                    aspectRatio: "4 / 3",
+                    height: "100%",
                     objectFit: "cover",
                     display: "block"
                   }}
                 />
 
-                <div style={{ padding: 24, display: "grid", gap: 18 }}>
+                <div
+                  style={{
+                    position: "relative",
+                    zIndex: 1,
+                    margin: 16,
+                    width: "calc(100% - 32px)",
+                    padding: 18,
+                    display: "grid",
+                    gap: 14,
+                    borderRadius: 20,
+                    border: "1px solid rgba(255, 255, 255, 0.24)",
+                    background: "linear-gradient(145deg, rgba(18, 18, 18, 0.5), rgba(18, 18, 18, 0.32))",
+                    backdropFilter: "blur(10px)",
+                    WebkitBackdropFilter: "blur(10px)"
+                  }}
+                >
                   <div style={{ display: "grid", gap: 12 }}>
                     <div style={{ display: "grid", gap: 8 }}>
-                      <h3 style={{ margin: 0, fontSize: 28 }}>{member.name}</h3>
+                      <h3 style={{ margin: 0, fontSize: 28, color: "#fffaf4" }}>{member.name}</h3>
+                      {member.position ? (
+                        <p
+                          style={{
+                            margin: 0,
+                            color: "rgba(255, 250, 244, 0.92)",
+                            fontSize: 14,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.08em"
+                          }}
+                        >
+                          {member.position}
+                        </p>
+                      ) : null}
                       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                         {member.specialties.map((specialty) => (
                           <span
@@ -437,8 +474,8 @@ export default async function HomePage({ params }: HomePageProps) {
                             style={{
                               borderRadius: 999,
                               padding: "8px 12px",
-                              background: "rgba(214, 176, 125, 0.22)",
-                              color: "var(--brand-accent)",
+                              background: "rgba(255, 255, 255, 0.18)",
+                              color: "#fffaf4",
                               fontSize: 13,
                               fontWeight: 700
                             }}
@@ -449,27 +486,33 @@ export default async function HomePage({ params }: HomePageProps) {
                       </div>
                     </div>
 
-                    <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.7 }}>
+                    <p style={{ margin: 0, color: "rgba(255, 250, 244, 0.9)", lineHeight: 1.7 }}>
                       {member.bio ?? dictionary.team.bioFallback}
                     </p>
+
+                    {member.instagramUrl ? (
+                      <a
+                        href={member.instagramUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          width: "fit-content",
+                          borderRadius: 999,
+                          padding: "8px 12px",
+                          border: "1px solid rgba(255, 255, 255, 0.34)",
+                          background: "rgba(255, 255, 255, 0.12)",
+                          color: "#fffaf4",
+                          fontWeight: 700,
+                          fontSize: 13,
+                          textDecoration: "none"
+                        }}
+                      >
+                        Instagram
+                      </a>
+                    ) : null}
                   </div>
 
-                  <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
-                    <Link
-                      href={onePageHref(locale, "/booking")}
-                      style={{
-                        display: "inline-flex",
-                        padding: "13px 18px",
-                        borderRadius: 999,
-                        background:
-                          "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
-                        color: "#fffaf4",
-                        fontWeight: 700
-                      }}
-                    >
-                      {dictionary.team.bookingCta}
-                    </Link>
-                  </div>
+                
                 </div>
               </article>
             ))}
@@ -515,23 +558,6 @@ export default async function HomePage({ params }: HomePageProps) {
                   }}
                 />
 
-                <div style={{ padding: 22, display: "grid", gap: 12 }}>
-                  <div
-                    style={{
-                      fontSize: 12,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.14em",
-                      color: "var(--muted)"
-                    }}
-                  >
-                    Gallery
-                  </div>
-                  {image.description ? (
-                    <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
-                      {image.description}
-                    </p>
-                  ) : null}
-                </div>
               </article>
             ))}
           </section>
@@ -761,7 +787,14 @@ export default async function HomePage({ params }: HomePageProps) {
         </section>
       </div>
 
+      {contactContent.items.whatsapp?.href ? (
+        <FloatingWhatsAppButton
+          href={contactContent.items.whatsapp.href}
+          label={contactContent.items.whatsapp.label}
+        />
+      ) : null}
       <BackToTopButton />
+      <FloatingCookieSettingsButton label={dictionary.cookies.openSettings} />
     </main>
   );
 }

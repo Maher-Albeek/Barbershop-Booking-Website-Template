@@ -25,22 +25,22 @@ export function PageHeroEditor({ locale, page, label, description }: PageHeroEdi
         </article>
       ) : null}
 
-      <article style={{ ...surfaceCardStyle, display: "grid", gap: 14 }}>
-        <div style={{ display: "grid", gap: 6 }}>
-          <strong>{hasHeroSection ? "Content section background image" : "Page background image"}</strong>
-          <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
-            {hasHeroSection
-              ? "Upload a per-page background image used behind the content section below the hero."
-              : "Upload the background image used for this page content area."}
-          </p>
-        </div>
-        <HeroImageManager
-          locale={locale}
-          page={page}
-          initialImageUrl={getContentBackgroundImageUrl(page) ?? ""}
-          kind="content"
-        />
-      </article>
+      {!hasHeroSection ? (
+        <article style={{ ...surfaceCardStyle, display: "grid", gap: 14 }}>
+          <div style={{ display: "grid", gap: 6 }}>
+            <strong>Page background image</strong>
+            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
+              Upload the background image used for this page content area.
+            </p>
+          </div>
+          <HeroImageManager
+            locale={locale}
+            page={page}
+            initialImageUrl={getContentBackgroundImageUrl(page) ?? ""}
+            kind="content"
+          />
+        </article>
+      ) : null}
     </div>
   );
 }

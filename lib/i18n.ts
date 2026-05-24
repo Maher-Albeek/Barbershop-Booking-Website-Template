@@ -1,4 +1,4 @@
-export const locales = ["en", "de", "ar"] as const;
+export const locales = ["de", "ar"] as const;
 
 export type Locale = (typeof locales)[number];
 
@@ -535,8 +535,7 @@ const dictionaries = {
       openSettings: "\u0627\u0641\u062a\u062d \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0645\u0644\u0641\u0627\u062a \u0627\u0644\u0627\u0631\u062a\u0628\u0627\u0637"
     }
   }
-} as const satisfies Record<
-  Locale,
+} as const satisfies Record<string,
   {
     direction: "ltr" | "rtl";
     labels: {
@@ -682,7 +681,154 @@ const dictionaries = {
       openSettings: string;
     };
   }
->;
+> &
+  Record<Locale,
+    {
+      direction: "ltr" | "rtl";
+      labels: {
+        since: string;
+        primaryNavigation: string;
+      };
+      navigation: Array<{ href: string; label: string }>;
+      actions: {
+        bookNow: string;
+        viewServices: string;
+      };
+      services: {
+        durationLabel: string;
+        variablePriceLabel: string;
+        fixedPriceLabel: string;
+        bookingCta: string;
+      };
+      team: {
+        eyebrow: string;
+        title: string;
+        subtitle: string;
+        bioFallback: string;
+        bookingCta: string;
+      };
+      gallery: {
+        imageLabel: string;
+      };
+      offers: {
+        validUntilLabel: string;
+        bookingCta: string;
+      };
+      booking: {
+        eyebrow: string;
+        title: string;
+        subtitle: string;
+        serviceStepLabel: string;
+        serviceStepTitle: string;
+        serviceStepDescription: string;
+        selectServiceLabel: string;
+        serviceHint: string;
+        noSelectionTitle: string;
+        noSelectionDescription: string;
+        detailsTitle: string;
+        detailsDescription: string;
+        employeeStep: string;
+        employeeStepLabel: string;
+        employeeStepTitle: string;
+        employeeStepDescription: string;
+        employeeAnyOption: string;
+        employeeAnyDescription: string;
+        employeeSpecificLabel: string;
+        employeeSpecialtiesLabel: string;
+        employeeUnavailableTitle: string;
+        employeeUnavailableDescription: string;
+        selectedEmployeeLabel: string;
+        timeStepLabel: string;
+        timeStepTitle: string;
+        timeStepDescription: string;
+        timeStepAnyDescription: string;
+        durationForEmployeeLabel: string;
+        slotAssignedLabel: string;
+        slotEmptyTitle: string;
+        slotEmptyDescription: string;
+        slotWindowLabel: string;
+        slotTimezoneNote: string;
+        timeStep: string;
+        customerStep: string;
+        customerStepLabel: string;
+        customerStepTitle: string;
+        customerStepDescription: string;
+        reviewStepLabel: string;
+        reviewStepTitle: string;
+        reviewStepDescription: string;
+        continueToReviewLabel: string;
+        reviewCustomerTitle: string;
+        backToServiceLabel: string;
+        backToEmployeeLabel: string;
+        backToTimeLabel: string;
+        editLabel: string;
+        selectedSlotTitle: string;
+        selectedDateLabel: string;
+        selectedTimeLabel: string;
+        selectedPriceLabel: string;
+        selectedStatusLabel: string;
+        confirmedStatus: string;
+        cancelledStatus: string;
+        noSlotTitle: string;
+        noSlotDescription: string;
+        nameLabel: string;
+        emailLabel: string;
+        notesLabel: string;
+        notesHint: string;
+        submitLabel: string;
+        referenceLabel: string;
+        successEyebrow: string;
+        successTitle: string;
+        successDescription: string;
+        successMissingTitle: string;
+        successMissingDescription: string;
+        cancellationSuccessMessage: string;
+        cancelBookingLabel: string;
+        backToBookingLabel: string;
+        backToHomeLabel: string;
+        contactTitle: string;
+        errorMissingFields: string;
+        errorInvalidEmail: string;
+        errorInvalidSelection: string;
+        errorSlotUnavailable: string;
+        privacyNote: string;
+      };
+      contact: {
+        directLabel: string;
+        title: string;
+        visitLabel: string;
+        visitTitle: string;
+        bookingCta: string;
+      };
+      footer: {
+        legalLabel: string;
+        impressum: string;
+        datenschutz: string;
+        cookieSettings: string;
+        tagline: string;
+        locationTitle: string;
+        legalLinksTitle: string;
+      };
+      cookies: {
+        title: string;
+        description: string;
+        customizeTitle: string;
+        acceptAll: string;
+        rejectAll: string;
+        customize: string;
+        save: string;
+        close: string;
+        essentialTitle: string;
+        essentialDescription: string;
+        functionalTitle: string;
+        functionalDescription: string;
+        analyticsTitle: string;
+        analyticsDescription: string;
+        alwaysOn: string;
+        openSettings: string;
+      };
+    }
+  >;
 
 export function getDictionary(locale: Locale) {
   return dictionaries[locale];

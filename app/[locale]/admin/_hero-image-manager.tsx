@@ -197,36 +197,6 @@ export function HeroImageManager({
         </div>
       )}
 
-      {imageUrl && (
-        <div style={{ display: "grid", gap: 8 }}>
-          <p style={{ margin: 0, fontSize: 12, color: "var(--muted)" }}>Image URL:</p>
-          <input
-            type="text"
-            value={imageUrl}
-            readOnly
-            style={inputStyle}
-          />
-        </div>
-      )}
-
-      <button
-        onClick={() => {
-          if (imageUrl) {
-            navigator.clipboard.writeText(imageUrl);
-            setSuccess("Image URL copied to clipboard!");
-          }
-        }}
-        disabled={isUploading || !imageUrl}
-        style={{
-          ...inputStyle,
-          cursor: isUploading ? "wait" : "pointer",
-          fontWeight: 700,
-          background: imageUrl ? "rgba(139, 94, 60, 0.15)" : "rgba(107, 91, 79, 0.1)",
-          opacity: isUploading ? 0.6 : 1
-        }}
-      >
-        {isUploading ? "Converting..." : "Copy Image URL"}
-      </button>
     </div>
   );
 }

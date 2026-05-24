@@ -172,7 +172,9 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
       bookingServiceSlugs: [],
       specialties: [],
       name: emp.name,
-      bio: emp.bio
+      bio: emp.bio,
+      position: emp.position,
+      instagramUrl: emp.instagramUrl
     }))
   };
   const bookingConfig = siteConfig.booking;
@@ -925,6 +927,23 @@ export default async function BookingPage({ params, searchParams }: BookingPageP
                               <span style={{ color: "var(--muted)", lineHeight: 1.6 }}>
                                 {member.bio ?? member.specialties.join(" - ")}
                               </span>
+
+                              {member.position ? (
+                                <span style={{ fontSize: 13, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                                  {member.position}
+                                </span>
+                              ) : null}
+
+                              {member.instagramUrl ? (
+                                <a
+                                  href={member.instagramUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ width: "fit-content", color: "var(--brand-accent)", fontWeight: 700 }}
+                                >
+                                  Instagram
+                                </a>
+                              ) : null}
 
                               <span style={{ fontSize: 14 }}>
                                 <strong>{dictionary.booking.employeeSpecialtiesLabel}:</strong>{" "}

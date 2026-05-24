@@ -197,6 +197,8 @@ type ExistingBooking = {
   end: string;
 };
 
+type LocalizedRecord<T> = Record<string, T> & Record<Locale, T>;
+
 export const siteConfig: {
   defaultLocale: Locale;
   locales: readonly Locale[];
@@ -211,13 +213,13 @@ export const siteConfig: {
       tiktok?: string;
     };
   };
-  content: Record<Locale, LocalizedHomepageContent>;
-  services: Record<Locale, LocalizedServicesContent>;
-  team: Record<Locale, LocalizedTeamContent>;
-  gallery: Record<Locale, LocalizedGalleryContent>;
-  offers: Record<Locale, LocalizedOffersContent>;
-  contact: Record<Locale, LocalizedContactContent>;
-  legal: Record<Locale, LocalizedLegalContent>;
+  content: LocalizedRecord<LocalizedHomepageContent>;
+  services: LocalizedRecord<LocalizedServicesContent>;
+  team: LocalizedRecord<LocalizedTeamContent>;
+  gallery: LocalizedRecord<LocalizedGalleryContent>;
+  offers: LocalizedRecord<LocalizedOffersContent>;
+  contact: LocalizedRecord<LocalizedContactContent>;
+  legal: LocalizedRecord<LocalizedLegalContent>;
   booking: {
     slotIntervalMinutes: number;
     searchWindowDays: number;

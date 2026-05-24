@@ -64,15 +64,7 @@ export default async function AdminGalleryPage({ params }: AdminGalleryPageProps
                     label="Gallery image"
                     defaultValue={image.imageUrl}
                   />
-                  <label style={{ display: "grid", gap: 8 }}>
-                    <span>Description</span>
-                    <textarea
-                      name="description"
-                      defaultValue={image.description ?? ""}
-                      rows={3}
-                      style={{ ...inputStyle, resize: "vertical", minHeight: 96 }}
-                    />
-                  </label>
+                   
                   <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <input type="checkbox" name="isVisible" defaultChecked={image.isVisible} />
                     Visible on public gallery
@@ -99,14 +91,7 @@ export default async function AdminGalleryPage({ params }: AdminGalleryPageProps
           <strong>Add a new gallery image</strong>
           <input type="hidden" name="locale" value={locale} />
           <ImageDropField name="imageSrc" label="Gallery image" />
-          <label style={{ display: "grid", gap: 8 }}>
-            <span>Description</span>
-            <textarea
-              name="description"
-              rows={3}
-              style={{ ...inputStyle, resize: "vertical", minHeight: 96 }}
-            />
-          </label>
+          
           <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <input type="checkbox" name="isVisible" defaultChecked />
             Visible on public gallery

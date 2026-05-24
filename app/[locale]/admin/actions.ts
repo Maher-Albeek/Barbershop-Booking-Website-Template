@@ -5,6 +5,7 @@ import { writeFile, mkdir, readdir, unlink } from "fs/promises";
 import { join } from "path";
 import { requireRole } from "@/lib/auth";
 import { isHeroImageKey } from "@/lib/hero-image";
+import { saveEmployeeProfile } from "@/lib/employee-profile-storage";
 import { prisma } from "@/lib/prisma";
 import {
   addBlockedTime,
@@ -43,6 +44,28 @@ function normalize(value: FormDataEntryValue | null) {
 
 function checked(formData: FormData, key: string) {
   return normalize(formData.get(key)) === "on";
+}
+
+function normalizeInstagramUrl(value: string) {
+  const normalized = value.trim();
+
+  if (!normalized) {
+    return "";
+  }
+
+  if (normalized.startsWith("@")) {
+    return `https://instagram.com/${normalized.slice(1)}`;
+  }
+
+  if (/^https?:\/\//i.test(normalized)) {
+    return normalized;
+  }
+
+  if (normalized.includes("instagram.com")) {
+    return `https://${normalized.replace(/^\/+/, "")}`;
+  }
+
+  return `https://instagram.com/${normalized.replace(/^@/, "")}`;
 }
 
 function parseOptionalNonNegativeInt(value: FormDataEntryValue | null) {
@@ -174,7 +197,7 @@ export async function upsertServiceAction(formData: FormData) {
   const shopId = await getPrimaryShopId();
 
   if (!shopId) {
-    redirectToAdmin(locale, "services");
+    redirectToAdmin(locale, "servicesPage");
   }
 
   const serviceName = normalize(formData.get("name_en")) || 
@@ -182,7 +205,7 @@ export async function upsertServiceAction(formData: FormData) {
                      normalize(formData.get("name_ar"));
 
   if (!serviceName) {
-    redirectToAdmin(locale, "services");
+    redirectToAdmin(locale, "servicesPage");
   }
 
   const serviceDescription = normalize(formData.get("description"));
@@ -200,7 +223,7 @@ export async function upsertServiceAction(formData: FormData) {
     isActive
   });
 
-  redirectToAdmin(locale, "services");
+  redirectToAdmin(locale, "servicesPage");
 }
 
 export async function upsertEmployeeAction(formData: FormData) {
@@ -209,6 +232,8 @@ export async function upsertEmployeeAction(formData: FormData) {
   const name = normalize(formData.get("name"));
   const bioValue = normalize(formData.get("bio"));
   const avatarInput = normalize(formData.get("avatar"));
+  const positionValue = normalize(formData.get("position"));
+  const instagramUrlValue = normalizeInstagramUrl(normalize(formData.get("instagramUrl")));
   const isActive = checked(formData, "isActive");
 
   if (employeeId) {
@@ -218,7 +243,7 @@ export async function upsertEmployeeAction(formData: FormData) {
     });
 
     if (!existingEmployee) {
-      redirectToAdmin(locale, "employees");
+      redirectToAdmin(locale, "teamPage");
     }
 
     const avatarUploadKey = slugify(name || existingEmployee.name || `employee-${employeeId}`);
@@ -233,21 +258,26 @@ export async function upsertEmployeeAction(formData: FormData) {
         isActive
       }
     });
+
+    saveEmployeeProfile(employeeId, {
+      position: positionValue || undefined,
+      instagramUrl: instagramUrlValue || undefined
+    });
   } else {
     if (!name) {
-      redirectToAdmin(locale, "employees");
+      redirectToAdmin(locale, "teamPage");
     }
 
     const shopId = await getPrimaryShopId();
 
     if (!shopId) {
-      redirectToAdmin(locale, "employees");
+      redirectToAdmin(locale, "teamPage");
     }
 
     const avatarUploadKey = slugify(name);
     const uploadedAvatar = await saveEmployeeAvatarFromDataUrl(avatarUploadKey, avatarInput);
 
-    await prisma.employee.create({
+    const createdEmployee = await prisma.employee.create({
       data: {
         shopId,
         name,
@@ -256,9 +286,14 @@ export async function upsertEmployeeAction(formData: FormData) {
         isActive
       }
     });
+
+    saveEmployeeProfile(createdEmployee.id, {
+      position: positionValue || undefined,
+      instagramUrl: instagramUrlValue || undefined
+    });
   }
 
-  redirectToAdmin(locale, "employees");
+  redirectToAdmin(locale, "teamPage");
 }
 
 export async function setEmployeeActiveAction(formData: FormData) {
@@ -266,7 +301,7 @@ export async function setEmployeeActiveAction(formData: FormData) {
   const employeeId = parseOptionalPositiveInt(formData.get("employeeId"));
 
   if (!employeeId) {
-    redirectToAdmin(locale, "employees");
+    redirectToAdmin(locale, "teamPage");
   }
 
   await prisma.employee.update({
@@ -276,7 +311,7 @@ export async function setEmployeeActiveAction(formData: FormData) {
     }
   });
 
-  redirectToAdmin(locale, "employees");
+  redirectToAdmin(locale, "teamPage");
 }
 
 export async function upsertAssignmentAction(formData: FormData) {
@@ -340,7 +375,7 @@ export async function updateBookingStatusAction(formData: FormData) {
     normalize(formData.get("bookingId")),
     normalize(formData.get("status")) as "cancelled" | "completed" | "confirmed" | "no_show"
   );
-  redirectToAdmin(locale, "bookings");
+  redirectToAdmin(locale, "bookingPage");
 }
 
 export async function upsertGalleryAction(formData: FormData) {
@@ -394,7 +429,7 @@ export async function upsertOfferAction(formData: FormData) {
   const shopId = await getPrimaryShopId();
 
   if (!shopId) {
-    redirectToAdmin(locale, "offers");
+    redirectToAdmin(locale, "offersPage");
   }
 
   const offerTitle = normalize(formData.get("title_en")) || 
@@ -402,7 +437,7 @@ export async function upsertOfferAction(formData: FormData) {
                     normalize(formData.get("title_ar"));
 
   if (!offerTitle) {
-    redirectToAdmin(locale, "offers");
+    redirectToAdmin(locale, "offersPage");
   }
 
   const offerDescription = normalize(formData.get("description_en")) || 
@@ -425,7 +460,7 @@ export async function upsertOfferAction(formData: FormData) {
     isActive
   });
 
-  redirectToAdmin(locale, "offers");
+  redirectToAdmin(locale, "offersPage");
 }
 
 export async function deleteOfferAction(formData: FormData) {
@@ -433,12 +468,12 @@ export async function deleteOfferAction(formData: FormData) {
   const offerId = parseOptionalPositiveInt(formData.get("offerId"));
 
   if (!offerId) {
-    redirectToAdmin(locale, "offers");
+    redirectToAdmin(locale, "offersPage");
   }
 
   // Delete from database
   await deleteOfferFromDatabase(offerId);
-  redirectToAdmin(locale, "offers");
+  redirectToAdmin(locale, "offersPage");
 }
 
 export async function updateShopSettingsAction(formData: FormData) {
@@ -455,11 +490,7 @@ export async function updateShopSettingsAction(formData: FormData) {
     enabledLocales: enabledLocales.length > 0 ? enabledLocales : [defaultLocale],
     defaultLocale,
     hero: {
-      en: {
-        kicker: normalize(formData.get("hero_kicker_en")),
-        title: normalize(formData.get("hero_title_en")),
-        subtitle: normalize(formData.get("hero_subtitle_en"))
-      },
+       
       de: {
         kicker: normalize(formData.get("hero_kicker_de")),
         title: normalize(formData.get("hero_title_de")),
@@ -500,19 +531,14 @@ export async function updateContactContentAction(formData: FormData) {
     address: normalize(formData.get("address")),
     whatsapp: normalize(formData.get("whatsapp")),
     workingHours: {
-      en: normalize(formData.get("hours_en")),
-      de: normalize(formData.get("hours_de")),
+       de: normalize(formData.get("hours_de")),
       ar: normalize(formData.get("hours_ar"))
     },
     mapEmbedUrl: normalize(formData.get("mapEmbedUrl")),
     mapDirectionsHref: normalize(formData.get("mapDirectionsHref")),
     mapVisible: checked(formData, "mapVisible"),
     translations: {
-      en: {
-        title: normalize(formData.get("title_en")),
-        subtitle: normalize(formData.get("subtitle_en")),
-        addressLabel: normalize(formData.get("addressLabel_en"))
-      },
+     
       de: {
         title: normalize(formData.get("title_de")),
         subtitle: normalize(formData.get("subtitle_de")),

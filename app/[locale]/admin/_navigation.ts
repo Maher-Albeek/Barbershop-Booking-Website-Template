@@ -9,12 +9,8 @@ export type AdminPageKey =
   | "offersPage"
   | "bookingPage"
   | "contactPage"
-  | "services"
   | "database"
-  | "employees"
   | "schedule"
-  | "bookings"
-  | "offers"
   | "settings"
   | "email";
 
@@ -59,14 +55,14 @@ export const adminNavGroups: AdminNavGroup[] = [
         label: "Services Page",
         story: "ADMIN-014",
         path: "pages/services",
-        description: "Manage the public services page hero and background."
+        description: "Manage the services page hero plus service records used for booking and public listings."
       },
       {
         key: "teamPage",
         label: "Team Page",
         story: "ADMIN-015",
         path: "pages/team",
-        description: "Manage the team page hero and background assets."
+        description: "Manage the team page hero plus team member records and profiles."
       },
       {
         key: "galleryPage",
@@ -80,14 +76,14 @@ export const adminNavGroups: AdminNavGroup[] = [
         label: "Offers Page",
         story: "ADMIN-016",
         path: "pages/offers",
-        description: "Manage the public offers page hero and background imagery."
+        description: "Manage the offers page hero plus promotional offer records and validity data."
       },
       {
         key: "bookingPage",
         label: "Booking Page",
         story: "ADMIN-017",
         path: "pages/booking",
-        description: "Manage the booking page hero and supporting background image."
+        description: "Manage booking page hero plus booking records, filters, and status updates."
       },
       {
         key: "contactPage",
@@ -102,13 +98,6 @@ export const adminNavGroups: AdminNavGroup[] = [
     label: "DATA MANAGEMENT",
     items: [
       {
-        key: "services",
-        label: "Services",
-        story: "ADMIN-002",
-        path: "entities/services",
-        description: "Create and update service records shown in booking and public pages."
-      },
-      {
         key: "database",
         label: "Database Manage",
         story: "ADMIN-018",
@@ -116,32 +105,11 @@ export const adminNavGroups: AdminNavGroup[] = [
         description: "Display all database tables and inspect their current row values."
       },
       {
-        key: "employees",
-        label: "Employees",
-        story: "ADMIN-003",
-        path: "entities/employees",
-        description: "Manage employee profiles, bios, and login linkage."
-      },
-      {
         key: "schedule",
         label: "Schedule",
         story: "ADMIN-004 / ADMIN-005 / ADMIN-006",
         path: "entities/schedule",
         description: "Configure assignments, working hours, and blocked time."
-      },
-      {
-        key: "bookings",
-        label: "Bookings",
-        story: "ADMIN-007",
-        path: "entities/bookings",
-        description: "Filter bookings and manage appointment statuses."
-      },
-      {
-        key: "offers",
-        label: "Offers",
-        story: "ADMIN-009",
-        path: "entities/offers",
-        description: "Maintain promotional offer records and validity windows."
       }
     ]
   },

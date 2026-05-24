@@ -17,7 +17,7 @@ export function AnimatedCounter({
   value,
   suffix = "",
   durationMs = 2200,
-  locale = "en"
+  locale = "de"
 }: AnimatedCounterProps) {
   const target = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
   const [displayValue, setDisplayValue] = useState(0);
